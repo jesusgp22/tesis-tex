@@ -1,0 +1,391 @@
+\documentclass[12pt,oneside]{book}
+
+\usepackage{ulamonog} % formato para la propuesta o proyecto de grado
+\usepackage[ansinew]{inputenc} % escribir acentos
+
+
+
+%\usepackage[activeacute,spanish]{babel}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\usepackage[table,xcdraw]{xcolor}
+
+% ***************************************************************** %
+% En el siguiente comando se pueden modificar:
+% Titulo, Autor, Palabras clave
+% ***************************************************************** %
+
+% si se va a imprimir,
+% se incluye al final despues de citecolor=blue, el comando draft=true
+% Las siguientes son propiedades del pdf, mï¿½s no cambian nada dentro del
+% texto de la monografï¿½a
+\hypersetup{pdftitle={Propuesta de Tesis},
+pdfauthor={Jesús Gómez},
+pdfsubject={Propuesta de Proyecto de Grado}, % se deja igual (se cambia para el proyecto de grado)
+pdfkeywords={ Monitoreo de redes, Calidad de servicio, Big Data, Benchmarking, Cloud}, pdfstartview=FitH,
+bookmarks=true, citecolor=blue}%, draft=true}
+
+% ***************************************************************** %
+% FIN DE
+% Titulo, Autor, Palabras clave
+% ***************************************************************** %
+
+% Si desea que no aparezca la lista de tablas o figuras descomente las siguientes lineas
+\nolistoftables
+\nolistoffigures
+
+%\usepackage{natbib}
+
+\sloppy
+
+\begin{document}
+
+\frontmatter
+
+
+% ***************************************************************** %
+% Portada y resumen
+% ***************************************************************** %
+
+% Si desea que el logo de la ULA aparezca en la parte superior,
+% descomente la siguiente lï¿½nea. Por defecto aparece en la parte inferior
+% \logoarriba{}
+
+% Aï¿½o en el cual se entrega el proyecto de grado o la propuesta
+\copyrightyear{2015}
+
+% Al final cuando hayan presentado, sin comentar,
+% deberia ser el nï¿½mero de tesis presentada y la opciï¿½n, IO por ejemplo
+% (Actualmente, 11-03-08, no se estï¿½ trabajando con esta metodologï¿½a de llevar un
+% nï¿½mero de proyecto para las tesis, por lo cual debe ir comentado)
+%\numproy{00IO}
+
+% En caso de hacer la propuesta, descomente la siguiente
+% instrucciï¿½n. Para el Proyecto de Grado debe comentarse. Modifica
+% tanto la categorï¿½a de la monografï¿½a, como la apariciï¿½n de
+% "Presentado ante la ilustre Universidad de Los Andes
+% como requisito parcial para obtener el Tï¿½tulo de" en la portada
+\tipomonografia{Propuesta de Proyecto de Grado}
+
+
+% Tï¿½tulo de la monografï¿½a, el cual saldrï¿½ en la portada
+\title{Diseño e implementación de un sistema de monitoreo de redes orientado a la recolección masiva de datos.}
+
+% Autor de la monografï¿½a, el cual saldrï¿½ en la portada
+ \author{Jesús Alberto Gómez Pérez}
+
+% La fechaentrega, presentaciondia, presentacionlugar
+% y mencionespecial, es para aquel caso en el cual se
+% vaya a utilizar la hoja del veredicto en el formato
+% que se presenta aquï¿½. El primerjurado, segundojurado,
+% y cedula, son campos que pueden llenarse, pero sï¿½lo
+% aparecerï¿½n si se utiliza la pï¿½gina del veredicto
+
+% Cï¿½dula del autor de la monografï¿½a
+ \cedula{XX.XXX.XXX}
+
+% Tutor del Proyecto de Grado
+ \tutor{Dr. Andrés Arcia-Moret}
+
+% Cualquiera de los instructores que aparecen a continuaciï¿½n
+% pueden comentarse o descomentarse segï¿½n sea el caso:
+
+%%% Cotutor del Proyecto de Grado
+% \cotutor{Dra. propuesta}
+% \cotutordos{Dra. propuesta dos}
+%%% Asesor del Proyecto de Grado
+% \asesor{Dr. Asesor}
+%%% Asesor Industrial del Proyecto de Grado
+% \asesorindustrial{Dr. Asesor Industrial}
+%%% Tutor Industrial del Proyecto de Grado
+% \tutorindustrial{Dr. Tutor Industrial}
+%%% Jurados del Proyecto de Grado
+ \primerjurado{Dr. Primer Profesor}
+ \segundojurado{Prof. Segundo Profesor}
+
+% ***************************************************************** %
+% Si sabe la fecha de presentaciï¿½n
+%
+% con o sin comentar
+% (Esta hoja es un formato para asentar la nota del proyecto de grado;
+% sin embargo, la hoja que se utiliza para ese fin, se busca en la escuela
+% dï¿½as antes de la presentaciï¿½n)
+% ***************************************************************** %
+%\fechaentrega{Diciembre 2006} % Si sabe cuando se presentï¿½
+%\presentaciondia{7 de Diciembre de 2005} % si conoce exactamente el dï¿½a
+%\presentacionlugar{Salï¿½n de reuniones EISULA} % si conoce exactamente el lugar donde se presentï¿½
+% ***************************************************************** %
+% FIN DE
+% Si sabe la fecha de presentaciï¿½n
+% ***************************************************************** %
+
+
+% ***************************************************************** %
+% Si tiene mencion especial
+% con o sin comentar
+% ***************************************************************** %
+%\mencionespecial{Este proyecto fue seleccionado como \textbf{mejor
+%proyecto de grado} de la Escuela de Ingenierï¿½a de Sistemas, en el
+%IC aniversario de la Facultad de Ingenierï¿½a.} % si tiene menciï¿½n especial
+% (El texto puede cambiarse \mencionespecial{*********} segï¿½n corresponda
+% ***************************************************************** %
+% FIN DE
+% Si tiene mencion especial
+% con o sin comentar
+% ***************************************************************** %
+
+% NO TOCAR si es Ingenieria de Sistemas
+% \grado{Ingeniero Quï¿½mico} % por defecto Ingeniero de Sistemas
+
+%\signaturepage ----- NO TOCAR
+
+%%%%%OJO%%%%%Arreglen esto segï¿½n su opciï¿½n
+% Si es control y automatizacion se comentan las siguientes lï¿½neas. Si es de
+% Sistemas Computacionales comenta la tercera. De Investigaciï¿½n de Operaciones
+% comenta la segunda
+\opcion{Sistemas Computacionales}
+% \opcion{Investigaciï¿½n de Operaciones}
+
+% Aquï¿½ se escribe el resumen de la monografía
+\resumen{En el presente proyecto se plantea el desarrollo de un sistema de monitoreo distribuido de enlaces críticos de redes a través de un servicio web centralizado. Este servicio además pretende hacer énfasis en la visualización de los datos recolectados a partir de pruebas periódicas. El sistema está planteado como una herramienta para facilitar el entendimiento del funcionamiento de la red y ofrecer una solución centralizada, de muy bajo costo y con componentes de hardware que puedan estar desatendidos.}
+
+% Aquï¿½ se escriben las palabras claves de la monografï¿½a
+\descriptores{Monitoreo de redes, Calidad de servicio, Big Data, Benchmarking, Cloud}
+
+% Esto es para que salga la cota en la hoja del resumen. Actualmente,
+% 11-03-08, en la Escuela de Ingenierï¿½a de Sistemas no es necesario
+% buscar la cota previamente, sino que el Proyecto de Grado se entrega
+% en la Escuela sin cota.
+%\cota{IXD A01.1}
+
+% Si desea eliminar la frase "Este trabajo fue procesado en LATEX"
+% del resumen, descomente la siguiente lï¿½nea
+\sinlatex{}
+
+% ***************************************************************** %
+% FIN DE
+% Portada y resumen
+% ***************************************************************** %
+
+
+% ***************************************************************** %
+% Si tiene dedicatoria
+% con o sin comentar
+% ***************************************************************** %
+%\dedicatoria{A todos los amados seres\\ cuando son dos lï¿½neas o mï¿½s}
+% ***************************************************************** %
+% FIN DE
+% Si tiene dedicatoria
+% ***************************************************************** %
+
+\beforepreface
+
+% ***************************************************************** %
+% Agradecimientos y capï¿½tulos NO numerados
+% ***************************************************************** %
+
+%\prefacesection{Agradecimientos}
+% Aï¿½n no hay agradecimientos
+
+%%% Capitulo sin numero, antes de la pagina 1
+
+%\prefacesection{Introducciï¿½n}
+% Este es un ejemplo de una secciï¿½n no numerada.
+
+
+% ***************************************************************** %
+% FIN DE
+% Agradecimientos y capï¿½tulos NO numerados
+% ***************************************************************** %
+
+\afterpreface
+
+\pagestyle{fancyplain}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{\textsc{\footnotesize\thechapter\ #1}}}
+\renewcommand{\sectionmark}[1]{\markright{\textsc{\footnotesize\thesection\ #1}}}
+\lhead[\fancyplain{}{\textsc{\footnotesize\thepage}}]%
+{\fancyplain{}{\rightmark}}
+\rhead[\fancyplain{}{\leftmark}]%
+{\fancyplain{}{\textsc{\footnotesize\thepage}}} \cfoot{}
+
+\mainmatter
+
+% ***************************************************************** %
+% Cuerpo
+% ***************************************************************** %
+% De aquï¿½ en adelante se desarrollan los capï¿½tulos numerados de la monografï¿½a
+
+% ***************************************************************** %
+% INICIO DE estructura tentativa de la Propuesta
+% ***************************************************************** %
+
+\chapter{Introducción}
+
+\section{Antecedentes}
+
+Existen dos estrategias de monitoreo de redes: monitoreo activo o benchmarking que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red  y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El benchmarking tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red ejemplos de herramientas de benchmarking son ping, iperf y traceroute.
+
+El monitoreo pasivo tiene la ventaja de que nos puede dar una muy buena idea del uso de la red sin embargo para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso, ejemplos de herramientas de monitoreo pasivo son tcpdump y wireshark; en ambos casos hay que resaltar que es difícil tener una imagen completa de la realidad de la red.
+
+Uno de los trabajos más importantes en el área de monitoreo de redes es el Protocolo Simple de Administración de Red o SNMP (del inglés Simple Network Management Protocol) este emergió como una de las primeras soluciones al problema de manejo de redes y se ha convertido en la solución más ampliamente aceptada  debido a su diseño modular e independiente de productos o redes específicas. SNMP consiste de (1) un administrador de red, (2) una serie de dispositivos remotos monitoreados (3) bases de información de administración (MIBs) en estos dispositivos, (4) agentes remotos que reportan la información de las MIBs al administrador de red y toman acciones si les indica y (5) un protocolo de comunicación entre los dispositivos \cite{Kurose:13}.
+
+SNMP no solo ofrece al administrador de red reportes sobre cada uno de los dispositivos administrados sino que también permite tomar acción sobre ellos proactivamente antes de que ocurran problemas o de forma reactiva para solucionar problemas cuando ocurren de forma inesperada.
+
+La red de TVWS (TV White Spaces o Espacios blancos en el espectro radioeléctrico) de Malawi fue implementada en el marco de un proyecto para llevar Internet a áreas rurales en países en vías de desarrollo utilizando soluciones de bajo costo a través de los espacios en blanco en el espectro radioeléctrico específicamente en la banda UHF (siglas del inglés Ultra High Frequency, 'frecuencia ultra alta') \cite{Malawi:13}.
+
+Muchas veces esta red debe dejarse desatendida durante largos periodos de tiempo ya que sus nodos son de difícil acceso o es muy costoso tener a profesionales dedicados que se encarguen de su mantenimiento, este escenario hace evidente la necesidad de una solución de monitoreo de redes a distancia y de mínimo mantenimiento. Además es atractivo para el centro de monitoreo de la red poder añadir, modificar o eliminar nodos de interés de manera sencilla a la interfaz de monitoreo.
+
+Para intentar solucionar este problema y recolectar información sobre la red de Malawi se implementó un sistema en dos partes: un monitor de red instalado en la estación base (BS) en Malawi y un servicio web remoto, el monitor en la estación base se conecta a cada uno de los nodos de la red y determina el tiempo de ida y vuelta (RTT por sus siglas en ingles)  de forma automatizada en ciertos intervalos de tiempo, guarda los resultados en archivos y los coloca en una carpeta que se sincroniza a través de un servicio en la nube  de tipo PaaS (Plataforma como servicio) con el servidor web, que a su vez escanea la carpeta compartida y actualiza su base de datos que puede usarse para generar gráficas de RTT promedio y determinar tiempos de actividad continuos y porcentaje de disponibilidad de servicio \cite{MalawiNetMonitor:15}.
+
+A pesar de que este sistema recolecta información útil y presenta gráficas muy sencillas de entender, su programación no permite agregar nuevos nodos, esto trae como consecuencia que debe ser modificado manualmente cuando la red se expande, dando lugar a la necesidad de que el servicio web se pueda expandir para dar servicio a múltiples monitores remotos simultáneamente.
+
+Por estos motivos proponemos la construcción de un sistema de monitoreo a gran escala que llamaremos Octopus Monitor, para hacerlo totalmente configurable y robusto además de agregar una interfaz de configuración vía web que permita manejar usuarios, agregar monitores remotos, agregar nodos y modificar los parámetros de las pruebas, todo esto apoyándonos en un sistema de archivos compartidos a través de la nube.
+
+Mientras que  el mayor valor de Malawinet Monitor es la visualización de grandes volúmenes de datos  que se pueden obtener a partir de pruebas de bajo impacto de tráfico (ping, traceroute), se han realizado otros trabajos en el área de monitoreo de redes como Bowlmap; este es un sistema de monitoreo de redes a través de la visualización de mediciones para el Laboratorio Abierto Inalámbrico de Berlín (BOWL,  por sus siglas en ingles). Este sistema tiene una alta flexibilidad ya que permite realizar cambios en sus pruebas existentes así como agregar pruebas totalmente nuevas y a su vez generar las visualizaciones necesarias para el análisis de dicha información, además tiene la ventaja de solo transmitir la información necesaria para cada actualización lo que acelera las peticiones y permite la visualización de data en tiempo real \cite{Bowlmap:12}.
+
+\section{Planteamiento del Problema}
+
+Las redes de computadoras se componen de un conjunto de nodos interconectados sujetos a numerosos factores que escapan de nuestro control y sobre los que muchas veces no tenemos conocimiento, en otras palabras la red puede llegar a ser impredecible y no ofrece garantías sobre el servicio que ofrece; algunas aplicaciones dependen de una alta disponibilidad y estabilidad por lo que es esencial para un administrador de red tener información del estado de la red, para diagnosticar,  solucionar problemas y asegurar la calidad de servicio.
+
+Existen muchos otros ejemplos en los que es importante tener datos del estado de la red como en redes de bajo costo en las que pueden ocurrir largas interrupciones de servicio o para un cliente de un servicio de alojamiento web que desea saber si su sitio web está disponible y que tan rápido responde; plataformas como Pingdom \cite{PINGDOM} o UptimeRobot \cite{UPTIMEROBOT} permiten monitorear distintos servicios en Internet y generan alertas cuando encuentran problemas, sin embargo no son gratuitas y no permiten la inclusión de nuevos tipos de pruebas o la visualización masiva de datos históricos.
+
+ Mantener estas mediciones con las herramientas existentes se vuelve una tarea compleja mientras crece el número de nodos a monitorear (es decir, las fuentes de información) y la cantidad de datos aumenta a través del tiempo, sumado a esto solo podemos capturar información a partir de los nodos externos de la red, por lo que en la mayoría de los casos no es posible tener una imagen completa de los enlaces a monitorear.
+
+  A pesar de que Malawinet Network Monitor podría ofrecer estadísticas de tiempo de ida y vuelta (RTT) y disponibilidad de un enlace solo a partir de las trazas capturadas con Ping, se desea además implementar un marco de trabajo que permita agregar nuevas pruebas automatizadas que ayuden a obtener una imagen más completa de la red.
+
+\section{Objetivos}
+
+\subsection{Objetivos Generales}
+
+Construir un servicio web de monitoreo de redes de bajo costo para países en vías de desarrollo con almacenamiento de datos en la nube de tipo PaaS que sea de fácil instalación y permita configurar múltiples monitores remotos para ajustarse a cambios en las características de las redes a monitorear y la carencia de personal in sitio.
+
+\subsection{Objetivos Específicos}
+
+\begin{itemize}
+\item Desarrollar un servicio de monitoreo de bajo costo para países en vías de desarrollo que de servicio a múltiples monitores de red remotos, presente visualizaciones gráficas a partir de los datos recogidos y ofrezca un marco de trabajo para agregar nuestros tipos de pruebas a los monitores de red existentes.
+\item Desarrollar un cliente monitor para desplegar en nodos desatendidos con dispositivos recolectores de muestra de bajo costo (ej. Raspberry PI, Alix boards, APU) para observar el comportamiento de los enlaces a través de aplicaciones de monitoreo sencillas y de consola.
+\item Utilizar de sistemas de bajo costo y alta disponibilidad en la nube para almacenamiento y transferencia de datos.
+\item Integrar los distintos subsistemas que conforman el servicio de monitoreo.
+\item Desarrollar un modulo de calculo asíncrono de gráficas que permita mejorar los tiempos de interacción del usuario final con el sistema utilizando técnicas para agilizar cómputo como caching, prefetching, threads, etc.
+\end{itemize}
+
+\section{Metodología}
+
+En este trabajo se seguirá una metodología en espiral; el modelo en espiral es un modelo del ciclo de vida del software donde el esfuerzo del desarrollo es iterativo. Cada ciclo de la espiral representa una fase del desarrollo de software, cada uno de los ciclos consiste de los siguientes pasos:
+\begin{enumerate}
+  \item Determinar o fijar los objetivos. En este paso se definen los objetivos específicos para posteriormente identifica las limitaciones del proceso y del sistema de software, además se diseña una planificación detallada de gestión y se identifican los riesgos.
+  \item Análisis del riesgo. En este paso se efectúa un análisis detallado para cada uno de los riesgos identificados del proyecto, se definen los pasos a seguir para reducir los riesgos y luego del análisis de estos riesgos se planean estrategias alternativas.
+  \item Desarrollar, verificar y validar. En este tercer paso, después del análisis de riesgo, se eligen un paradigma para el desarrollo del sistema de software y se lo desarrolla.
+  \item Planificar. En este último paso es donde el proyecto se revisa y se toma la decisión si se debe continuar con un ciclo posterior al de la espiral. Si se decide continuar, se desarrollan los planes para la siguiente fase del proyecto.
+\end{enumerate}
+
+Se realizarán cuatro ciclos, el primero corresponde a la realización de un monitor remoto básico que realice mediciones de RTT de la red con almacenamiento en la nube y visualizaciones de los datos obtenidos.
+
+El segundo ciclo consiste en permitir el monitoreo de una cantidad arbitraria de monitores remotos permitiendo a múltiples usuarios manejar sus monitores remotos desde el servicio web y observar las visualizaciones.
+
+El tercer ciclo corresponde en diseñar e integrar una prueba con otras herramientas (traceroute, iperf, etc) para conseguir puntos comunes y generar un enfoque de integración sencillo de los wrappers futuros a las aplicaciones. (ej. Lidiar con aplicaciones que requieren enfoque cliente solo [ping] o cliente-servidor [iperf]).
+
+El cuarto ciclo consiste en hacer análisis del rendimiento del sistema y hacer las optimizaciones necesarias para ofrecer una calidad de servicio apropiada, determinar costos, limitaciones y requisitos mínimos para implementar en países en vías de desarrollo.
+
+\section{Cronograma de Actividades}
+
+Actividades:
+\begin{itemize}
+\item Ciclo 1:
+    \begin{itemize}
+    \item	Actividad 1: Diseño e implementación de un monitor de red que capture datos de RTT de una red dada de forma periódica.
+    \item	Actividad 2: Diseño e implementación de servicio web que recoja datos generados por el monitor de red definido en la Actividad 1.
+    \item	Actividad 3: Diseño e implementación de algoritmo para obtener días y horas activos a partir de los datos de RTT.
+    \item	Actividad 4: Diseño e implementación de algoritmo para obtener periodos continuos de actividad e inactividad a partir de los datos de RTT.
+    \item	Actividad 5: Conceptualización e implementación de representaciones graficas de los datos obtenidos a partir de las actividades 1, 3 y 4.
+    \item   Actividad 6: Evaluar la dinámica de la latencia para observar el impacto de las fallas eléctricas, congestión, o condiciones de transmisión en el desempeño un enlace.
+    \end{itemize}
+\item Ciclo 2:
+    \begin{itemize}
+    \item   Actividad 7: Implementación de un sistema básico de autenticación de usuarios en el servicio web.
+    \item	Actividad 8: Diseño e implementación de un esquema de sincronización entre el monitor y el recolector para permitir configuración remota de múltiples monitores de múltiples usuarios.
+    \item	Actividad 9: Diseño e implementación de un esquema para permitir al servicio web recolectar los datos de múltiples monitores remotos.
+    \end{itemize}
+\item Ciclo 3:
+    \begin{itemize}
+    \item	Actividad 10: Integración de prueba con la herramienta traceroute al monitor remoto.
+    \item	Actividad 11: Conceptualización e implementación de representaciones gráficas de los datos obtenidos a partir de la actividad 10.
+    \item	Actividad 12: Evaluación y diseño de estrategias para integración de nuevas pruebas.
+    \item	Actividad 13: Generación de workflow para integración de nuevas pruebas.
+    \end{itemize}
+\item Ciclo 4:
+    \begin{itemize}
+    \item	Actividad 14: Evaluación de rendimiento del servicio web, análisis y desarrollo de estrategias de optimización de los tiempos de respuesta.
+    \item	Actividad 15: Puesta en marcha del sistema en un servidor de pruebas.
+    \end{itemize}
+\item Actividad 16: Elaboración del documento de tesis.
+\item Actividad 17: Entrega Final.
+\end{itemize}
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[h!]
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+             & \multicolumn{16}{c|}{Semana}                                                                                                                                                                                                                                                                                                                                                                                                                  \\ \hline
+Actividad    & 1                        & 2                        & 3                        & 4                        & 5                        & 6                        & 7                        & 8                        & 9                        & 10                       & 11                       & 12                       & 13                       & 14                       & 15                       & 16                       \\ \hline
+Actividad 1  & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 2  & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 3  &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 4  &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 5  &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 6  &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 7  &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 8  &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 9  &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 10 &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 11 &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          \\ \hline
+Actividad 12 &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          \\ \hline
+Actividad 13 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          \\ \hline
+Actividad 14 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          \\ \hline
+Actividad 15 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          \\ \hline
+Actividad 16 &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          \\ \hline
+Actividad 17 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Cronograma de Evaluaciones}
+
+\begin{table}[h!]
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+                         & \multicolumn{16}{c|}{Semana}                                                                                                                                                                                                                                                    \\ \hline
+Actividad                & 1 & 2                        & 3 & 4                        & 5 & 6                                               & 7 & 8                        & 9 & 10                       & 11 & 12                       & 13 & 14                       & 15 & 16                       \\ \hline
+Reunión con el tutor     &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434}{\color[HTML]{343434} } &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434} &    & \cellcolor[HTML]{343434} &    & \cellcolor[HTML]{343434} &    &                          \\ \hline
+Evaluación primer ciclo  &   & \cellcolor[HTML]{343434} &   &                          &   &                                                 &   &                          &   &                          &    &                          &    &                          &    &                          \\ \hline
+Evaluación segundo ciclo &   &                          &   &                          &   & \cellcolor[HTML]{343434}{\color[HTML]{343434} } &   &                          &   &                          &    &                          &    &                          &    &                          \\ \hline
+Evaluación tercer ciclo  &   &                          &   &                          &   &                                                 &   &                          &   & \cellcolor[HTML]{343434} &    &                          &    &                          &    &                          \\ \hline
+Evaluación cuarto ciclo  &   &                          &   &                          &   &                                                 &   &                          &   &                          &    &                          &    & \cellcolor[HTML]{343434} &    &                          \\ \hline
+Entrega Final            &   &                          &   &                          &   &                                                 &   &                          &   &                          &    &                          &    &                          &    & \cellcolor[HTML]{343434} \\ \hline
+\end{tabular}
+\end{table}
+
+% ***************************************************************** %
+% FIN DE estructura tentativa de la Propuesta
+% ***************************************************************** %
+
+% Estilo de la bibliografï¿½a
+\bibliographystyle{ieeetr}
+
+% ***************************************************************** %
+% Para agregar toda la bibliografia del archivo .bib
+% solo descomente el siguiente comando
+% ***************************************************************** %
+\nocite{*}
+% ***************************************************************** %
+% Nombre del archivo con extensiï¿½n .bib en donde se almacena la bibliografï¿½a
+\bibliography{bib-tesis}
+
+% ***************************************************************** %
+% FIN DE
+% Cuerpo
+% ***************************************************************** %
+
+\end{document}
