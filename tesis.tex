@@ -253,6 +253,10 @@ Existen muchos otros ejemplos en los que es importante tener datos del estado de
  Mantener estas mediciones con las herramientas existentes se vuelve una tarea compleja mientras crece el número de nodos a monitorear (es decir, las fuentes de información) y la cantidad de datos aumenta a través del tiempo, sumado a esto solo podemos capturar información a partir de los nodos externos de la red, por lo que en la mayoría de los casos no es posible tener una imagen completa de los enlaces a monitorear.
 
   A pesar de que Malawinet Network Monitor podría ofrecer estadísticas de tiempo de ida y vuelta (RTT) y disponibilidad de un enlace solo a partir de las trazas capturadas con Ping, se desea además implementar un marco de trabajo que permita agregar nuevas pruebas automatizadas que ayuden a obtener una imagen más completa de la red.
+  
+\section{Justificacion}
+  
+
 
 \section{Objetivos}
 
@@ -288,84 +292,149 @@ El tercer ciclo corresponde en diseñar e integrar una prueba con otras herramien
 
 El cuarto ciclo consiste en hacer análisis del rendimiento del sistema y hacer las optimizaciones necesarias para ofrecer una calidad de servicio apropiada, determinar costos, limitaciones y requisitos mínimos para implementar en países en vías de desarrollo.
 
-\section{Cronograma de Actividades}
+\section{Alcanze}
 
-Actividades:
-\begin{itemize}
-\item Ciclo 1:
-    \begin{itemize}
-    \item	Actividad 1: Diseño e implementación de un monitor de red que capture datos de RTT de una red dada de forma periódica.
-    \item	Actividad 2: Diseño e implementación de servicio web que recoja datos generados por el monitor de red definido en la Actividad 1.
-    \item	Actividad 3: Diseño e implementación de algoritmo para obtener días y horas activos a partir de los datos de RTT.
-    \item	Actividad 4: Diseño e implementación de algoritmo para obtener periodos continuos de actividad e inactividad a partir de los datos de RTT.
-    \item	Actividad 5: Conceptualización e implementación de representaciones graficas de los datos obtenidos a partir de las actividades 1, 3 y 4.
-    \item   Actividad 6: Evaluar la dinámica de la latencia para observar el impacto de las fallas eléctricas, congestión, o condiciones de transmisión en el desempeño un enlace.
-    \end{itemize}
-\item Ciclo 2:
-    \begin{itemize}
-    \item   Actividad 7: Implementación de un sistema básico de autenticación de usuarios en el servicio web.
-    \item	Actividad 8: Diseño e implementación de un esquema de sincronización entre el monitor y el recolector para permitir configuración remota de múltiples monitores de múltiples usuarios.
-    \item	Actividad 9: Diseño e implementación de un esquema para permitir al servicio web recolectar los datos de múltiples monitores remotos.
-    \end{itemize}
-\item Ciclo 3:
-    \begin{itemize}
-    \item	Actividad 10: Integración de prueba con la herramienta traceroute al monitor remoto.
-    \item	Actividad 11: Conceptualización e implementación de representaciones gráficas de los datos obtenidos a partir de la actividad 10.
-    \item	Actividad 12: Evaluación y diseño de estrategias para integración de nuevas pruebas.
-    \item	Actividad 13: Generación de workflow para integración de nuevas pruebas.
-    \end{itemize}
-\item Ciclo 4:
-    \begin{itemize}
-    \item	Actividad 14: Evaluación de rendimiento del servicio web, análisis y desarrollo de estrategias de optimización de los tiempos de respuesta.
-    \item	Actividad 15: Puesta en marcha del sistema en un servidor de pruebas.
-    \end{itemize}
-\item Actividad 16: Elaboración del documento de tesis.
-\item Actividad 17: Entrega Final.
-\end{itemize}
+\section{Estructura del Documento}
 
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-\begin{table}[h!]
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-\hline
-             & \multicolumn{16}{c|}{Semana}                                                                                                                                                                                                                                                                                                                                                                                                                  \\ \hline
-Actividad    & 1                        & 2                        & 3                        & 4                        & 5                        & 6                        & 7                        & 8                        & 9                        & 10                       & 11                       & 12                       & 13                       & 14                       & 15                       & 16                       \\ \hline
-Actividad 1  & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 2  & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 3  &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 4  &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 5  &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 6  &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 7  &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 8  &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 9  &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 10 &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 11 &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          &                          \\ \hline
-Actividad 12 &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          &                          \\ \hline
-Actividad 13 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          &                          &                          \\ \hline
-Actividad 14 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          &                          \\ \hline
-Actividad 15 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} &                          &                          \\ \hline
-Actividad 16 &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} & \cellcolor[HTML]{343434} &                          \\ \hline
-Actividad 17 &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          &                          & \cellcolor[HTML]{343434} \\ \hline
-\end{tabular}
-\end{table}
 
-\section{Cronograma de Evaluaciones}
+%
+%******************************
+%FIN DE CAPITULO I
+%******************************
+%
 
-\begin{table}[h!]
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-\hline
-                         & \multicolumn{16}{c|}{Semana}                                                                                                                                                                                                                                                    \\ \hline
-Actividad                & 1 & 2                        & 3 & 4                        & 5 & 6                                               & 7 & 8                        & 9 & 10                       & 11 & 12                       & 13 & 14                       & 15 & 16                       \\ \hline
-Reunión con el tutor     &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434}{\color[HTML]{343434} } &   & \cellcolor[HTML]{343434} &   & \cellcolor[HTML]{343434} &    & \cellcolor[HTML]{343434} &    & \cellcolor[HTML]{343434} &    &                          \\ \hline
-Evaluación primer ciclo  &   & \cellcolor[HTML]{343434} &   &                          &   &                                                 &   &                          &   &                          &    &                          &    &                          &    &                          \\ \hline
-Evaluación segundo ciclo &   &                          &   &                          &   & \cellcolor[HTML]{343434}{\color[HTML]{343434} } &   &                          &   &                          &    &                          &    &                          &    &                          \\ \hline
-Evaluación tercer ciclo  &   &                          &   &                          &   &                                                 &   &                          &   & \cellcolor[HTML]{343434} &    &                          &    &                          &    &                          \\ \hline
-Evaluación cuarto ciclo  &   &                          &   &                          &   &                                                 &   &                          &   &                          &    &                          &    & \cellcolor[HTML]{343434} &    &                          \\ \hline
-Entrega Final            &   &                          &   &                          &   &                                                 &   &                          &   &                          &    &                          &    &                          &    & \cellcolor[HTML]{343434} \\ \hline
-\end{tabular}
-\end{table}
+\chapter{Marco Teórico}
+
+En este capitulo se presentan los conceptos necesarios para la comprensión de este documento y se describen las herramientas de software y formatos que se emplearán para el desarrollo del sistema propuesto.
+
+\section{Monitoreo de Redes}
+
+
+
+\section{Principio Fin-a-Fin}
+
+
+
+\section{Métricas de calidad de un enlace}
+
+
+
+\subsection{Tiempo de ida y vuelta (RTT)}
+
+
+
+\subsection{Throughput}
+
+
+\subsection{Jitter}
+
+
+
+\subsection{Actividad del enlace}
+
+
+
+\subsection{Perdida de paquetes}
+
+
+
+\section{Big Data}
+
+\section{Data Visualization}
+
+\section{Computacion en la nube}
+
+\subsection{IaaS}
+
+
+\subsection{PaaS}
+
+\subsection{SaaS}
+
+
+\section{Herramientas usadas para el desarrollo del sistema}
+
+\subsection{Django}
+
+\subsection{Celery}
+
+\subsection{Bases de Datos}
+
+\subsection{Modelo Vista Controlador (MVC)}
+
+\subsection{Caching}
+
+\subsection{Dropbox API}
+
+\subsection{Json}
+
+\subsection{Diseño web adaptable}
+
+\subsection{Highcharts}
+
+\subsection{Google Maps}
+
+\subsection{freegeoip}
+
+\subsection{Ajax}
+
+\subsection{APScheduler}
+
+\subsection{Ping}
+
+\subsection{Requests}
+
+\subsection{Traceroute}
+
+\section{Estado del Arte}
+
+\subsection{Tabla comparativa del estado del arte}
+
+\chapter{Monitor de Red "Tentacle"}
+
+\section{Arquitectura}
+
+\section{Componentes}
+
+\section{Casos de uso}
+
+\chapter{Servicio Web "Optopus Monitor"}
+
+\section{Diseño del sistema}
+
+\subsection{Arquitectura}
+
+\subsection{Estructura de la base de datos}
+
+\subsection{Flujo de navegacion}
+
+\subsection{Diseño de Pantallas}
+
+\section{Componentes}
+
+\subsection{Recolector de datos}
+
+\subsection{Generación de visualizaciones}
+
+\subsubsection{Cálculo de Mapas de Calor de RTT}
+
+\subsubsection{Cálculo de horas activas}
+
+\subsubsection{Cálculo de días activos}
+
+\subsubsection{Cálculo de periodos de actividad continúa}
+
+\section{Casos de Uso}
+
+\section{Caching de gráficas}
+
+\section{Pruebas de Rendimiento}
+
+\chapter{Framework de integración de pruebas}
+
+\chapter{Conclusiones y Recomendaciones}
+
+
 
 % ***************************************************************** %
 % FIN DE estructura tentativa de la Propuesta
