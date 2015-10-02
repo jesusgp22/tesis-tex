@@ -10,6 +10,12 @@
 \usepackage{color}
 \usepackage[colorlinks]{hyperref}
 \usepackage[table,xcdraw]{xcolor}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\definecolor{light-gray}{gray}{0.95}
+\usepackage{listings}
 
 % ***************************************************************** %
 % En el siguiente comando se pueden modificar:
@@ -336,7 +342,7 @@ En este capitulo se presentan los conceptos necesarios para la comprensión de es
 
 \subsection{Perdida de paquetes}
 
-
+\subsection{Alcanzabilidad}
 
 \section{Big Data}
 
@@ -357,6 +363,8 @@ En este capitulo se presentan los conceptos necesarios para la comprensión de es
 \subsection{Django}
 
 \subsection{Celery}
+
+\subsection{Redis} \label{sub:redis}
 
 \subsection{Bases de Datos}
 
@@ -380,7 +388,7 @@ En este capitulo se presentan los conceptos necesarios para la comprensión de es
 
 \subsection{APScheduler}
 
-\subsection{Ping}
+\subsection{Ping} \label{sub:ping}
 
 \subsection{Requests}
 
@@ -390,15 +398,395 @@ En este capitulo se presentan los conceptos necesarios para la comprensión de es
 
 \subsection{Tabla comparativa del estado del arte}
 
-\chapter{Monitor de Red "Tentacle"}
+\chapter{Monitor de Red "Octopus Tentacle"}
 
-\section{Arquitectura}
+Octopus Tentacle (OT) es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo.
+
+OT ejecuta pruebas en intervalos regulares, recogiendo datos sobre distintas métricas, los resultados de las pruebas son guardados en un espacio de almacenamiento compartido en la nube para que la aplicación web sea capaz de retirar estos datos posteriormente.
+
+Uno de los objetivos principales de Octopus Tentacle es ejecutar las pruebas en el momento preciso, ya que el posterior análisis de los datos exige que las muestras se tomen con un patrón regular y conocido, para esto se hace uso de un planificador, cada prueba se ejecuta en su propio hilo, siendo posible que varias pruebas se ejecuten simultáneamente.
+
+El monitor OT posee una arquitectura basada en plugins que hace posible agregar nuevas pruebas en tiempo de ejecución, sin necesidad de reiniciar el monitor, eliminando potenciales interrupciones a pruebas que ya se están ejecutando. Esto también implica que no importa cuantas pruebas estén disponibles, el monitor solo tiene en memoria aquellas que son parte del conjunto de pruebas a ejecutar.
+
+El comportamiento del monitor viene dado por un archivo de configuración en formato json, este archivo se aloja en el almacenamiento compartido en la nube y funge de interfaz entre los monitores remotos y la aplicación web. OT revisa regularmente este archivo y lo compara con su estado interno haciendo los cambios que sean necesarios. 
+
+\section{Diseño del Monitor}
+
+El diseño del monitor esta sujeto a los siguientes baremos: 
+
+\begin{itemize}
+	\item{\textbf{Estabilidad} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá resultados en la aplicación web.}
+	\item{\textbf{Flexibilidad} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando}
+	\item{\textbf{Planificación precisa} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de la manera mas fiel posible la planificación dada.}
+	\item{\textbf{Ejecutable en equipos de bajo costo} el monitor debe incluir el código mínimo para su funcionamiento y tener un uso muy bajo de memoria.}
+	\item{\textbf{Configuración remota} el monitor debe tener algún protocolo para actualizar su estado interno a partir de cambios hechos en la aplicación web.}
+	\item{\textbf{Bitacora} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre ciertos eventos importantes del monitor.}
+\end{itemize}
+
+\subsection{Arquitectura}
+
+Como se puede observar en la figura \ref{fig:tentacle-components.png}, Octopus Tentacle tiene una arquitectura basada en componentes altamente desacoplados con una interfaz bien definida para facilitar el desarrollo de la aplicación.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{img/tentacle-components.png}
+	\caption{Diagrama de Componentes Octopus Tentacle}
+	\label{fig:tentacle-components.png}
+\end{figure} 
+
+\subsection{Diagrama de actividades}
+
+La ejecución del monitor Tentacle comienza en el cliente, el cliente es el encargado de instanciar el proceso daemon y lo hace a través de un método bien conocido de doble fork. Para asegurarse de no ejecutar múltiples instancias del monitor se revisa un archivo .pid, si el archivo existe significa que el monitor se está ejecutando y el cliente informa del error al usuario. 
+
+Después de que el proceso esta daemonizado comienza la fase de inicializacion, para esto se crea el planificador y se lee el archivo de configuración insertando en el almacén de tareas del planificador cada prueba a ejecutar, para esto primero hay que importar el código de cada prueba a través del manejador de plugins.
+
+A este punto las pruebas están planificadas tentativamente y cargadas en memoria pero solo serán ejecutadas después de que se inicie el planificador.
+
+Al iniciar el planificador este pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento justo. Cuando el planificador inicia una tarea se la pasa al ejecutor en este caso un grupo de subprocesos previamente inicializados, cuando un subproceso termina de ejecutar una tarea informa al planificador, esto con la finalidad de implementar politicas para limitar la cantidad de tareas del mismo tipo que se estan ejecutando simultaneamente.
+
+El hilo principal revisa periódicamente el archivo de configuración y lo compara con el almacen de tareas, existen tres tipos de cambios relevantes: (1) una prueba se ha insertado en la configuracion y debe cargarse a memoria y planificarse (2) una prueba se ha eliminado y debe ser eliminada de la planificacion (3) el intervalo entre pruebas de una prueba ha cambiado y debe replanificarse.
+
+El monitor solo puede detenerse a través de una señal del sistema operativo, en este caso SIGTERM, el cliente utiliza el archivo pid para determinar el id del proceso y enviar la señal. El manejador de excepciones del monitor entonces inicia una secuencia de apagado, deteniendo las pruebas, apagando el planificador y desbloqueado el archivo .pid.
+
+Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activity}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\linewidth]{img/tentacle-activity}
+\caption{Diagram de actividades de Tentacle}
+\label{fig:tentacle-activity}
+\end{figure}
+
 
 \section{Componentes}
 
+\subsection{Cliente}
+
+El cliente de Octopus Tentacle es el programa encargado de iniciar o detener la ejecución del monitor en modo daemon y funge como interfaz entre el usuario y monitor.
+
+Se puede invocar el cliente con los siguientes comandos:
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+
+\begin{table}[h!]
+	\centering
+	\label{my-label}
+	\begin{tabular}{p{2cm}p{13cm}}
+		\rowcolor{light-gray} Comando & Descripción \\ 
+		\hline start & Inicia el monitor como un proceso daemon, falla si el archivo .pid ya existe (el monitor se esta ejecutando) \\ 
+		\hline stop & Detiene el monitor enviando la señal SIGTERM al proceso daemon, falla si el archivo pid no existe (el monitor no se esta ejecutando) \\ 
+		\hline 
+	\end{tabular} 
+	\caption{Comandos del cliente Octopus Tentacle}
+\end{table}
+
+\subsection{Hilo Principal}
+
+El hilo principal de ejecución es el punto de partida desde el momento en que el proceso ya se ha convertido en un daemon, se encarga de inicializar el planificador a partir del archivo de configuración y se asegura de mantener el estado del planificador al día en caso de que se observen cambios en el mismo. 
+
+\subsection{Manejador de plugins}
+
+Este modulo contiene la lógica para cargar plugins de forma dinámica, cada plugin se identifica a través de un "nombre de modulo" único, si no se encuentra un paquete que coincida con dicho nombre se escribe un mensaje de error en la bitácora y se omite esta entrada.
+
+El único requisito para que un modulo sea un plugin valido es que este implemente una función "run" que sirva como punto de partida para una prueba. 
+
+\subsection{Planificador}
+
+Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite ejecutar de forma periódica código python; el planificador se puede ejecutar como un subproceso de modo que es posible agregar, eliminar y re-planificar tareas en cualquier momento desde el hilo principal de la aplicación. 
+
+APScheduler consiste de un conjunto de componentes configurables que se pueden extender o re-usar para obtener cualquier comportamiento deseado, a continuación se explica su funcionamiento y como se usaron en el marco de esta aplicación.
+
+\subsubsection{Triggers (Gatillos)}
+
+Los triggers contienen la lógica para determinar en que momento se debe ejecutar una tarea, la biblioteca incluye un trigger en intervalos periódicos que se ha usado para esta aplicación.  
+
+\subsubsection{Executors (Ejecutores)}
+
+El ejecutor es el ente encargado de llevar a cabo la ejecución de las tareas, en nuestro caso se ha hecho uso de un grupo de subprocesos (thread pool), la cantidad de hilos en el grupo esta dado por el numero de pruebas que estaremos ejecutando de modo que siempre se tenga al menos un hilo disponible cuando se inicia una prueba. 
+
+\subsubsection{Almacén de tareas (Job store)}
+
+El almacén de tareas guarda las tareas planificadas, el comportamiento por defecto es guardar las tareas en memoria, pero existen distintos tipos de almacenes como redis (ver sección \ref{sub:redis}) y bases de datos; el comportamiento por defecto es preferido ya que solo estaremos manejando un conjunto pequeño de tareas y no es necesario ningún tipo de persistencia en caso de que el monitor se detenga.
+
+\subsection{Almacenamiento Compartido}
+
+El almacenamiento compartido se encarga de alojar el archivo de configuración del monitor así como los resultados de las pruebas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos de trazas.
+
+Para mantener el numero de archivos en el almacenamiento compartido razonablemente pequeño se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese periodo se anexan al archivo correspondiente; mientras el costo de alojar archivos en la nube no depende del numero de archivos sino del espacio total de disco en uso, existe un limite de peticiones diarias por usuario que debemos evitar superar. Este tema se explicará a profundidad en la sección \ref{fig:sub:sincronizacion}.
+
+El trabajo de mantener el almacenamiento compartido sincronizado con la nube se delega a una aplicación de terceros, esto no solo facilita el desarrollo de la aplicación, que sencillamente guarda los archivos en disco, sino que ademas permite cambiar con mucha facilidad el servicio de almacenamiento en la nube que se esté usando con mínimos cambios al monitor.
+
+\section{Estructura del archivo de configuración}
+
+El archivo de configuración determina el comportamiento del monitor de red tentacle, un requisito primordial de este archivo es que sea sencillo de leer y modificar tanto por la aplicación web como el propio monitor, por esto se eligió el formato json, que puede ser decodificado de forma trivial a estructuras de datos python. 
+
+El archivo de configuración consiste de un diccionario que tiene la siguiente estructura:
+
+\begin{lstlisting}
+{
+	"sleep time": sleep_time_1,
+	"tests":{
+		"test_1":{
+			"parameter_1":value_1,
+			"parameter_2":value_2,
+			...
+		},
+		"test_2":{
+			"parameter_1":value_1,
+			"parameter_2":value_2,
+			...
+		},
+		...
+	},
+	"links":{
+		"link_1":{
+			"status":true|false,
+			"ip":"ip_1",
+			"id":id_1
+		},
+		"link_2":{
+			"status":true|false,
+			"ip":"ip_2",
+			"id":id_2
+		},
+		...
+	},
+	"id":2
+}
+\end{lstlisting}
+
+Como se puede observar, el diccionario tiene las siguientes entradas:
+	
+\begin{itemize}
+\item{\textbf{sleep time:} determina el tiempo que el hilo principal del monitor espera antes de verificar si hay cambios en el archivo de configuración}
+\item{\textbf{tests:} un diccionario cuyas claves son las pruebas a ejecutar, los valores son a su vez diccionarios con los parámetros de las pruebas}
+\item{\textbf{links:} la lista de los enlaces monitoreados, cada enlace es a su vez un diccionario con las siguientes entradas:
+	\begin{itemize}
+		\item{\textbf{status:} determina si se deben realizar pruebas sobre este enlace.}
+		\item{\textbf{ip:} dirección ip de enlace.}
+		\item{\textbf{id:} identificador único del enlace .}
+	\end{itemize}
+	
+	}
+\item{\textbf{id:} el identificador único del monitor }
+\end{itemize}
+
+
+\section{Pruebas Implementadas}
+
+Gracias a la arquitectura de Tentacle, implementar una prueba es tan sencillo como crear un paquete e implementar la función "run" en el archivo init.py, todas las pruebas implementadas hasta ahora comparten una flujo de ejecución similar:
+\begin{enumerate}
+	\item{Se lee el archivo de configuración}
+	\item{Se obtienen los enlaces a monitorear y los parámetros globales}
+	\item{Por cada enlace a monitorear se crea un hilo donde se ejecutará la prueba en sí.}
+	\item{Se leen los parámetros específicos al enlace (si los hay)}
+	\item{Se ejecuta un comando externo externo como ping o traceroute o se usa una biblioteca python para evaluar alguna métrica del enlace.}
+	\item{(opcional) si se ejecuta un comando externo se hace un parsing para extraer los resultados relevantes de la salida del programa}
+	\item{Se guardan los resultados en un archivo de trazas; generalmente el resultado de una prueba está representado por una linea en archivo de trazas, sin embargo el desarrollador tiene libertad total sobre el formato que utilice}
+\end{enumerate}
+
+Las pruebas implementadas hasta ahora no inyectan una cantidad de trafico considerable a la red por lo que ejecutarlas en paralelo para cada enlace monitoreado no debería afectar los resultados, sin embargo también es posible implementar pruebas que se ejecuten en secuencia esto es especialmente útil si se desea medir, por ejemplo, el throughput del enlace y se desea minimizar el efecto de otros flujos de datos en la red.
+
+\subsection{Ping}
+
+Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como ya se menciono en la sección \ref{sub:ping} ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo.
+
+La prueba consiste en ejecutar el comando ping para cada uno de los enlaces monitoreados, ejecutamos el comando con la opción -D para que ping imprima cada resultado de latencia con una marca de tiempo entre corchetes, un ejemplo de la salida de ping se puede ver en la figura \ref{fig:ping-out}. 
+
+Es muy sencillo extraer los datos relevantes de la salida de ping, para esto recorremos la salida descartando las lineas que no comiencen con el carácter '[', separamos la salida en palabras, la palabra en la posición 0 corresponde a la marca de tiempo, luego buscamos las palabras que comiencen por "icmp\_seq o icmp\_req y time" para obtener numero de secuencia icmp y tiempo de ida y vuelta respectivamente.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{img/ping-out}
+	\caption{Ping output}
+	\label{fig:ping-out}
+\end{figure}
+
+Independientemente del número de sondas que se envíen elegiremos solo un resultado de latencia por prueba (la mediana), si para una prueba no se obtiene ninguna respuesta entonces guardamos una traza con rtt=-1, indicando que el enlace está inactivo o el nodo está rechazando el protocolo.
+
+\begin{table}[h]
+	\centering
+	\label{table:ping-parameters}
+	\begin{tabular}{rp{2cm}p{9cm}}
+		\rowcolor{light-gray} 
+		Parametro              &  Tipo & Descripcion                                                                \\ \hline
+		Numero de sondas       & Entero                      & Número de sondas icmp a enviar.                                            \\ \hline
+		Timeout                & Float                       & Tiempo a esperar por una respuesta antes de asumir una sonda como perdida. \\ \hline
+		Intervalo entre sondas & Float                       & Tiempo entre el envío de cada sonda individual.                           
+	\end{tabular}
+		\caption{Parametros de la prueba ping}
+\end{table}
+
+\subsection{Httping}
+
+Esta prueba usa el protocolo HTTP para hacer un HEAD Request y obtener el tiempo de respuesta y código de estatus HTTP, a diferencia de la prueba esta no ejecuta un comando externo sino que llama a una función de la biblioteca 'requets' que hace la petición directamente por lo que no es necesario ningún tipo de parsing. 
+
+La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba httping, note que los parámetros path y port son específicos a cada enlace, los parámetros de este tipo se guardan en el archivo de configuración uniendo el nombre del parámetro y el id del enlace usando guión bajo como carácter de separación, un ejemplo del archivo de configuración para un monitor ejecutando esta prueba se puede ver a continuación: 
+
+\begin{lstlisting}
+
+{
+	"sleep time":10,
+	"tests":{
+		"httping":{
+			"port_8":80,
+			"port_9":80,
+			"path_8":"",
+			"path_9":"/octopusmonitor/",
+			"path_7":"",
+			"interval":300,
+			"port_7":80,
+			"timeout":5
+		}
+	},
+	"links":{
+		"RESIDE":{
+			"status":true,
+			"ip":"150.185.138.59",
+			"id":9
+		},
+		"ULA Site":{
+			"status":true,
+			"ip":"150.185.168.156",
+			"id":8
+		},
+		"Saber ULA":{
+			"status":true,
+			"ip":"190.168.5.17",
+			"id":7
+		}
+	},
+	"id":2
+}
+
+\end{lstlisting}
+
+\begin{table}[h]
+	\centering
+	\label{table:httping-parameters}
+	\begin{tabular}{rp{2cm}p{9cm}}
+		\rowcolor{light-gray} 
+		Parametro              &  Tipo & Descripcion                                                                \\ \hline
+		Timeout       & Float                      & Tiempo a esperar por una respuesta                                        \\ \hline
+		Path                & String                       & Cadena de caracteres que se adjunta al ip o nombre de dominio del enlace, especialmente útil para probar servicios específicos de una aplicación o servicio web.. \\ \hline
+		Port & Entero                       & Espeficia el puerto al que se envía la peticion HTTP.                           
+	\end{tabular}
+	\caption{Parametros de la prueba ping}
+\end{table}
+
+
+\subsection{Traceroute}
+
+Esta prueba ejecuta el comando traceroute para obtener la ruta entre un par de nodos a través de una red ip, llamamos ruta a una secuencia de saltos (hops) que hace un paquete al atravesar un enrutador. 
+
+El comando traceroute imprime la ruta como una lista ordenada donde cada linea representa un salto, con su dirección ip, nombre de dominio y latencia, dependiendo del numero de sondas que se estén enviando por salto pueden existir casos en que se obtenga respuesta de mas de una dirección ip, este comportamiento se puede ver en la figura \ref{fig:traceroute-out} en el salto 9 se observa que obtenemos una respuesta de la dirección ip 154.54.31.230 y dos de 154.54.47.154 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{img/traceroute-out-white.png}
+	\caption{Salida del comando traceroute}
+	\label{fig:traceroute-out}
+\end{figure}
+
+
+A partir de la salida de traceroute se debe obtener una estructura de datos que facilite el análisis de la ruta, para esto se usó el modulo tracerouteparser.py\footnote{tracerouteparser.py es cortesia del proyecto Netalyzr: http://netalyzr.icsi.berkeley.edu}, que extrae la información de la cabecera (ip destino y nombre de dominio), asi como una lista de hops (saltos), cada hop es a su vez una lista de probes (sondas), cada sonda tiene dirección ip, nombre de dominio, rtt y anotaciones; ya que el ip destino es conocido, solo se guarda en el archivo de trazas la lista de saltos en formato json. 
+
+El formato esta compuesto de la siguiente manera:
+
+\lstset{
+	numbers=left,
+	stepnumber=1,    
+	firstnumber=1,
+	numberfirstline=true,
+	numberstyle=\tiny,
+	basicstyle =\small
+}
+
+\begin{lstlisting}][h,frame=single]
+[
+	[
+		{
+			"anno": anno_1,
+			"rtt": rtt_1,
+			"ipaddr": ipaddr_1,
+			"name": name_1
+		},
+		{
+			"anno":  anno_2,
+			"rtt": rtt_2,
+			"ipaddr": ipaddr_2,
+			"name": name_2
+		},
+		...
+	],
+	...
+]
+\end{lstlisting}
+
+Cada vez que se realiza una prueba con traceroute se anexa al archivo de trazas una entrada con la marca de tiempo de inicio de la prueba, un carácter de separación y luego el formato json antes mostrado. 
+
+Las parámetros de esta prueba son los siguientes:
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		\rowcolor[HTML]{C0C0C0} 
+		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
+		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
+		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\ \hline
+	\end{tabular}
+		\caption{Parametros de la prueba con traceroute}
+		\label{tab:traceroute-params}
+\end{table}
+
 \section{Casos de uso}
 
-\chapter{Servicio Web "Optopus Monitor"}
+Ya que el monitor de red Tentacle funciona de forma automatizada y todas las acciones de configuración y visualización de los datos recolectados por el se realizan en la aplicación web, solo se tienen dos casos de uso para el monitor.
+
+\begin{table}[H]
+	\caption{Caso de uso – Iniciar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{MU-01}} & \multicolumn{2}{l}{\textit{Iniciar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea iniciar el monitor de red tentacle.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "start". \\
+			& 2 & El cliente crea el proceso daemon y retorna. \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si el archivo pid existe entonces el cliente muestra un mensaje de error indicando que el monitor ya se esta ejecutando. \\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+\begin{table}[H]
+	\caption{Caso de uso – Detener monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{AD-01}} & \multicolumn{2}{l}{\textit{Detener monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea detener el monitor que se esta ejecutando en modo daemon.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "stop". \\
+			& 2 & El cliente abre el archivo pid y envía la señal SIGTERM al proceso daemon. \\
+			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
+			% Linea de Secuencia excepciones
+			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 2 & Si el valor ingresado no es un email, el sistema informa del error. \\
+			& 2 & Si el valor está vacío, el sistema informa del error. \\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\chapter{Aplicación Web "Optopus Monitor"}
 
 \section{Diseño del sistema}
 
