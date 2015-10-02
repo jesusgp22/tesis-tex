@@ -320,29 +320,57 @@ En este capitulo se presentan los conceptos necesarios para la comprensión de es
 \section{Principio Fin-a-Fin}
 
 
+\section{SMTP}
 
 \section{Métricas de calidad de un enlace}
 
+A continuación se explican las métricas mas comúnmente utilizadas para determinar la calidad de un enlace.
 
+\subsection{Latencia} \label{sub:lat}
 
-\subsection{Tiempo de ida y vuelta (RTT)}
+La latencia es el tiempo que le toma a un paquete o mensaje viajar desde su origen hasta el punto destino \cite{Grigorik:13}. Teóricamente la latencia está relacionada directamente con la distancia entre los puntos finales de una comunicación, en la practica los paquetes viajan a través de una red de enrutadores que retransmiten el mensaje hasta su destino, la latencia total será la suma de cada uno de los siguientes factores para cada uno de los enrutadores que atraviese el paquete\cite{Grigorik:13}:
+\begin{itemize}
+\item{\textbf{Retraso de Propagación:} es el tiempo que tarda un mensaje en viajar del emisor al receptor y es función de la distancia por la velocidad a la que la señal se propaga}
+\item{\textbf{Retraso de Transmisión:} es el tiempo que tarda el emisor en poner todos los bits de un mensaje en el medio de transmisión y es función de la longitud del paquete y el ancho de banda del enlace}
+\item{\textbf{Retraso de Procesamiento:} tiempo requerido para revisar la cabecera del paquete, buscar errores y determinar el destino del paquete.}
+\item{\textbf{Retraso de Colas:} Cantidad de tiempo que un paquete pasa en la cola de una interfaz esperando su turno por ser procesado.}
+\end{itemize}
 
+\subsection{Tiempo de ida y vuelta}
 
+El tiempo de ida y vuelta (RTT por sus siglas es ingles) es el tiempo que le toma a un paquete viajar desde el origen a su destino y de vuelta, podría pensarse que el RTT es aproximadamente el resultado de multiplicar la latencia por dos, sin embargo existen factores como el retraso por procesamiento en el equipo destino o diferencias en el enrutamiento del paquete en su camino de vuelta que hace que sea arriesgado establecer esa proposición. 
+
+Uno de los métodos mas populares para medir el RTT es enviar un paquete ICMP Echo Request y esperar el correspondiente ICMP Echo Reply sin embargo también es posible medir el RTT pasivamente durante la transmisión de un flujo TCP usando marcas de tiempo en la cabecera de los mensajes TCP\cite{strowes2013passively}.
+
+Es importante notar que no es lo mismo medir el RTT desde la capa de red con el protocolo ICMP que hacerlo en la capa de transporte con TCP o en la capa de aplicación con un protocolo como HTTP, evidentemente el RTT será mayor en las capas superiores, sin embargo estas métricas también son útiles ya que se acercan mas fielmente a la experiencia del usuario.
+
+\subsection{Perdida de paquetes}
+
+La pérdida de paquetes ocurre cuando los paquetes en una transmisión fallan en llegar a su destino, ya sea por interferencias en el medio de transmisión (por ejemplo obstáculos físicos en un enlace WiFi), o cuando son desechados por un nodo de la red, los paquetes pueden ser desechados si se determina que están corruptos o mas comúnmente debido a escenarios de congestión en los que un enrutador está recibiendo paquetes a una tasa mayor de la que puede retransmitirlos y no tiene mas opción que desechar los paquetes que desborden la cola.
+
+La perdida de paquetes afecta dramáticamente la latencia percibida en la capa de aplicación, según \cite{strowes2013passively} una perdida de paquetes del 5\% puede introducir un retraso de medio segundo en la aplicación. 
+ 
+Mientras puede parecer que la perdida de paquetes es siempre producto de un problema, esta juega un papel vital en el algoritmo de prevención de congestión (congestion avoidance) del protocolo TCP, ayudándolo a detectar congestión en la red el cual responderá limitando su tasa de envío de datos, esto ha sido esencial para evitar el colapso de las redes ip NOTA: Nosotros alguna vez hablamos de esto, valdría la pena nombrar el RFC que lo explica. 
+
+\subsection{Jitter} 
+
+Se llama jitter a la fluctuación de la latencia durante la transmisión de un conjunto de paquetes, estas fluctuaciones vienen dadas principalmente por la variación del retraso que los paquetes experimentan en las colas en los enrutadores\cite{Kurose:13}, sin embargo todos los factores mencionados en la sección \ref{sub:lat} pueden contribuir en menor medida.
+
+El término jitter puede tener distintas connotaciones sin embargo es usado frecuentemente por científicos en el área de la computación como la variación de una métrica (comúnmente latencia) con respecto a otra métrica de referencia (como latencia mínima o promedio), a esto también se le llama variación en el retraso de los paquetes (PDV por sus siglas en ingles), este termino es a veces preferido por ser mas preciso \cite{rfc3393}
+
+El jitter puede afectar considerablemente transmisiones en tiempo real como VoIP o streaming sin embargo la correcta implementación de políticas de buffering del lado del receptor puede minimizar e incluso mitigar este efecto\cite{Kurose:13}
 
 \subsection{Throughput}
-
-
-\subsection{Jitter}
-
 
 
 \subsection{Actividad del enlace}
 
 
 
-\subsection{Perdida de paquetes}
 
 \subsection{Alcanzabilidad}
+
+\subsection{Bufferbloat}
 
 \section{Big Data}
 
@@ -780,8 +808,7 @@ Ya que el monitor de red Tentacle funciona de forma automatizada y todas las acc
 			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
 			% Linea de Secuencia excepciones
 			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 2 & Si el valor ingresado no es un email, el sistema informa del error. \\
-			& 2 & Si el valor está vacío, el sistema informa del error. \\
+			& 4 & Si el archivo pid no existe, el cliente informa al usuario que el monitor no se esta ejecutando. \\
 		\end{tabular}
 	\end{center}
 \end{table}
