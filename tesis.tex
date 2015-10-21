@@ -362,10 +362,34 @@ El jitter puede afectar considerablemente transmisiones en tiempo real como VoIP
 
 \subsection{Throughput}
 
+En términos de redes de computadoras, el throughput es la tasa en bits por segundo a la que fluyen los datos a través de un enlace \cite{Kurose:13}, el throughput puede compararse al caudal de un rio, donde mientras mas ancho sea el rio mas agua puede fluir a través de el.
 
-\subsection{Actividad del enlace}
+El máximo throughput teórico entre un par de nodos esta determinado principalmente por el segmento de la red con menor ancho de banda, este comportamiento se ilustra en la figura \ref{fig:throughput}, donde el cable entre el punto de acceso wifi y el ISP resulta ser el cuello de botella en la comunicación. En la practica el throughput también viene determinado por varios factores como otros flujos de datos con los que se comparte la red o la velocidad a la que el receptor es capaz de procesar el flujo de datos entrante.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/throughput}
+\caption{Latencia y ancho de banda – Imagen tomada del
+	sitio: http://chimera.labs.oreilly.com/books/1230000000545/ch01.html}
+\label{fig:throughput}
+\end{figure}
 
+Para aplicaciones en tiempo real es esencial tener un throughput mínimo mayor a un cierto umbral que asegure que los datos se estén recibiendo a una tasa mayor o igual a la que se están consumiendo\cite{Kurose:13}, es decir que un mayor throughput no implica una mejoría en la calidad de la comunicación, otras aplicaciones como transferencias de archivos se benefician del mayor throughput posible ya que el tiempo de transferencia es una función del tamaño del archivo entre el throughput durante la transferencia.
+
+No es posible medir el throughput de un enlace de forma pasiva, por lo que las pruebas que existen consisten en inyectar tráfico al enlace hasta suturarlo y determinar la velocidad a la que se reciben los datos del lado del receptor. Existen múltiples maneras de saturar el enlace, por ejemplo speedtest.net \cite{SPEEDTEST} utiliza hasta cuatro hilos paralelos transmitiendo mensajes aleatorios a través de HTTP, utilizar múltiples flujos es una forma efectiva de mitigar el efecto de la latencia sobre el throughput.
+
+Note que a diferencia de las métricas anteriores medir el throughput solo es posible con la colaboración de los nodos extremos del enlace, por lo que es necesario tener algún tipo de software preparado para aceptar la prueba e informar del resultado obtenido.
+
+\subsection{Utilización del ancho de banda}
+
+Se le llama utilización del ancho de banda a la cantidad de bits que atraviesan un cierto
+
+generalmente la utilizacion del ancho de banda es medido como un porcentaje del ancho de banda efectivo
+
+siempre se desea utilizar el enlace
+
+es util cuando se desea no superar un limite de uso
+es util cuando una organizacion desea saber como se usa el internet en sus redes
 
 
 \subsection{Alcanzabilidad}
