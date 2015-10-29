@@ -298,7 +298,9 @@ El tercer ciclo corresponde en diseñar e integrar una prueba con otras herramien
 
 El cuarto ciclo consiste en hacer análisis del rendimiento del sistema y hacer las optimizaciones necesarias para ofrecer una calidad de servicio apropiada, determinar costos, limitaciones y requisitos mínimos para implementar en países en vías de desarrollo.
 
-\section{Alcanze}
+\section{Alcance}
+
+
 
 \section{Estructura del Documento}
 
@@ -374,36 +376,47 @@ El máximo throughput teórico entre un par de nodos esta determinado principalmen
 \label{fig:throughput}
 \end{figure}
 
-Para aplicaciones en tiempo real es esencial tener un throughput mínimo mayor a un cierto umbral que asegure que los datos se estén recibiendo a una tasa mayor o igual a la que se están consumiendo\cite{Kurose:13}, es decir que un mayor throughput no implica una mejoría en la calidad de la comunicación, otras aplicaciones como transferencias de archivos se benefician del mayor throughput posible ya que el tiempo de transferencia es una función del tamaño del archivo entre el throughput durante la transferencia.
+Para aplicaciones en tiempo real es esencial tener un throughput mínimo mayor a un cierto umbral que asegure que los datos se estén recibiendo a una tasa mayor o igual a la que se están consumiendo\cite{Kurose:13}, es decir que a partir de esa tasa mínima un mayor throughput no implica una mejoría en la calidad de la comunicación, otras aplicaciones como transferencias de archivos se benefician del mayor throughput posible ya que el tiempo de transferencia es una función del tamaño del archivo entre el throughput durante la transferencia.
 
 No es posible medir el throughput de un enlace de forma pasiva, por lo que las pruebas que existen consisten en inyectar tráfico al enlace hasta suturarlo y determinar la velocidad a la que se reciben los datos del lado del receptor. Existen múltiples maneras de saturar el enlace, por ejemplo speedtest.net \cite{SPEEDTEST} utiliza hasta cuatro hilos paralelos transmitiendo mensajes aleatorios a través de HTTP, utilizar múltiples flujos es una forma efectiva de mitigar el efecto de la latencia sobre el throughput.
 
-Note que a diferencia de las métricas anteriores medir el throughput solo es posible con la colaboración de los nodos extremos del enlace, por lo que es necesario tener algún tipo de software preparado para aceptar la prueba e informar del resultado obtenido.
+A diferencia de las métricas anteriores medir el throughput solo es posible con la colaboración de los nodos extremos del enlace, por lo que es necesario tener algún tipo de software preparado para aceptar la prueba e informar del resultado obtenido.
 
-\subsection{Utilización del ancho de banda}
+\subsection{Uso del ancho de banda}
 
-Se le llama utilización del ancho de banda a la cantidad de bits que atraviesan un cierto
+Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red.
 
-generalmente la utilizacion del ancho de banda es medido como un porcentaje del ancho de banda efectivo
+Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red, por ejemplo una universidad podría desear saber que porcentaje del ancho de banda esta siendo utilizado para visitar sitios de streaming, a una empresa le gustaría saber cuanto tiempo pasan sus empleados en redes sociales, un analista desea saber cuales son los sitios web mas visitados en una red, etc. 
 
-siempre se desea utilizar el enlace
+NOTA PARA EL PROFESOR: ayuda, no encontré ninguna cita que me ayudara a definir estos conceptos, sin embargo me parece que es importante incluir esto en el marco teórico.
 
-es util cuando se desea no superar un limite de uso
-es util cuando una organizacion desea saber como se usa el internet en sus redes
+\subsection{Disponibilidad}
 
+Un servicio esta disponible para un cliente cuando dicho cliente puede comunicarse con el, análogamente un servicio no esta disponible para un cliente cuando no puede comunicarse con el, ya sea por un problema en el nodo final o en la red \cite{dahlin2003end}. 
 
-\subsection{Alcanzabilidad}
+Generalmente la disponibilidad se mide a través de la disponibilidad promedio, que es la fracción del tiempo  durante el cual un servicio esta disponible para un cliente promedio \cite{dahlin2003end}, sin embargo también se puede usar la disponibilidad continua, en este trabajo llamaremos actividad continua a un evento durante el cual un servicio está continuamente disponible para un cliente, y un inactividad continua a un evento durante el cual un servicio esta continuamente no disponible para un cliente.
+
+Hemos definido la disponibilidad como un concepto meramente binario, en el que si un servicio es alcanzable entonces está disponible \cite{dahlin2003end} sin embargo hay ciertos escenarios en los que se puede considerar que un nodo alcanzable está fallando en ofrecer un servicio adecuadamente, por ejemplo cuando un servidor web está respondiendo a las peticiones con un código de estado 500, o cuando la latencia es tal que hace que una comunicación en tiempo real no sea posible. 
 
 \subsection{Bufferbloat}
 
+Bufferbloat es la existencia de buffers excesivamente grandes y generalmente llenos presentes en Internet \cite{gettys2011bufferbloat}; puede parecer contra-intuitivo ya que buffers mas grandes implican que menos paquetes serán desechados al llegar a un enrutador congestionado, pero mientras la cola en la interfaz del enrutador crece también lo hace el tiempo de espera del paquete y a la vez interfiere (o invalida) los algoritmos de control de congestión de los protocolos mas comunes en la capa de transporte \cite{gettys2011bufferbloat}.
+
+El bufferbloat puede ser mitigado configurando apropiadamente el hardware disponible, sin embargo es difícil de diagnosticar y es confundido frecuentemente con congestión en la red.
+
+Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional que toma enviar paquetes a través de un enlace congestionado, algunas pruebas disponibles en linea como \cite{DSLReports} \cite{ThinkBroadband} intentan determinar este retraso haciendo mediciones constantes de latencia al mismo tiempo que inundan el enlace para determinar la forma en que esta varía durante la prueba.
+
 \section{Big Data}
+
+Big Data es la tendencia de recolectar y almacenar cantidades masivas de datos de forma constante permitiendo tomar decisiones basadas en el análisis de estos datos. No se ha definido formalmente una cantidad a partir de la cual se esta hablando de Big Data, pero usualmente se relaciona con datos en el orden de los petabytes y exabytes \cite{barranco2012}.
+
+El concepto de Big Data esta estrechamente relacionado con el concepto de stream computing, que es el procesamiento de flujos de datos continuos que podrían estarse recibiendo indefinidamente, en contraposición al enfoque clásico de 
 
 \section{Data Visualization}
 
-\section{Computacion en la nube}
+\section{Computación en la nube}
 
 \subsection{IaaS}
-
 
 \subsection{PaaS}
 
@@ -412,21 +425,137 @@ es util cuando una organizacion desea saber como se usa el internet en sus redes
 
 \section{Herramientas usadas para el desarrollo del sistema}
 
-\subsection{Django}
-
-\subsection{Celery}
-
-\subsection{Redis} \label{sub:redis}
-
-\subsection{Bases de Datos}
+A continuación se describen las herramientas usadas para el desarrollo del sistema de monitoreo de redes orientado a la recolección masiva de datos.
 
 \subsection{Modelo Vista Controlador (MVC)}
 
-\subsection{Caching}
+El Modelo Vista Controlador es un patrón de diseño que divide la lógica de los datos y la presentación de forma claramente identificable y bien definida \cite{pantoja2004patron}.
 
-\subsection{Dropbox API}
+Este patrón de diseño es especialmente popular en el marco de aplicaciones web ya que su abstracción permite escribir software altamente desacoplado y fácil de mantener y escalar.
 
-\subsection{Json}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{img/mvc}
+	\caption{Ejemplo de la relación entre los componentes de una aplicación MVC – Imagen tomada del
+		sitio: http://mind42.com/mindmap/75870b0c-b70c-4e83-9223-67de79330cd3}
+	\label{fig:mvc}
+\end{figure}
+
+
+\subsubsection{Modelo} 
+
+Según \cite{pantoja2004patron} \textit{''El modelo es un conjunto de clases que representan la información del mundo real que el sistema debe procesar, así por ejemplo un sistema de administración de datos climatologías tendrá un modelo que representará la temperatura, humedad ambiental, estado del tiempo esperado etc''}
+
+Según la implementación de MVC el modelo puede dividirse en el modelo del dominio que es el modelo propiamente dicho, es decir una colección de clases que modelan la realidad relevante a la aplicación, y opcionalmente el modelo de la aplicación; este modelo tiene conocimiento de las vistas y es capaz de enviar notificaciones cuando ocurren cambios en el modelo. El modelo de la aplicación también es llamado coordinador de la aplicación \cite{pantoja2004patron} .
+
+\subsubsection{Vista} 
+
+La vista es la encargada de determinar que información contenida en el modelo mostrar al usuario y la presentación, por ejemplo si se está modelando una caldera es posible tener una vista que dibuje gráficamente el nivel de la caldera y un termómetro con su temperatura y otra vista que sencillamente muestre estas propiedades en una tabla. 
+
+La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de notificaciones emitidas por el modelo de la aplicación, siguiendo con el modelo anterior de esta forma sería posible monitorear en tiempo real el estado de la caldera a partir de sensores que mantengan actualizado el modelo. 
+
+\subsubsection{Controlador} 
+
+El controlador es el encargado de dirigir el flujo de control de la aplicación a partir de mensajes externos, como datos introducidos por el usuario en el caso de una aplicación de escritorio o peticiones HTTP en el caso de aplicaciones web. A partir de estos estímulos, el controlador se encargará de invocar las vistas apropiadas, actualizar el modelo y hacer todas las acciones necesarias.
+
+Distintas implementaciones del patrón MVC se toman la libertad de establecer la linea que separa el controlador y la vista de forma distinta, por ejemplo en algunas implementaciones el controlador se encarga tanto de actualizar el modelo y las vistas como de responder a los mensajes externos, es decir que el controlador es el encargado de ejecutar toda la lógica, y la vista meramente contiene la presentación de los datos, en otras implementaciones como veremos en la próxima sección la vista es la encarga tanto de seleccionar los datos que van a mostrarse así como de desplegar la presentación, esta ultima es una variación de MVC a veces llamado MTV (Modelo-Template-Vista)
+
+\subsection{Django}
+
+Django es un framework de desarrollo de aplicaciones web construido en python, en este trabajo usamos Django como el fundamento para Octopus Head. Django permite construir aplicaciones web rápidamente gracias a su filosofía de "baterias incluidas", es decir, que incluye una inmensa gama de características comunes a la mayoría de las aplicaciones web como validaciones de formularios, autenticación de usuarios, manejo de sesiones entre muchos otros; de esta manera el desarrollador puede concentrarse en escribir la lógica que es especifica a su aplicación y dejar que Django maneje los aspectos repetitivos y muchas veces tediosos de la pila de desarrollo web.
+
+Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que los datos son presentados. 
+
+Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste de retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (llamada template) para generar la respuesta que será devuelta, en la figura \ref{fig:django-arch} puede verse el ciclo de petición-respuesta tal como se ha descrito.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\linewidth]{img/django-arch}
+\caption{Ciclo de peticion-respuesta de Django}
+\label{fig:django-arch}
+\end{figure}
+
+Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Javascript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que también pueden ser manejadas por el mismo servidor.
+
+Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una enorme comunidad de colaboradores y amplia documentación. 
+
+\subsection{Celery}
+
+Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios) que son: 
+
+\begin{itemize}
+	\item{Bróker de mensajería: el message broker es el encargado almacenar las tareas que deben ser ejecutadas, el message broker consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que ejecutores.}
+	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico, el planificador no puede asegurar que las tareas sean ejecutadas exactamente en el tiempo planificado ya que el tiempo de planificador depende del tamaño de la cola y de las tareas que ya estén siendo ejecutadas por los ejecutores.}
+	\item{Workers (Ejecutores): los ejecutores son los encargados de ejecutar las tareas; estos se subscriben a una o mas colas y consumen los mensajes según la prioridad establecida en la cola finalmente escriben los resultados obtenidos en un result backend}
+	\item{Result Backend: sirve como un almacen donde se guardan los resultados de las tareas ejecutadas durante un periodo de tiempo dado, esto es especialmente de esta manera es posible consultar los resultados obtenidos por un tarea}
+\end{itemize}
+
+Uno de los problemas comunes en el desarrollo de aplicaciones web es la ejecución de tareas largas o altamente bloqueantes que mantienen ocupado al servidor web durante periodos prolongados y peor aun mantienen al usuario final esperando, para evitar este escenario el servidor web debe tener una forma de delegar este tipo de tareas para ser ejecutadas después y responder inmediatamente.
+
+Celery es usado comúnmente junto a Django y permite a una aplicación web escalar indefinidamente ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas físicas como sea necesario. 
+
+\subsection{Redis} \label{sub:redis}
+
+Redis es un almacén de estructuras de datos en memoria que puede ser usado como base de datos, cache o bróker de mensajería; se caracteriza por su excelente velocidad de respuesta ya que todos sus datos están en memoria, sin embargo sus datos no persisten en caso de fallas o errores inesperados. Redis puede ser usado tanto como bróker de mensajes o como result backend en Redis. 
+
+\subsection{Bases de Datos}
+
+Uno de los pilares fundamentales de casi toda aplicación moderna es tener un modo de almacenar datos de forma persistente en el tiempo así como consultarlos y actualizarlos de forma rápida, segura y resistente a fallas.
+
+Según \cite{MysqlDev} una base de datos es una colección de datos estructurados. Puede ser cualquier cosa desde una simple lista de compras, una galería de fotos o las bastas cantidades de información en una red corporativa. Para agregar, acceder y procesar la data almacenada en una base de datos, se necesita un sistema manejador de base de datos. Ya que los computadores hacen un muy buen trabajo manejando grandes cantidades de datos, los sistemas manejadores de bases de datos juegan un papel central en la computación como utilidades independientes o partes de otras aplicaciones.
+
+SQL por sus siglas en ingles "Structured Query Language" (lenguaje de consulta estructurado) es el lenguaje estandarizado mas común para acceder a bases de datos, SQL está definido por el Estándar ANSI/ISO SQL y ha ido evolucionando desde 1986 para convertirse en un estándar de facto en el mundo de la computación.  
+
+\subsubsection{Mysql}
+
+Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus siglas en ingles) de codigo abierto bajo la licencia GPL (GNU General Public License). Mysql se caracteriza por ser rápido, confiable, escalable y fácil de usar, es posible instalar Mysql tanto en una maquina junto a otras aplicaciones como servidores web o también instarlo en maquinas dedicadas para que use todo el poder disponible. Mysql posee características para ejecutarse en clusters de maquinas junto con un motor de replicacion para obtener una alta escalabilidad \cite{MysqlDev}.
+
+\subsubsection{Mapeo Objeto-Relacional}
+
+El Mapeo Objeto-Relacional (ORM por sus siglas en ingles) es un método para interactuar con bases de datos relaciones desde el paradigma de la programación orientada a objetos, de esta manera es posible aprovechar conceptos como herencia y polimorfismo.
+
+Según \cite{ScottORM} la mayoría de las aplicaciones modernas usan lenguajes orientados a objetos como Java o C\# para construir aplicaciones y bases de datos estructuradas para almacenar datos, por lo tanto, es util tener una interfaz que transforme los datos entre estos tipos de incompatibles. 
+
+El uso de un ORM simplifica enormemente el manejo de la estructura de datos subyacente ya que permite al programador manejar los datos a un mayor nivel de abstracción como si fueran objetos, sin necesidad de generar manualmente las consultas SQL, ademas esta capa de abstracción permite desacoplar el código de la aplicación de los detalles específicos de cada RDBMS.
+
+\subsection{Json (JavaScript Object Notation)}
+
+Json (JavaScript Object Notation) o notación de objectos javascript es un formato textual de intercambio y almacenamiento de datos no estructurados, json posee un formato que es fácil de leer para humanos y fácil de interpretar para maquinas y mas ligero que XML por lo que se ha popularizado para el desarrollo de APIs. 
+
+Json soporta dos tipos de estructuras de datos:
+\begin{enumerate}
+	\item{Colecciones de pares <nombre,valor> comparable a un diccionario o tablashash.}
+	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
+\end{enumerate}
+
+Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes escritas o cualquier permutacion de dichas estructuras anidadas. 
+
+Los tipos de datos soportados por json son:
+\begin{itemize}
+	\item{Number: numeros flotantes de doble presicion en formato Javascript}
+	\item{String: cadenas de caracteres unicode encerradas en dobles comillas} 
+	\item{Boolean: true o false}
+	\item{Arreglo: secuencia de valores ordenados}
+	\item{Objeto: colección no ordenada de pares <nombre,valor>}
+	\item{null: nulo o vacío}
+\end{itemize}
+
+\subsection{Dropbox}
+
+Dropbox es una plataforma de almacenamiento de datos en la nube de tipo PaaS y SaaS que permite compartir y sincronizar archivos entre un número arbitrario de clientes.
+
+Dropbox es usado por aproximadamente 400 millones de personas y 100000 organizaciones\cite{Dropbox} y posee aplicaciones en Windows, Linux, Mac OS X, iOS, Android, Blackberry y web. 
+
+Como todo servicio en la nube es atractivo para desarrolladores por ser robusto y confiable y es gratis hasta cierta cuota de almacenamiento a partir del cual el pago escala según la cantidad de almacenamiento necesario.
+
+
+\subsubsection{API de Dropbox}
+
+Un API (Aplication Programming Interface) o interfaz de programación de aplicaciones, es una serie de métodos o funciones orientados a la comunicación maquina-maquina, en el caso de la computación en la nube un API conforma un servicio que permite desarrollar aplicaciones sobre la plataforma de otra aplicación (en este caso Dropbox).
+
+El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento.
+
+El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones durante un cierto periodo de tiempo, sin embargo el limite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
 
 \subsection{Diseño web adaptable}
 
