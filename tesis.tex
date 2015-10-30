@@ -262,7 +262,7 @@ Existen muchos otros ejemplos en los que es importante tener datos del estado de
   
 \section{Justificacion}
   
-
+Ya que las redes están compuestas de arreglos de nodos conectados entre si y muchas veces resultan de despliegues caóticos y no-coordinados sobre los que no se tiene control o conocimiento y existe una enorme cantidad de variables como 
 
 \section{Objetivos}
 
@@ -313,18 +313,30 @@ El cuarto ciclo consiste en hacer análisis del rendimiento del sistema y hacer l
 
 \chapter{Marco Teórico}
 
-En este capitulo se presentan los conceptos necesarios para la comprensión de este documento y se describen las herramientas de software y formatos que se emplearán para el desarrollo del sistema propuesto.
+En este capitulo se presentan los conceptos necesarios para la comprensión de este documento y se describen las herramientas de software, métodos y formatos que se emplearán para el desarrollo del sistema propuesto.
 
 \section{Monitoreo de Redes}
 
+El monitoreo de redes se refiere al uso de sistemas computacionales para determinar el estado de redes de computadoras, el estado de la red puede ser visto como el conjunto de factores o métricas que describen la red en un momento dado, se hablará a detalle de algunas de estas métricas en la sección \ref{sec:metricas}.
 
+Mientras una red tiene ciertos elementos relativamente invariables como la posición de sus nodos, la longitud de los enlaces, el tipo de enlace (fibra óptica, cable, satelital, etc), el ancho de banda de los enlaces, la velocidad de procesamiento de los enrutadores, entre otros, el estado de la red viene determinado por elementos generalmente impredecibles, como condiciones climatológicas, problemas de configuración, equipos en mal estado y congestión, determinar todo este tipo de problemas para generar alertas, aplicar acciones correctivas o al menos tener conocimiento de ellas es el objetivo de un sistema de monitoreo de redes.
+
+Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas del estado de la red.
+
+Algunos casos de uso típicos del monitoreo de redes incluyen:
+
+\begin{itemize}
+	\item{Sistemas de detección de intrusos: los sistemas de detección de intrusos (IDS) intentan detectar la presencia de activades maliciosas en una red }
+	\item{Tomografía de redes: consiste en obtener datos sobre el estado de ciertos enlaces a partir de sondas enviadas por nodos en los puntos finales de una red. Este es un caso muy común ya que en el caso de Internet rara vez se tiene acceso a los nodos internos manejados por ISPs}
+	\item{Análisis de rutas: es el conjunto de métodos y herramientas para obtener datos sobre el enrutamiento de paquetes, el enrutamiento es vital en el funcionamiento de redes ip y problemas como ineficiencias o ciclos pueden aparecer y degradar el servicio}
+	\item{Monitoreo de servicios: }
+\end{itemize}
 
 \section{Principio Fin-a-Fin}
 
 
-\section{SMTP}
 
-\section{Métricas de calidad de un enlace}
+\section{Métricas de calidad de un enlace} \label{sec:metricas}
 
 A continuación se explican las métricas mas comúnmente utilizadas para determinar la calidad de un enlace.
 
