@@ -559,17 +559,48 @@ El API de Dropbox impone ciertos límites de peticiones por usuario para impedir 
 
 \subsection{Diseño web adaptable}
 
-Debido a la inmensa diversidad de dispositivos desplegados en el mercado y sus distintos tamaños y formas es imposible realizar manualmente diseños que puedan ajustarse a cada uno de ellos, anteriormente una solución popular a este problema era tener varias versiones con distintas resoluciones y elegir que versión mostrar a cada cliente según su tamaño de ventana, sin embargo gracias a las nuevas herramientas disponibles en HTML5 CSS y Javascript que ya estan apliamente 
+Debido a la inmensa diversidad de dispositivos desplegados en el mercado y sus distintos tamaños y formas es imposible realizar manualmente diseños que puedan ajustarse a cada uno de ellos, anteriormente una solución popular a este problema era tener varias versiones con distintas resoluciones y elegir que versión mostrar a cada cliente, sin embargo esto ya no es necesario gracias a las nuevas herramientas disponibles en HTML5 CSS y Javascript que están ampliamente implementadas en navegadores modernos.
 
-El diseño web adaptable o "Responsive Web Design" es la tendencia en el diseño de de paginas web que se ajusten elásticamente a cualquier resolución, adaptando la forma en que se presentan sus elementos de forma "inteligente". Generalmente las tecnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal, otra heuristica en la creacion de sitios web adaptables es esconder elementos gráficos decorativos o innecesarios o menus de navegacion laterales y reducir el tamaño de margenes o incluso cambiar tipos de letras para que sean mas legibles en dispositivos mobiles, 
+El diseño web adaptable o "Responsive Web Design" es la tendencia en el diseño de paginas web que se ajusten elásticamente a cualquier resolución, adaptando la forma en que se presentan sus elementos de forma "inteligente".
 
-De esta manera no es necesario construir múltiples versiones de un mismo sitio web y el usuario siempre tiene una experiencia 
+Las técnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal se reduce estos pasan a ocupar el espacio verticalmente; siempre buscamos ocupar solo el máximo del ancho de la pantalla, evitando crear barras de desplazamiento horizontal que desorientan e incomodan a los usuarios. 
+
+Otra heuristica en la creación de sitios web adaptables es escalar o esconder elementos gráficos decorativos o menús de navegación laterales, reducir el tamaño de margenes o incluso cambiar tipos de letras para que sean mas legibles en dispositivos móviles, mientras el tamaño del dispositivo es menor, cada pixel se vuelve mas precioso.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{img/responsive}
+\caption{Ejemplo de diseño adaptable, se puede ver como los elementos se reagrupan, escalan o esconden para ajustarse al tamaño de la pantalla.}
+\label{fig:responsive}
+\end{figure}
+
+
+El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se este visitando.
 
 \subsection{Highcharts}
 
+Highcharts es una biblioteca Javascript para dibujar gráficas en entornos HTML es gratis para proyectos no comerciales y de código abierto. Las gráficas generadas por highcharts aprovechan las características de HTML5 por lo que pueden soportar enormes conjuntos de datos sin afectar el rendimiento incluso en dispositivos móviles, son totalmente interactivas de manera que el usuario puede inspeccionar detalladamente el conjunto de datos y son dinámicas permitiendo actualizar la gráfica en tiempo real cuando se reciben nuevos datos.
+
+Highcharts incluye una amplia gama de gráficas predefinidas que la hace ideal para todo tipo de visualización de datos como mapas de calor, splines, gráficas de área, barras, pie, mapas, entre muchos otros; cada una de ellas ofrece un gran control sobre la forma en que son presentadas de modo que es posible lograr casi cualquier resultado deseado.
+
+Desde el punto de vista del programador es muy fácil de usar ya que solo requiere especificar un "objeto de configuración" y uno o mas arreglos conteniendo los datos a desplegar, es posible obtener distintas representaciones de los mismos datos solo cambiando el objeto de configuración. 
+
 \subsection{Google Maps}
 
-\subsection{freegeoip}
+Google Maps es el servicio de mapas web de Google, ofrece distintos tipos de mapas, como mapas viales, mapas de relieve e incluso imágenes satelitales e imágenes de calles en tercera dimensión (llamado Google Street View)
+
+Los mapas de Google Maps son totalmente dinámicos, permitiendo al usuario desplazarse, hacer zoom y cambiar el tipo de mapa a voluntad, Google Maps funciona dividendo el espacio mostrado en sectores que son descargados individualmente, de manera que cuando el usuario desplaza el mapa solo es necesario descargar los nuevos sectores desde los servidores de Google.
+
+Google Maps es una de las herramientas mas populares para dibujar mapas web ya que ofrece un API gratuito y fácil de usar que permite enmarcar mapas en cualquier sitio web con solo algunas lineas, ademas los mapas de Google son de altisima calidad y se mantienen constantemente actualizados. 
+
+\subsection{Geo-localizacion IP}
+
+La geo-localizacion IP consiste en asignar a un IP la localizacion geográfica de la maquina anfitriona correspondiente\cite{poese2011ip}. 
+
+Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica. 
+
+En ambos casos es imposible conocer la localizacion exacta asociada a una direccion IP sin la colaboracion activa de sin embargo es posible hacer buenos aproximaciones o en algunos casos aproximaciones a nivel de ciudades o paises.
+
 
 \subsection{Ajax}
 
@@ -580,6 +611,8 @@ De esta manera no es necesario construir múltiples versiones de un mismo sitio w
 \subsection{Requests}
 
 \subsection{Traceroute}
+
+\subsection{Iperf}
 
 \section{Estado del Arte}
 
