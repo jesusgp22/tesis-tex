@@ -597,22 +597,67 @@ Google Maps es una de las herramientas mas populares para dibujar mapas web ya q
 
 La geo-localizacion IP consiste en asignar a un IP la localizacion geográfica de la maquina anfitriona correspondiente\cite{poese2011ip}. 
 
-Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica. 
+Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica, sin embargo su precisión puede estar sujeta a errores substanciales.
 
-En ambos casos es imposible conocer la localizacion exacta asociada a una direccion IP sin la colaboracion activa de sin embargo es posible hacer buenos aproximaciones o en algunos casos aproximaciones a nivel de ciudades o paises.
+En ambos casos es imposible conocer la localización exacta asociada a una dirección IP sin la colaboración activa de los anfitriones finales, sin embargo es posible hacer buenas aproximaciones en algunos a nivel de ciudades o países.
 
+Ya que conocer la localización de sus clientes a partir de su dirección ip es útil para muchos servicios (por ejemplo, para conducir anuncios localizados) existe una gran variedad de soluciones de geolocalizacion tanto gratuitas como de pago.
 
 \subsection{Ajax}
 
+AJAX (Asynchronous JavaScript And XML) es una técnica para construir sitios web interactivos a través de peticiones asíncronas con Javascript que mantienen comunicación con el servidor web para mantener el estado del cliente actualizado sin necesidad de que el usuario tenga que refrescar la pagina o realizar consultas adicionales, de esta manera el usuario tiene una experiencia similar a la que tendría con aplicaciones de escritorio. 
+
+A pesar de que el nombre AJAX sugiera el uso XML como lenguaje para la transferencia de datos entre el cliente y el servidor, se puede usar cualquier formato como texto plano, HTML y JSON
+
 \subsection{APScheduler}
+
+APScheduler (Advanced Python Scheduler) es una biblioteca python para retrasar la ejecución de rutinas a un instante dado en el futuro ya sea como eventos de una sola vez o de forma recurrente\cite{APScheduler}, esta biblioteca provee las herramientas para construir cualquier esquema de planificación que se desee su arquitectura consta de componentes altamente desacoplados que pueden ser mezclados, combinados o incluso extendidos para ofrecer nuevas funcionalides.
+
+\subsubsection{Triggers (gatillos)}
+
+Los triggers (gatillos) son los encargados de determinar el momento de la próxima ejecución de una tarea, APScheduler incluye tres gatillos predefinidos: DateTrigger que ejecuta tareas dada una fecha y hora, IntervalTrigger que ejecuta tareas de forma recurrente dado un intervalo fijo y CronTrigger que ejecuta tareas de forma similar a crontab del sistema UNIX.
+
+\subsubsection{Job Stores (almacenes de tareas)}
+
+Job Stores o almacenes de tareas determinan la forma en que las tareas serán alojadas por el planificador, por defecto las tareas se guardan en memoria, sin embargo también es posible guardar las tareas en almacenes persistentes como bases de datos SQL o mongo.
+
+\subsubsection{Executors (ejecutores)}
+
+Los ejecutores son los encargados de ejecutar tareas y posteriormente informar al planificador del estado de la tarea. El ejecutor por defecto consta de un arreglo de hilos (thread pool) pre-instanciados listos para aceptar tareas, sin embargo si se tienen tareas de uso intensivo de CPU, esta disponible un ejecutor basado en procesos que puede aprovechar mejor las características de procesadores multinúcleos \cite{APScheduler}.
+
+\subsubsection{Shedulers (Planificadores)}
+
+Los planificadores son los que unen todos los elementos mencionados anteriores y son los encargados de gestionar las tareas, es decir que delegan a los ejecutores la ejecución de las tareas en el tiempo adecuado y duerme esperando la ocurrencia de eventos que requieran su atención.
+
+APScheduler incluye dos planificadores predefinidos: BackgroundScheduler que se ejecuta instanciando un hilo en segundo plano y permite que el flujo del programa continúe, útil cuando se desea realizar otras funciones o como agregar o modificar tareas después de que el planificador se ha inicializado y BlockingScheduler que se ejecuta en el mismo hilo de ejecución bloqueando el flujo del programa indefinidamente.
 
 \subsection{Ping} \label{sub:ping}
 
-\subsection{Requests}
+Ping es un programa utilitario incluido en todos los sistemas basados en UNIX y Windows que comprueba la presencia y tiempo de respuesta de un host en una red IP. Ping utiliza el Protocolo de Mensajes de Control de Internet (ICMP) para enviar un paquete de solicitud ICMP (ICMP Echo Request) y espera el mensaje de respuesta del host remoto (ICMP Echo Reply); calculando la diferencia de tiempo entre el envío y la recepción se puede calcular la latencia de la red, ping también incluye funciones para enviar paquetes en ráfaga útil cuando se desea medir la perdida de paquetes.
+
+Ya que históricamente ping se ha usado por atacantes para determinar la presencia de equipos en una red o realizar ataques de denegación de servicio (ping flood) muchos enrutadores y firewalls bloquean estos mensajes como medida de seguridad, aunado a esto ya que ping utiliza ICMP que es un protocolo de capa de red, este no es capaz de alcanzar equipos detrás de un NAT; a pesar de esto, ping ha demostrado ser una herramienta vital en el diagnostico y monitoreo de redes IP.
 
 \subsection{Traceroute}
 
+Traceroute (tambien llamado Tracert en sistemas Windows) es un programa utilitario de diagnostico que permite conocer los hosts que visita un paquete durante su transito por una red.
+
+Al igual que Ping, Traceroute utiliza el protocolo ICMP pero envía paquetes con un valor de "Time to Live" (TTL) incremental, cada vez que un nodo de la red recibe un paquete decrementa su valor de TTL y si este llega a cero lo descarta y envía de vuelta al host emisor un mensaje de control indicando que el TTL llegó a 0, de esta manera Traceroute puede generar una lista de los nodos visitados y el valor de RTT para cada uno de ellos.
+
+Un análisis cuidadoso de la salida de Traceroute puede ayudar a diagnosticar numerosos problemas en una red como ineficiencias en el enrutamiento, presencia de enrutadores congestionados, cuellos de botella, comportamientos inesperados, etc. 
+
 \subsection{Iperf}
+
+Iperf es una herramienta que permite medir el rendimiento (throughput) entre un par de nodos en un red. Al igual que muchas otras pruebas para medir velocidad de transferencia, Iperf funciona con una arquitectura cliente-servidor, donde el cliente genera un flujo de datos hacia el servidor y mide la velocidad obtenida, también es posible ejecutar una prueba "en reversa" donde es el servidor el que genera el flujo de datos.
+
+Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferencias entre ellos:
+
+\begin{itemize}
+		\item{Ya que UDP a diferencia de TCP no implementa ningún algoritmo de control de congestión se podría obtener un rendimiento ligeramente superior con este protocolo *Nota para el profesor: yo se que esto es "verdad" pero me gustaría poder sustentarlo un poco mejor o incluir una cita}
+		\item{Con UDP se puede obtener una estadística de la perdida de paquetes durante la prueba}
+		\item{Con UDP es el servidor el que totaliza los resultados, ya que el cliente no tiene manera de saber que datagramas se han recibido.}
+\end{itemize}
+
+Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
 
 \section{Estado del Arte}
 
