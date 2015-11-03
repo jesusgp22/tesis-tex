@@ -321,20 +321,15 @@ El monitoreo de redes se refiere al uso de sistemas computacionales para determi
 
 Mientras una red tiene ciertos elementos relativamente invariables como la posición de sus nodos, la longitud de los enlaces, el tipo de enlace (fibra óptica, cable, satelital, etc), el ancho de banda de los enlaces, la velocidad de procesamiento de los enrutadores, entre otros, el estado de la red viene determinado por elementos generalmente impredecibles, como condiciones climatológicas, problemas de configuración, equipos en mal estado y congestión, determinar todo este tipo de problemas para generar alertas, aplicar acciones correctivas o al menos tener conocimiento de ellas es el objetivo de un sistema de monitoreo de redes.
 
-Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas del estado de la red.
-
-Algunos casos de uso típicos del monitoreo de redes incluyen:
-
-\begin{itemize}
-	\item{Sistemas de detección de intrusos: los sistemas de detección de intrusos (IDS) intentan detectar la presencia de activades maliciosas en una red }
-	\item{Tomografía de redes: consiste en obtener datos sobre el estado de ciertos enlaces a partir de sondas enviadas por nodos en los puntos finales de una red. Este es un caso muy común ya que en el caso de Internet rara vez se tiene acceso a los nodos internos manejados por ISPs}
-	\item{Análisis de rutas: es el conjunto de métodos y herramientas para obtener datos sobre el enrutamiento de paquetes, el enrutamiento es vital en el funcionamiento de redes ip y problemas como ineficiencias o ciclos pueden aparecer y degradar el servicio}
-	\item{Monitoreo de servicios: }
-\end{itemize}
+Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas.
 
 \section{Principio Fin-a-Fin}
 
+El principio de fin-a-fin (también llamado argumento de fin-a-fin) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
 
+Este principio es valioso para el diseño de cualquier tipo de sistema distribuido sin embargo ha sido fundamental en la expansión y desarrollo de redes de computadoras de propósito general y se sustenta en que los nodos intermedios de una red deben proveer solo las funciones necesarias para permitir la comunicación entre los nodos finales, de esta manera es posible implementar nuevas funcionalides en los extremos de la red sin necesidad de hacer cambios a los nodos intermedios.
+
+En el contexto de monitoreo de redes, se denomina tomografía de redes al proceso de inferir aspectos internos de una red a partir de mediciones realizadas en sus nodos externos.
 
 \section{Métricas de calidad de un enlace} \label{sec:metricas}
 
@@ -420,19 +415,50 @@ Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional q
 
 \section{Big Data}
 
-Big Data es la tendencia de recolectar y almacenar cantidades masivas de datos de forma constante permitiendo tomar decisiones basadas en el análisis de estos datos. No se ha definido formalmente una cantidad a partir de la cual se esta hablando de Big Data, pero usualmente se relaciona con datos en el orden de los petabytes y exabytes \cite{barranco2012}.
+Debido a la rápida evolución en la capacidad de almacenamiento de los sistemas computaciones y la adopción por parte de miles de millones de usuarios de, así como el despliegue de millones de sensores y objetos inteligentes (IoT) se están generando datos a una velocidad vertiginosa y creciente, está claro que es necesaria la existencia de sistemas y métodos para obtener información útil a partir de este flujo masivo de datos. 
+
+Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, no existe una cantidad precisa a partir de la cual una aplicación pueda considerarse de "big data", pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}.
+
+ permitiendo a organizaciones tomar decisiones basadas en el análisis de estos datos (tambien llamadas data-driven desitions )
+
 
 El concepto de Big Data esta estrechamente relacionado con el concepto de stream computing, que es el procesamiento de flujos de datos continuos que podrían estarse recibiendo indefinidamente, en contraposición al enfoque clásico de 
 
-\section{Data Visualization}
+\section{Visualización de datos}
+
+La visualización de datos se refiere al conjunto de elementos gráficos y técnicas usadas para representar la información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
+
+Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y columnas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
+
+Es importante elegir los métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar efectivamente la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc.
+
+Existe una gran riqueza de métodos para comunicar la información de forma creativa, el uso de colores puede ser aprovechado para ofrecer intuitivamente información sobre grupos y categorías, es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas pueden expresar la "densidad" en un área.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{img/crimespotting}
+\caption{Visualizacion de datos sobre delincuencia en el distrito de Columbia – Imagen tomada del
+	sitio:: http://www.pervasif.com/index.php/news-a-event/capabilities/data-visualization}
+\label{fig:crimespotting}
+\end{figure}
+
+En la figura \ref{fig:crimespotting} se puede observar como se usan distintos métodos para representar datos sobre crímenes como robo de vehículos, homicidios y asaltos con armas letales en un área del distrito de Columbia, un mapa es usado para mostrar la localización en que se ocurrieron los crímenes, en esta representación se puede observar rápidamente que zonas son mas propensas a cada tipo de crimen y obtener una idea de su frecuencia, a la izquierda se puede ver una gráfica de barras mostrando la cantidad de ocurrencias coloreadas por tipo de crimen y separados por día de la semana, de esta manera es posible no solo observar que crímenes son mas frecuentes sino que días y semanas son las peores. También se ofrecen herramientas para filtrar los crímenes por fecha, tipo de crimen y distrito, este tipo de herramientas de visualización de datos interactivas son cada vez mas populares en todo tipo de organizaciones ya que facilitan el análisis efectivo de sus datos.
 
 \section{Computación en la nube}
 
+
+
 \subsection{IaaS}
+
+IaaS Infraestructura como servicio
 
 \subsection{PaaS}
 
+Plataforma como servicio
+
 \subsection{SaaS}
+
+Software como servicio
 
 
 \section{Herramientas usadas para el desarrollo del sistema}
