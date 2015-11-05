@@ -415,24 +415,19 @@ Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional q
 
 \section{Big Data}
 
-Debido a la rápida evolución en la capacidad de almacenamiento de los sistemas computaciones y la adopción por parte de miles de millones de usuarios de, así como el despliegue de millones de sensores y objetos inteligentes (IoT) se están generando datos a una velocidad vertiginosa y creciente, está claro que es necesaria la existencia de sistemas y métodos para obtener información útil a partir de este flujo masivo de datos. 
+Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información que pudiera haber esta oculta o no fuera evidente de otra forma. 
 
-Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, no existe una cantidad precisa a partir de la cual una aplicación pueda considerarse de "big data", pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}.
+Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, Big Data es un termino relativamente impreciso ya que no existe un convenio sobre la cantidad de datos a la que se refiere, pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}. 
 
- permitiendo a organizaciones tomar decisiones basadas en el análisis de estos datos (tambien llamadas data-driven desitions )
-
-
-El concepto de Big Data esta estrechamente relacionado con el concepto de stream computing, que es el procesamiento de flujos de datos continuos que podrían estarse recibiendo indefinidamente, en contraposición al enfoque clásico de 
+El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito medico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
 
 \section{Visualización de datos}
 
-La visualización de datos se refiere al conjunto de elementos gráficos y técnicas usadas para representar la información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
+La visualización de datos se refiere al aprovechamiento de elementos gráficos para representar información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
 
 Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y columnas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
 
-Es importante elegir los métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar efectivamente la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc.
-
-Existe una gran riqueza de métodos para comunicar la información de forma creativa, el uso de colores puede ser aprovechado para ofrecer intuitivamente información sobre grupos y categorías, es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas pueden expresar la "densidad" en un área.
+Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc, cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados, por ejemplo, es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas de esta manera se pueden expresar datos de variable al mismo tiempo que se da una idea de su posición geográfica.
 
 \begin{figure}
 \centering
@@ -446,17 +441,25 @@ En la figura \ref{fig:crimespotting} se puede observar como se usan distintos mé
 
 \section{Computación en la nube}
 
+La computación en la nube se refiere tanto a las aplicaciones desplegadas como servicios en Internet y el hardware y los sistemas computaciones en los centros de datos que proveen dichos servicios \cite{armbrust2010view}, a los servicios en si mismos se les ha dado el nombre de Software como Servicio (SaaS) y al hardware y software en los centros de datos es a lo que llamamos una nube. Cuando una nube se hace disponible para el publico en general a través de alguna forma de pago, se le llama una nube publica y el servicio que se esta vendiendo es Computación como Utilidad (Utility Computing), se le llama nube privada a los centros de datos internos de negocios u otras organizaciones pero que no pueden ser usados por el publico general, por lo tanto llamamos computación en la nube a la suma de SaaS y Computación como Utilidad sin incluir nubes privadas\cite{armbrust2010view}
 
+La computación en la nube se caracteriza por ofrecer métodos de pago flexibles que permiten pagar solo por los recursos que se están utilizando (pay-as-you-go) y con una fina granularidad de modo que es lo mismo pagar 1000 procesadores una hora que un procesador por mil horas, esto permite a aplicaciones manejar cargas y escalas fluctuantes o patrones de uso específicos sin necesidad de tener hardware que esté ocioso durante largos periodos de tiempo. La nube ofrece a desarrolladores la ilusión de recursos computaciones ilimitados y disponibles a petición, eliminando la necesidad de planificar y aprovisionar equipos de hardware, y minimizar los riesgos relacionados con subestimar una aplicación que explota en popularidad o sobrestimar una aplicación que no llena las expectativas, en otras palabras no es necesario tener un gran capital de inversión inicial independiente de la escala que resulte necesario manejar a corto o mediano plazo.
 
-\subsection{IaaS}
+\subsection{Modelos de servicio en la nube}
 
-IaaS Infraestructura como servicio
+Los proveedores de servicio en la nube ofrecen sus servicios según un modelo de servicios que forma una "arquitectura orientada a servicios" en la nube en forma de pila:
 
-\subsection{PaaS}
+\subsubsection{Infraestructura como Servicio (IaaS)}
 
-Plataforma como servicio
+Infraestructura como Servicio a veces llamado Hardware como Servicio (HaaS) ofrece funciones básicas de almacenamiento y capacidad de computo como servicio ya sea a través de equipos de hardware físicos o de forma mas común como maquinas virtuales y una larga gama de imágenes de software disponible.
 
-\subsection{SaaS}
+Esta capa abstrae a usuario de los detalles de infraestructura de los recursos de computo físico, localización, configuración, escala, seguridad, respaldo, mantenimiento, etc.
+
+\subsubsection{Plataforma como Servicio (PaaS)}
+
+Plataforma como servicio ofrece como servicio una plataforma para el desarrollo, ejecución y manejo de aplicaciones web, los recursos computacionales demandados por la aplicación son manejados automáticamente, de modo que la complejidad de manejar la infraestructura subyacente queda eliminada, esto permite reducir enormemente la complejidad necesaria para desplegar aplicaciones, que pueden pasar de la etapa de desarrollo y pruebas rápidamente a un entorno de producción con un esfuerzo mínimo por parte de los desarrolladores. 
+
+\subsubsection{Software como Servicio (SaaS)}
 
 Software como servicio
 
