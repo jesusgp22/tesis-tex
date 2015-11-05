@@ -325,7 +325,7 @@ Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo acti
 
 \section{Principio Fin-a-Fin}
 
-El principio de fin-a-fin (también llamado argumento de fin-a-fin) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
+El principio de fin-a-fin (también llamado argumento de fin-a-fin) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
 
 Este principio es valioso para el diseño de cualquier tipo de sistema distribuido sin embargo ha sido fundamental en la expansión y desarrollo de redes de computadoras de propósito general y se sustenta en que los nodos intermedios de una red deben proveer solo las funciones necesarias para permitir la comunicación entre los nodos finales, de esta manera es posible implementar nuevas funcionalides en los extremos de la red sin necesidad de hacer cambios a los nodos intermedios.
 
@@ -385,7 +385,7 @@ El máximo throughput teórico entre un par de nodos esta determinado principalmen
 
 Para aplicaciones en tiempo real es esencial tener un throughput mínimo mayor a un cierto umbral que asegure que los datos se estén recibiendo a una tasa mayor o igual a la que se están consumiendo\cite{Kurose:13}, es decir que a partir de esa tasa mínima un mayor throughput no implica una mejoría en la calidad de la comunicación, otras aplicaciones como transferencias de archivos se benefician del mayor throughput posible ya que el tiempo de transferencia es una función del tamaño del archivo entre el throughput durante la transferencia.
 
-No es posible medir el throughput de un enlace de forma pasiva, por lo que las pruebas que existen consisten en inyectar tráfico al enlace hasta suturarlo y determinar la velocidad a la que se reciben los datos del lado del receptor. Existen múltiples maneras de saturar el enlace, por ejemplo speedtest.net \cite{SPEEDTEST} utiliza hasta cuatro hilos paralelos transmitiendo mensajes aleatorios a través de HTTP, utilizar múltiples flujos es una forma efectiva de mitigar el efecto de la latencia sobre el throughput.
+No es posible medir el throughput de un enlace de forma pasiva, por lo que las pruebas que existen consisten en inyectar tráfico al enlace hasta saturarlo y determinar la velocidad a la que se reciben los datos del lado del receptor. Existen múltiples maneras de saturar el enlace, por ejemplo speedtest.net \cite{SPEEDTEST} utiliza hasta cuatro hilos paralelos transmitiendo mensajes aleatorios a través de HTTP, utilizar múltiples flujos es una forma efectiva de mitigar el efecto de la latencia sobre el throughput.
 
 A diferencia de las métricas anteriores medir el throughput solo es posible con la colaboración de los nodos extremos del enlace, por lo que es necesario tener algún tipo de software preparado para aceptar la prueba e informar del resultado obtenido.
 
@@ -393,7 +393,7 @@ A diferencia de las métricas anteriores medir el throughput solo es posible con 
 
 Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red.
 
-Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red, por ejemplo una universidad podría desear saber que porcentaje del ancho de banda esta siendo utilizado para visitar sitios de streaming, a una empresa le gustaría saber cuanto tiempo pasan sus empleados en redes sociales, un analista desea saber cuales son los sitios web mas visitados en una red, etc. 
+Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red, por ejemplo una universidad podría desear saber que porcentaje del ancho de banda esta siendo utilizado por streams de audio o video, a una empresa le gustaría saber cuanto tiempo pasan sus empleados en redes sociales, un analista desea saber cuales son los sitios web mas visitados en una red, etc. 
 
 NOTA PARA EL PROFESOR: ayuda, no encontré ninguna cita que me ayudara a definir estos conceptos, sin embargo me parece que es importante incluir esto en el marco teórico.
 
@@ -411,11 +411,11 @@ Bufferbloat es la existencia de buffers excesivamente grandes y generalmente lle
 
 El bufferbloat puede ser mitigado configurando apropiadamente el hardware disponible, sin embargo es difícil de diagnosticar y es confundido frecuentemente con congestión en la red.
 
-Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional que toma enviar paquetes a través de un enlace congestionado, algunas pruebas disponibles en linea como \cite{DSLReports} \cite{ThinkBroadband} intentan determinar este retraso haciendo mediciones constantes de latencia al mismo tiempo que inundan el enlace para determinar la forma en que esta varía durante la prueba.
+Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional que toma enviar paquetes a través de un enlace congestionado, algunas pruebas disponibles en linea \cite{DSLReports}\cite{ThinkBroadband} intentan determinar este retraso haciendo mediciones constantes de latencia al mismo tiempo que inundan el enlace para determinar la forma en que esta varía durante la prueba.
 
 \section{Big Data}
 
-Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información que pudiera haber esta oculta o no fuera evidente de otra forma. 
+Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información que no se hubiera hecho evidente usando otros métodos de análisis. 
 
 Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, Big Data es un termino relativamente impreciso ya que no existe un convenio sobre la cantidad de datos a la que se refiere, pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}. 
 
@@ -443,26 +443,25 @@ En la figura \ref{fig:crimespotting} se puede observar como se usan distintos mé
 
 La computación en la nube se refiere tanto a las aplicaciones desplegadas como servicios en Internet y el hardware y los sistemas computaciones en los centros de datos que proveen dichos servicios \cite{armbrust2010view}, a los servicios en si mismos se les ha dado el nombre de Software como Servicio (SaaS) y al hardware y software en los centros de datos es a lo que llamamos una nube. Cuando una nube se hace disponible para el publico en general a través de alguna forma de pago, se le llama una nube publica y el servicio que se esta vendiendo es Computación como Utilidad (Utility Computing), se le llama nube privada a los centros de datos internos de negocios u otras organizaciones pero que no pueden ser usados por el publico general, por lo tanto llamamos computación en la nube a la suma de SaaS y Computación como Utilidad sin incluir nubes privadas\cite{armbrust2010view}
 
-La computación en la nube se caracteriza por ofrecer métodos de pago flexibles que permiten pagar solo por los recursos que se están utilizando (pay-as-you-go) y con una fina granularidad de modo que es lo mismo pagar 1000 procesadores una hora que un procesador por mil horas, esto permite a aplicaciones manejar cargas y escalas fluctuantes o patrones de uso específicos sin necesidad de tener hardware que esté ocioso durante largos periodos de tiempo. La nube ofrece a desarrolladores la ilusión de recursos computaciones ilimitados y disponibles a petición, eliminando la necesidad de planificar y aprovisionar equipos de hardware, y minimizar los riesgos relacionados con subestimar una aplicación que explota en popularidad o sobrestimar una aplicación que no llena las expectativas, en otras palabras no es necesario tener un gran capital de inversión inicial independiente de la escala que resulte necesario manejar a corto o mediano plazo.
+La computación en la nube se caracteriza por ofrecer métodos de pago flexibles que permiten pagar solo por los recursos que se están utilizando (pay-as-you-go) y con una fina granularidad de modo que es lo mismo pagar mil procesadores una hora que un procesador por mil horas, esto permite a aplicaciones manejar cargas y escalas fluctuantes o patrones de uso específicos sin necesidad de tener hardware que esté ocioso durante largos periodos de tiempo. La nube ofrece a desarrolladores la ilusión de recursos computaciones ilimitados y disponibles a petición, eliminando la necesidad de planificar y aprovisionar equipos de hardware, y minimizar los riesgos relacionados con subestimar una aplicación que explota en popularidad o sobrestimar una aplicación que no llena las expectativas, en otras palabras no es necesario tener un gran capital de inversión inicial independientemente de la escala que resulte necesario manejar a corto o mediano plazo.
 
 \subsection{Modelos de servicio en la nube}
 
-Los proveedores de servicio en la nube ofrecen sus servicios según un modelo de servicios que forma una "arquitectura orientada a servicios" en la nube en forma de pila:
+Existen tres modelos de servicios en la nube que forman una "arquitectura orientada a servicios", estos son:
 
 \subsubsection{Infraestructura como Servicio (IaaS)}
 
 Infraestructura como Servicio a veces llamado Hardware como Servicio (HaaS) ofrece funciones básicas de almacenamiento y capacidad de computo como servicio ya sea a través de equipos de hardware físicos o de forma mas común como maquinas virtuales y una larga gama de imágenes de software disponible.
 
-Esta capa abstrae a usuario de los detalles de infraestructura de los recursos de computo físico, localización, configuración, escala, seguridad, respaldo, mantenimiento, etc.
+Esta capa abstrae al usuario de los detalles de infraestructura de los recursos de computo físico, localización, configuración, escala, seguridad, respaldo, mantenimiento, etc.
 
 \subsubsection{Plataforma como Servicio (PaaS)}
 
-Plataforma como servicio ofrece como servicio una plataforma para el desarrollo, ejecución y manejo de aplicaciones web, los recursos computacionales demandados por la aplicación son manejados automáticamente, de modo que la complejidad de manejar la infraestructura subyacente queda eliminada, esto permite reducir enormemente la complejidad necesaria para desplegar aplicaciones, que pueden pasar de la etapa de desarrollo y pruebas rápidamente a un entorno de producción con un esfuerzo mínimo por parte de los desarrolladores. 
+Plataforma como servicio ofrece como servicio una plataforma para el desarrollo, ejecución y manejo de aplicaciones web, los recursos computacionales demandados por la aplicación son manejados automáticamente, de modo que la complejidad de manejar la infraestructura subyacente queda eliminada, esto permite reducir enormemente la complejidad necesaria para desplegar aplicaciones, que pueden pasar de la etapa de desarrollo y pruebas rápidamente a un entorno de producción con un esfuerzo mínimo. 
 
 \subsubsection{Software como Servicio (SaaS)}
 
-Software como servicio
-
+En el modelo de Software como servicio, los usuarios ganan acceso y hacen uso de aplicaciones de software, generalmente este tipo de software se paga bajo una subscripcion o por uso, este tipo de aplicaciones en la nube es conveniente y atractiva para los usuarios ya que estos no necesitan instalar software adicional en sus dispositivos sino que puede acceder a la aplicación desde navegadores web, esto permite que los usuarios puedan tener la misma experiencia en cualquier plataforma y reduce los costos operacionales.
 
 \section{Herramientas usadas para el desarrollo del sistema}
 
@@ -478,7 +477,7 @@ Este patrón de diseño es especialmente popular en el marco de aplicaciones web y
 	\centering
 	\includegraphics[width=0.7\linewidth]{img/mvc}
 	\caption{Ejemplo de la relación entre los componentes de una aplicación MVC – Imagen tomada del
-		sitio: http://mind42.com/mindmap/75870b0c-b70c-4e83-9223-67de79330cd3}
+		sitio: http://mind42.com}
 	\label{fig:mvc}
 \end{figure}
 
@@ -493,7 +492,7 @@ Según la implementación de MVC el modelo puede dividirse en el modelo del domini
 
 La vista es la encargada de determinar que información contenida en el modelo mostrar al usuario y la presentación, por ejemplo si se está modelando una caldera es posible tener una vista que dibuje gráficamente el nivel de la caldera y un termómetro con su temperatura y otra vista que sencillamente muestre estas propiedades en una tabla. 
 
-La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de notificaciones emitidas por el modelo de la aplicación, siguiendo con el modelo anterior de esta forma sería posible monitorear en tiempo real el estado de la caldera a partir de sensores que mantengan actualizado el modelo. 
+La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de notificaciones emitidas por el modelo de la aplicación, siguiendo con el ejemplo anterior de esta forma sería posible monitorear en tiempo real el estado de la caldera a partir de sensores que mantengan actualizado el modelo. 
 
 \subsubsection{Controlador} 
 
@@ -507,16 +506,16 @@ Django es un framework de desarrollo de aplicaciones web construido en python, e
 
 Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que los datos son presentados. 
 
-Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste de retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (llamada template) para generar la respuesta que será devuelta, en la figura \ref{fig:django-arch} puede verse el ciclo de petición-respuesta tal como se ha descrito.
+Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (template) para generar la respuesta que será devuelta, en la figura \ref{fig:django-arch} puede verse el ciclo de petición-respuesta tal como se ha descrito.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.5\linewidth]{img/django-arch}
+\includegraphics[width=0.5\linewidth]{img/dj-req-resp}
 \caption{Ciclo de peticion-respuesta de Django}
 \label{fig:django-arch}
 \end{figure}
 
-Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Javascript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que también pueden ser manejadas por el mismo servidor.
+Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Javascript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que compartan el mismo backend.
 
 Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una enorme comunidad de colaboradores y amplia documentación. 
 
@@ -525,19 +524,19 @@ Django ha demostrado ser escalable y flexible, se sabe de instancias de Django a
 Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios) que son: 
 
 \begin{itemize}
-	\item{Bróker de mensajería: el message broker es el encargado almacenar las tareas que deben ser ejecutadas, el message broker consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que ejecutores.}
-	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico, el planificador no puede asegurar que las tareas sean ejecutadas exactamente en el tiempo planificado ya que el tiempo de planificador depende del tamaño de la cola y de las tareas que ya estén siendo ejecutadas por los ejecutores.}
+	\item{Bróker de mensajería: el message broker es el encargado almacenar las tareas que deben ser ejecutadas, este consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que ejecutores.}
+	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico, el planificador no puede asegurar que las tareas sean ejecutadas exactamente en el tiempo planificado ya que el tiempo de ejecución depende del tamaño de la cola y de las tareas que ya estén siendo ejecutadas por los ejecutores.}
 	\item{Workers (Ejecutores): los ejecutores son los encargados de ejecutar las tareas; estos se subscriben a una o mas colas y consumen los mensajes según la prioridad establecida en la cola finalmente escriben los resultados obtenidos en un result backend}
-	\item{Result Backend: sirve como un almacen donde se guardan los resultados de las tareas ejecutadas durante un periodo de tiempo dado, esto es especialmente de esta manera es posible consultar los resultados obtenidos por un tarea}
+	\item{Result Backend: sirve como un almacen donde se guardan los resultados de las tareas ejecutadas durante un periodo de tiempo dado, esto hace posible consultar los resultados obtenidos por un tarea}
 \end{itemize}
 
 Uno de los problemas comunes en el desarrollo de aplicaciones web es la ejecución de tareas largas o altamente bloqueantes que mantienen ocupado al servidor web durante periodos prolongados y peor aun mantienen al usuario final esperando, para evitar este escenario el servidor web debe tener una forma de delegar este tipo de tareas para ser ejecutadas después y responder inmediatamente.
 
-Celery es usado comúnmente junto a Django y permite a una aplicación web escalar indefinidamente ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas físicas como sea necesario. 
+Celery es usado comúnmente junto a Django y permite a una aplicación web escalar indefinidamente ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas físicas (o maquinas virtuales en un servicio IaaS) como sea necesario. 
 
 \subsection{Redis} \label{sub:redis}
 
-Redis es un almacén de estructuras de datos en memoria que puede ser usado como base de datos, cache o bróker de mensajería; se caracteriza por su excelente velocidad de respuesta ya que todos sus datos están en memoria, sin embargo sus datos no persisten en caso de fallas o errores inesperados. Redis puede ser usado tanto como bróker de mensajes o como result backend en Redis. 
+Redis es un almacén de estructuras de datos en memoria que puede ser usado como base de datos, cache o bróker de mensajería; se caracteriza por su velocidad de respuesta ya que todos sus datos se mantienen en memoria principal y no invierte recursos en asegurar la persistencia de sus datos, evidentemente esto tiene como consecuencia que se pierden sus datos almacenados en caso de que ocurra cualquier falla inesperada. Redis puede ser usado como bróker de mensajería o como result backend por una aplicación Celery. 
 
 \subsection{Bases de Datos}
 
@@ -565,7 +564,7 @@ Json (JavaScript Object Notation) o notación de objectos javascript es un format
 
 Json soporta dos tipos de estructuras de datos:
 \begin{enumerate}
-	\item{Colecciones de pares <nombre,valor> comparable a un diccionario o tablashash.}
+	\item{Colecciones de pares nombre,valor comparable a un diccionario o tablashash.}
 	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
 \end{enumerate}
 
@@ -577,7 +576,7 @@ Los tipos de datos soportados por json son:
 	\item{String: cadenas de caracteres unicode encerradas en dobles comillas} 
 	\item{Boolean: true o false}
 	\item{Arreglo: secuencia de valores ordenados}
-	\item{Objeto: colección no ordenada de pares <nombre,valor>}
+	\item{Objeto: colección no ordenada de pares nombre,valor}
 	\item{null: nulo o vacío}
 \end{itemize}
 
@@ -587,14 +586,14 @@ Dropbox es una plataforma de almacenamiento de datos en la nube de tipo PaaS y S
 
 Dropbox es usado por aproximadamente 400 millones de personas y 100000 organizaciones\cite{Dropbox} y posee aplicaciones en Windows, Linux, Mac OS X, iOS, Android, Blackberry y web. 
 
-Como todo servicio en la nube es atractivo para desarrolladores por ser robusto y confiable y es gratis hasta cierta cuota de almacenamiento a partir del cual el pago escala según la cantidad de almacenamiento necesario.
+Como todo servicio en la nube es atractivo para desarrolladores por ser robusto y confiable y es gratis hasta cierta cuota de almacenamiento a partir del cual el pago escala según la cantidad de almacenamiento usado.
 
 
 \subsubsection{API de Dropbox}
 
-Un API (Aplication Programming Interface) o interfaz de programación de aplicaciones, es una serie de métodos o funciones orientados a la comunicación maquina-maquina, en el caso de la computación en la nube un API conforma un servicio que permite desarrollar aplicaciones sobre la plataforma de otra aplicación (en este caso Dropbox).
+Un API (Aplication Programming Interface) o interfaz de programación de aplicaciones, es una serie de métodos o funciones orientados a la comunicación maquina-maquina, en el caso de la computación en la nube un API conforma un servicio que permite desarrollar aplicaciones una plataforma (en este caso Dropbox).
 
-El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento.
+El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento del usuario.
 
 El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones durante un cierto periodo de tiempo, sin embargo el limite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
 
@@ -604,7 +603,7 @@ Debido a la inmensa diversidad de dispositivos desplegados en el mercado y sus d
 
 El diseño web adaptable o "Responsive Web Design" es la tendencia en el diseño de paginas web que se ajusten elásticamente a cualquier resolución, adaptando la forma en que se presentan sus elementos de forma "inteligente".
 
-Las técnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal se reduce estos pasan a ocupar el espacio verticalmente; siempre buscamos ocupar solo el máximo del ancho de la pantalla, evitando crear barras de desplazamiento horizontal que desorientan e incomodan a los usuarios. 
+Las técnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal se reduce estos pasan a ocupar el espacio verticalmente; siempre ocupando el máximo del ancho disponible, evitando crear barras de desplazamiento horizontal que desorientan e incomodan a los usuarios. 
 
 Otra heuristica en la creación de sitios web adaptables es escalar o esconder elementos gráficos decorativos o menús de navegación laterales, reducir el tamaño de margenes o incluso cambiar tipos de letras para que sean mas legibles en dispositivos móviles, mientras el tamaño del dispositivo es menor, cada pixel se vuelve mas precioso.
 
@@ -616,7 +615,7 @@ Otra heuristica en la creación de sitios web adaptables es escalar o esconder el
 \end{figure}
 
 
-El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se este visitando.
+El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se este visitando.
 
 \subsection{Highcharts}
 
@@ -638,9 +637,7 @@ Google Maps es una de las herramientas mas populares para dibujar mapas web ya q
 
 La geo-localizacion IP consiste en asignar a un IP la localizacion geográfica de la maquina anfitriona correspondiente\cite{poese2011ip}. 
 
-Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica, sin embargo su precisión puede estar sujeta a errores substanciales.
-
-En ambos casos es imposible conocer la localización exacta asociada a una dirección IP sin la colaboración activa de los anfitriones finales, sin embargo es posible hacer buenas aproximaciones en algunos a nivel de ciudades o países.
+Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica, sin embargo su precisión puede estar sujeta a errores substanciales. En ambos casos es imposible conocer la localización exacta asociada a una dirección IP sin la colaboración activa de los anfitriones finales, sin embargo es posible hacer buenas aproximaciones en algunos a nivel de ciudades o países.
 
 Ya que conocer la localización de sus clientes a partir de su dirección ip es útil para muchos servicios (por ejemplo, para conducir anuncios localizados) existe una gran variedad de soluciones de geolocalizacion tanto gratuitas como de pago.
 
@@ -699,10 +696,6 @@ Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferenci
 \end{itemize}
 
 Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
-
-\section{Estado del Arte}
-
-\subsection{Tabla comparativa del estado del arte}
 
 \chapter{Monitor de Red "Octopus Tentacle"}
 
