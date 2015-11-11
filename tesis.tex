@@ -1051,14 +1051,56 @@ Ya que el monitor de red Tentacle funciona de forma automatizada y todas las acc
 
 \chapter{Aplicación Web "Optopus Head"}
 
-La aplicación web "Octopus Head" hace las veces de interfaz entre el usuario final y sus monitores de red, ademas es el encargado de recolectar los datos obtenidos del monitoreo y crear poderosas visualizaciones interactivas a partir de ellos, a través de la interfaz web es posible crear monitores, agregar tentacles (enlaces a monitorear), definir y editar el plan de monitoreo, definir el horario de sincronizacion y computar cada una de las distintas visualizaciones.
+La aplicación web "Octopus Head" hace las veces de interfaz entre el usuario final y sus monitores de red, ademas es el encargado de recolectar los datos obtenidos del monitoreo y crear poderosas visualizaciones interactivas a partir de ellos, mientras los monitores realizan la tarea relativamente sencilla de recolectar datos de las redes a monitorear en Octopus Head se define el plan de monitoreo y se ejecutan las tareas pesadas de análisis de los datos recolectados para computar periodos de actividad continua, mapas de calor, horas y días activos, etc.
 
 \section{Diseño del sistema}
 
+Para el desarrollo de esta aplicación web se usó el Framework de desarrollo web Django que implementa un patrón MVC, ya que nuestra aplicación web se encargará de manejar tareas computacionalmente intensas, o de largo tiempo de ejecución, Django se integró con el sistema de procesamiento de tareas distribuido Celery, esto no solo con la finalidad de que el servidor web pueda delegar estas tareas y responder rápidamente al usuario, sino también para permitir una mejor escalabilidad del sistema, que entonces podrá responder a un mayor número de peticiones por unidad de tiempo.
 
 \subsection{Arquitectura}
 
-\subsection{Estructura de la base de datos}
+La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, administrador o quien sea que vea los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de negocio que es ejecutada por el servidor web que responde a las peticiones de los usuarios, delega tareas a la capa tres y retira y actualiza datos de la capa cuatro, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, etc.
+
+NOTA: Insertar figura de la arquitectura de la maquina servidor
+\label{fig:webapp-arch}
+
+\subsection{Modelo de la base de datos}
+
+La base de datos de Octopus Head esencialmente modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), los resultados obtenidos para cada tentáculo (o monitor) de cada una de sus pruebas, las pruebas y sus parámetros, el historial de cambios en el plan de monitoreo, entre otros. Ya que Django usa un ORM para manejar la base de datos, desde el punto de vista de la aplicación cada entidad es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos, como herencia de clases, clases abstractas implementación de métodos específicos a un modelos y sobrecarga de métodos de los padres, a continuación se describen las entidades que se desa modelar:
+
+Cada usuario registrado del sistema está representado por el modelo "User" que viene incluido como parte del framework de Django, este guarda la información mínima necesaria para autenticar al usuario, así como sus grupos y permisos, un usuario autenticado puede estar en uno o mas grupos y puede tener uno o mas permisos, por defecto se tienen tres tipos de usuarios: el usuario normal, el usuario "staff" que puede ingresar la panel de administración del sistema y el superusuario, el superusuario tiene todos los privilegios del sistema, por lo tanto puede manejar otros usuarios (agregando grupos, permisos, cambiando el tipo de otros usuarios, etc) y hacer cambios a cualquier otro modelo del sistema.
+
+Los usuarios finales del sistema (es decir aquellos que no son staff o superuser) tienen un modelo adicional llamado "UserProfile" (perfil de usuario), para implementar esta funcionalidad podría parecer conveniente sencillamente extender el modelo "User" sin embargo esto interfiere con el mecanismo de autenticacion (que no espera que exista otra tabla de usuarios) de modo que implementar una relación uno-a-uno entre el modelo "UserProfile" y el modelo "User" es preferido. El perfil de usuario aloja los detalles adicionales del usuario monitor como credenciales de Dropbox y códigos de confirmación.
+
+El modelo central de la base de datos es el monitor, que representa un Tentacle Probe Source haciendo pruebas en la red remota. Cada usuario posee uno o mas monitores, el monitor está compuesto por un número de enlaces monitoreados y un plan de monitoreo asi como su horario de sincronizacion y sus detalles específicos como zona horaria, posición geográfica, dirección ip entre otros. 
+
+Los tentaculos son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada tentáculo (o enlace monitoreado) consiste de un Tentacle Probe Source (el monitor) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos (como enrutadores, proxys, etc), para representar esto usamos el modelo "Link" que guarda el ip del Tentacle Probe Source y otros detalles como posición geográfica, nombre y descripción.
+
+Las pruebas son procedimientos que el usuario puede planificar para que sus monitores ejecuten según una planificación, es a esto a lo que llamamos el 'plan de monitoreo', una prueba consiste en cualquier código python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada, desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables, estos son usados para construir un formulario que permite al usuario editar el plan de monitoreo.
+
+Los resultados de las pruebas también llamados trazas se guardan según las características especificas de cada prueba, no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas, sin embargo las pruebas implementadas hasta ahora tienen en común un timestamp (el tiempo de ejecucion de la prueba) y el tentáculo relacionado a la prueba, sin embargo sería posible guardar trazas que no estén relacionadas a ningún tentáculo (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS)
+
+Un "MonitorTest" es una modelo intermedio que representa una prueba planificada para un monitor y sus parámetros, en otras palabras el conjunto de "MonitorTest" para un monitor conforman el plan de monitoreo, este modelo aloja el tiempo inicial de ejecucion de una prueba, el tiempo final, intervalo entre pruebas, y su estado (activa o inactiva). 
+
+Ya que el usuario tiene la libertad de modificar el plan de ejecucion en cualquier momento dado, se guarda un historial de los cambios hechos a los "MonitorTest" en una tabla a modo de historial, de esta manera es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecucion en algún momento especifico. 
+
+A los distintos métodos de análisis y visualización los datos que permiten al usuario explorar y obtener información relevante a partir de ellos, las llamamos visualizaciones, computar visualizaciones consiste en retirar los datos seleccionados de la base de datos, pasar estos datos por algún algoritmo de análisis y prepararlos para ser desplegados en alguna forma elegida por el usuario, como mapas de calor, gráficas de barras, mapas, etc.
+
+Las sincronizaciones consisten en recoger los datos dejados por los monitores remotos en la nube y insertarlos a la base de datos, generalmente haciendo algún preprocesamiento o parsing, se guarda un historial de sincronizaciones no sólo como forma de informar al usuario de la cantidad de archivos recolectados y si ocurrieron errores, el mecanismo de sincronizacion depende un cursor que indica al sistema cuales son los archivos nuevos o modificados que deben ser insertados, el mecanismo de sincronizacion se explicará a fondo en la subsección \ref{sub:Recolector}. 
+
+Como se vió en la figura \ref{fig:webapp-arch} el planificador depende de la base de datos para determinar el horario de sincronizaciones, por lo que es necesario un modelo para guardar el horario de sincronizaciones, ya sea este por intervalos o a una hora especifica del día. 
+
+Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos tentáculos, o incluso de distintos monitores y ademas compartirlas con usuarios no autenticados haciendo los resultados públicos.
+
+\subsubsection{Diagrama de clases}
+
+\subsubsection{Diagrama de entidad relación}
+
+\subsubsection{Entidades}
+
+\subsubsection{Relaciones}
+
+\subsubsection{Optimizaciones}
 
 \subsection{Flujo de navegación}
 
@@ -1066,7 +1108,9 @@ La aplicación web "Octopus Head" hace las veces de interfaz entre el usuario fin
 
 \section{Componentes}
 
-\subsection{Recolector de datos}
+\subsection{Data Pusher}
+
+\subsection{Recolector de datos} \label{sub:Recolector}
 
 \subsection{Algoritmos de análisis}
 
