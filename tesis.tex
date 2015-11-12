@@ -1094,11 +1094,82 @@ Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones e
 
 \subsubsection{Diagrama de clases}
 
-\subsubsection{Diagrama de entidad relación}
+TODO: agregar diagrama de clases
+
+\subsubsection{Diagrama de entidad-relación}
+
+TODO: agregar diagrama entidad-relacion
 
 \subsubsection{Entidades}
 
+Las siguientes tablas resumen las entidades y la función de las entidades que forman parte de la aplicacion web.
+
+
+\begin{table}[H]
+	\caption{Entidades relacionadas al manejo de usuarios}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{User}} & \multicolumn{2}{p{10cm}}{Almacena credenciales e información básica del usuario.}\\
+			\textbf{\textit{UserProfile}} & \multicolumn{2}{p{10cm}}{Almacena credenciales de dropbox y códigos de confirmación del usuario .}\\
+			
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\caption{Entidades relacionadas a los monitores}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}	
+			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
+			\hline
+			\textbf{\textit{Monitor}} &
+			 \multicolumn{2}{p{10cm}}{Almacena detalles del monitor (TPS) como dirección ip, posición geográfica y zona horaria.}\\
+			\textbf{\textit{Link}} & \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Destination como dirección ip, posición geográfica y si está activo para el monitoreo.}\\
+			\textbf{\textit{TracePing}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de ping como marca de tiempo, rtt y TPD relacionado.}\\
+			\textbf{\textit{TraceHttping}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de httping como marca de tiempo, tiempo de respuesta, código de estado y TPD relacionado.}\\
+			\textbf{\textit{TraceTraceroute}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de traceroute como marca de tiempo, número de saltos, alcanzabilidad y TPD relacionado.}\\
+			\textbf{\textit{TraceIperf}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de iperf como marca de tiempo, dirección del flujo, rendimiento obtenido en bytes por segundo y TPD relacionado.}\\
+			\textbf{\textit{Test}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción y tipo de una prueba.}\\
+			\textbf{\textit{Parameter}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción tipo de dato y otros detalles sobre un parámetro relacionado a una prueba.}\\
+			\textbf{\textit{MonitorTest}} & \multicolumn{2}{p{10cm}}{Almacena una prueba planificada para un monitor, asi como su tiempo inicial, final, su estado y parámetros.}\\
+			\textbf{\textit{MonitorTestHistory}} & \multicolumn{2}{p{10cm}}{Almacena los cambios realizados a una prueba planificada así como sus parámetros y el periodo en que estos fueron efectivos.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\caption{Entidades relacionadas al planificador}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}	
+			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
+			\hline
+			\textbf{\textit{Syncronization}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una planificación y algunos detalles como número de archivos recolectados y número de errores.}\\
+			\textbf{\textit{DropboxCursor}} & \multicolumn{2}{p{10cm}}{Almacena un cursor obtenido de la última sincronizacion de un monitor.}\\
+			\textbf{\textit{IntervalSchedule}} & \multicolumn{2}{p{10cm}}{Almacena el intervalo entre sincronizaciones de un monitor.}\\
+			\textbf{\textit{CustomSchedule}} & \multicolumn{2}{p{10cm}}{Almacena la hora de y los días de la semana en que debe sincronizarse un monitor.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\caption{Entidades relacionadas a las visualizaciones y reportes}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}	
+			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
+			\hline
+			\textbf{\textit{ResultView}} & \multicolumn{2}{p{10cm}}{Almacena el nombre y descripción de una visualización así como su tipo y slug.}\\
+			\textbf{\textit{Report}} & \multicolumn{2}{p{10cm}}{Almacena el nombre y descripción de un reporte, su dueño y tipo (publico o privado).}\\
+			\textbf{\textit{ResultItem}} & \multicolumn{2}{p{10cm}}{Almacena el url relacionado a una visualización que es parte de un reporte y comentarios.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
 \subsubsection{Relaciones}
+
+
 
 \subsubsection{Optimizaciones}
 
