@@ -6,7 +6,7 @@
 
 
 %\usepackage[activeacute,spanish]{babel}
-
+\usepackage{float}
 \usepackage{color}
 \usepackage[colorlinks]{hyperref}
 \usepackage[table,xcdraw]{xcolor}
@@ -1061,8 +1061,14 @@ Para el desarrollo de esta aplicación web se usó el Framework de desarrollo web 
 
 La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, administrador o quien sea que vea los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de negocio que es ejecutada por el servidor web que responde a las peticiones de los usuarios, delega tareas a la capa tres y retira y actualiza datos de la capa cuatro, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, etc.
 
-NOTA: Insertar figura de la arquitectura de la maquina servidor
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/webapp-arch}
+\caption{Arquitectura de la aplicacion web.}
 \label{fig:webapp-arch}
+\end{figure}
+
+NOTA: Agregar "carriles" para que queden claras las "capas"
 
 \subsection{Modelo de la base de datos}
 
@@ -1092,13 +1098,44 @@ Como se vió en la figura \ref{fig:webapp-arch} el planificador depende de la bas
 
 Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos tentáculos, o incluso de distintos monitores y ademas compartirlas con usuarios no autenticados haciendo los resultados públicos.
 
-\subsubsection{Diagrama de clases}
-
-TODO: agregar diagrama de clases
-
 \subsubsection{Diagrama de entidad-relación}
 
-TODO: agregar diagrama entidad-relacion
+La figura \ref{fig:basicl} muestra las entidades primordiales de la base de datos: usuarios, monitores, tentáculos y resultados de las pruebas implementadas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{img/basicl}
+\caption{}
+\label{fig:basicl}
+\end{figure}
+
+La figura \ref{fig:tests} muestra las entidades relacionadas al plan de monitoreo, así como su relación con la entidad monitor.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{img/tests}
+\caption{}
+\label{fig:tests}
+\end{figure}
+
+La figura \ref{fig:sync} muestra las entidades relacionadas a mecanismo de sincronizacion y horario de sincronizaciones del monitor.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{img/sync}
+\caption{}
+\label{fig:sync}
+\end{figure}
+
+La figura \ref{fig:results} muestra las entidades relacionadas a las vistas de resultados y reportes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{img/results}
+\caption{}
+\label{fig:results}
+\end{figure}
+
 
 \subsubsection{Entidades}
 
@@ -1134,7 +1171,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\textbf{\textit{TraceIperf}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de iperf como marca de tiempo, dirección del flujo, rendimiento obtenido en bytes por segundo y TPD relacionado.}\\
 			\textbf{\textit{Test}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción y tipo de una prueba.}\\
 			\textbf{\textit{Parameter}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción tipo de dato y otros detalles sobre un parámetro relacionado a una prueba.}\\
-			\textbf{\textit{MonitorTest}} & \multicolumn{2}{p{10cm}}{Almacena una prueba planificada para un monitor, asi como su tiempo inicial, final, su estado y parámetros.}\\
+			\textbf{\textit{MonitorTest}} & \multicolumn{2}{p{10cm}}{Tabla intermedia entre monitor y test que almacena una prueba planificada para un monitor, así como su tiempo inicial, final, su estado y parámetros.}\\
 			\textbf{\textit{MonitorTestHistory}} & \multicolumn{2}{p{10cm}}{Almacena los cambios realizados a una prueba planificada así como sus parámetros y el periodo en que estos fueron efectivos.}\\
 		\end{tabular}
 	\end{center}
@@ -1169,23 +1206,136 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 \subsubsection{Relaciones}
 
-
-
-\subsubsection{Optimizaciones}
-
-\subsection{Flujo de navegación}
+\begin{itemize}
+	\item{\textbf{users - userprofiles (1-1)}: Un usuario solo puede tener un perfil de usuario.}
+	\item{\textbf{users - monitors (n-1):} Un usuario puede ser dueño de cero o mas monitores, pero un monitor solo puede tener un dueño.}
+	\item{\textbf{monitors - tentacles (n-1):} Un monitor puede tener cero o mas tentacles, pero un tentacle solo puede estar en un monitor.}
+	\item{\textbf{tentacles - traces (n-1):} Un tentaculo puede tener cero o mas trazas relacionadas, pero una traza solo puede estar relacionada a un tentacle.}
+	\item{\textbf{test - parameter (n-1):} Una prueba puede tener uno o mas parámetros, pero un parámetro solo puede ser parte de una prueba.}
+	\item{\textbf{test - monitor (n-n):} Una prueba puede ser planificada cero o mas veces en cero o mas monitores.}
+	\item{\textbf{monitortest - monitortesthistory (n-1):} Una instancia de monitortest puede tener una o mas entradas en el historial, pero una entrada en el historial solo se refiere a un monitortest.}
+	\item{\textbf{monitor - synchronization(n-1):} Un monitor puede ser sincronizado cero o mas veces pero una sincronizacion solo puede estar relacionada a un monitor.}
+	\item{\textbf{synchronization - dropboxcursor (n-1):} Una sincronizacion puede tener uno o mas cursores, pero un cursor solo pertenece a una sincronizacion.}
+	\item{\textbf{monitor - intervalschedule (1-1):} Un monitor solo puede tener un horario de sincronizacion en intervalo y este solo puede pertenecer a un monitor.}
+	\item{\textbf{monitor - customschedule (1-1):} Un monitor solo puede tener un horario de sincronizacion personalizado y este solo puede pertenecer a un monitor.}
+	\item{\textbf{test - resultview (n-1):} Una prueba puede tener una o mas vistas de resultados, pero una vista de resultados solo puede pertenecer a una prueba.}
+	\item{\textbf{user - report (n-1):} Un usuario puede ser dueño de cero o mas reportes y un reporte solo puede pertenecer a un usuario.}
+	\item{\textbf{report - reportitem (1-1):} Un reporte puede tener uno o mas items y un item solo puede pertenecer a un reporte.}
+\end{itemize}
 
 \subsection{Diseño de Pantallas}
 
+Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos css y la lógica en archivos javascript para desplegar una pagina web adaptad al dispositivo del usuario.
+
+Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama 'rendering'.
+
+En la Figura \ref{} se puede ver como todas las plantillas heredan de la plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite extender el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar los archivos de estilo \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento como modales \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las paginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
+
+A continuación se muestra el diseño de las principales pantallas de la interfaz de usuario del servicio web.
+
+\begin{itemize}
+	\item{\textbf{Pantalla Inicial del sistema,} esta es la pantalla principal del servicio web disponible en linea y sirve como punto de inicio donde los usuarios no-autenticados pueden registrarse, iniciar sesión y obtener información básica sobre el sistema.}
+	
+	\item{\textbf{Pantalla de registro de usuario,} en esta pantalla un usuario que desee utilizar el sistema de monitoreo introduce su nombre de usuario, contraseña y correo electrónico para registrarse}
+	
+	\item{\textbf{Pantalla de inicio de sesión,} en esta pantalla un usuario autenticado puede introducir su nombre de usuario y contraseña para iniciar sesión, también se incluyen enlaces para recuperar contraseña o crear una nueva cuenta en caso de no tener una.}
+	
+	\item{\textbf{Pantalla "Home",} esta es la pantalla de bienvenida al sistema para un usuario autenticado, esta muestra algunas estadísticas rápidas del uso del sistema (como número de monitores, tentáculos, pruebas, sincronizaciones ejecutada, etc), así como enlaces a las principales subsecciones de cada monitor. Todas las pantallas a partir de ahora comparten un menú de navegación superior con enlaces al home, y funcionalidades para ver el perfil de usuario y hacer logout y un menú de navegación lateral con enlaces a las principales secciones del sistema}
+	
+	\item{\textbf{Pantalla de selección de monitores,} esta pantalla muestra los monitores del usuario y le permite seleccionar alguno de ellos para dirigirlo a la pantalla del monitor, ademas incluye un botón para crear nuevos monitores.}
+	
+	\item{Pantalla de creación de monitores,} en esta pantalla se introducen del detalles del monitor a crear como nombre, descripción, dirección ip, sistema operativo del dispositivo host y zona horaria del monitor, todas las pantallas 
+	
+	\item{\textbf{Pantalla del monitor,} esta es la pantalla principal del monitor donde se muestran los detalles del monitor, un mapa de la red mostrando la localizacion de los distintos dispositivos de red (TPS y TPS) generado a partir de la información suministrada por el usuario y una lista de verificación para ayudar al usuario a seguir los pasos para monitorear una red. Todas las vistas relacionadas a un monitor específico despliegan un submenú de navegación para visitar las distintas subsecciones de manejo del monitor como tentáculos, resultados y sincronizaciones.}
+	
+	\item{\textbf{Pantalla de tentáculos,} esta pantalla muestra los detalles de los distintos tentáculos de un monitor, y incluye enlaces para registrar nuevos tentáculos y editar los detalles de los existentes.}
+	
+	\item{\textbf{Pantalla de Plan de monitoreo,} esta pantalla permite ver el plan de monitoreo por tipo de prueba, incluye enlaces para editar pruebas planificadas y para planificar nuevas pruebas ya sean periodicas o de una sola vez. En caso de que hayan muchas pruebas planificadas separa el contenido en páginas numeradas}
+	
+	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecucion de la prueba}
+	
+	\item{\textbf{Pantalla de detalles de una prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario editable, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los periodos en que estuvo inactiva y sus distintos parámetros en periodos de inactividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
+	
+	\item{\textbf{Pantalla de resultados,} esta pantalla muestra todas las visualizaciones disponibles para un monitor (a partir de las pruebas activas o planificadas en algún momento) y una barra de búsqueda para filtrar los resultados.}
+	
+	\item{\textbf{Pantalla de visualizaciones,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido}
+	
+	\item{\textbf{Pantalla de sincronizaciones,} esta pantalla muestra el tiempo desde la última sincronizacion y el tiempo  para la próxima así como un botón para forzar una sincronizacion inmediata, también muestra un formulario para definir el horario de sincronizacion y en un panel lateral muestra el historial de sincronizaciones, este ofrece información sobre la cantidad de archivos recolectados y el numero de errores encontrados durante las últimas sincronizaciones}
+	
+	\item{\textbf{Pantalla de reportes,} esta pantalla muestra una tabla de los reportes del usuario con enlaces para ver cada uno de ellos y su última fecha de modificación así como un botón para ir al formulario de creación de reportes}
+	
+	\item{\textbf{Pantalla de visualización y edición reporte,} esta pantalla puede desplegarse de distintas maneras según el usuario que la observe, si se trata del usuario al que pertenece el reporte entonces este verá una barra de herramientas para agregar visualizaciones al reporte, cambiar la privacidad del reporte (publico o privado) o editar y borrar, del mismo modo podrá editar los comentarios de cada una de las visualizaciones o quitarlas del reporte. Un usuario que no sea dueño del reporte solo podrá leer su contenido y observar las visualizaciones}
+	
+	\item{\textbf{Pantalla de cuenta del usuario,} esta pantalla muestra los detalles de la cuenta del usuario, así como enlaces para cambiar la contraseña y renovar el token de acceso a dropbox en caso de que en algún momento este haya sido revocado}
+	
+	\item{\textbf{Pantalla de descargas,} en esta pantalla se muestra una lista de las descargas disponibles, como distintas versiones del montitor de red o publicaciones relacionadas}
+	
+	\item{\textbf{Pantalla de ayuda,} esta pantalla muestra tópicos de ayuda al usuario como conceptos básicas, manual de instalación básico, especificaciones de las pruebas, etc.}
+	
+\end{itemize}
+
 \section{Componentes}
 
-\subsection{Data Pusher}
+En esta sección se explican los distintos componentes de software que son parte de la aplicacion web y su funcionalidad.
+
+\subsection{Enlazador de cuentas de Dropbox}
+
+Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicacion web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un flujo de autenticación que dará permisos a la aplicacion web de realizar estas peticiones a partir de un token de autenticacion, el flujo de autenticacion se puede observar en la siguiente función:
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+
+\begin{algorithm}
+	\caption{Enlazamiento con Dropbox}\label{euclid}
+	\begin{algorithmic}[1]
+		\Procedure{link\_dropbox\_account}{}
+		\If {$request.method = \textit{'POST'}$}
+			\State $\textit{form} \gets \textit{DropboxCodeForm }$
+			\If {$\textit{form} \text{ is valid}$}
+				\State $\textit{flow} \gets$ \Call{DropboxOAuth2FlowNoRedirect}{}
+				
+				\State $\textit{access\_token , user\_id} \gets$\textit{flow}.\Call{finish}{\textit{form.code}}
+				\State $\textit{profile} \gets \Call{get}{\textit{UserProfile},id=request.user.id}$\Comment{Retira un objeto UserProfile por su id de la base de datos}
+				\State $\textit{profile.dropbox\_access\_token} \gets \textit{access\_token}$
+				\State $\textit{profile.dropbox\_user\_id} \gets \textit{user\_id}$
+				\State$\textit{profile.}\Call{save}$
+				
+				\Return \Call{HttpResponseRedirect}{"/dropbox/link-account/done"}
+			\EndIf
+		\Else
+			\State $\textit{flow} \gets
+			\Call{DropboxOAuth2FlowNoRedirect}{}$
+			\State $\textit{url} \gets \textit{flow}$.\Call{start}{}
+			\State $\textit{form} \gets \textit{DropboxCodeForm }$
+			
+		\EndIf
+		
+		\Return \Call{render}{request,"link\_dropbox.html",\textit{form}}
+
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo POST pasamos a validar la forma si es la válida entonces hacemos alguna operación (casi siempre actualizar la base de datos) y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario la forma es inválida y se dibuja la forma mostrando los mensajes de error correspondientes, si el método es GET entonces mostramos una forma en blanco.
+
+
+
+\subsection{Subidor de mensajes}
+
+Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los tentáculos (nuevo tentáculo registrado o cambios a un tentáculo existente) y los relacionados a las pruebas (nueva prueba, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
+
+Los archivos se suben en modo "overwrite" es decir que si ya existe un archivo con el mismo nombre en la carpeta este es reemplazado, esta política asegura que aunque el monitor este apagado y no esté leyendo los mensajes, la próxima vez que lo haga solo tenga que leer la última versión de los mensajes.
+
 
 \subsection{Recolector de datos} \label{sub:Recolector}
 
-\subsection{Algoritmos de análisis}
+\subsection{Cargador de visualizaciones}
 
-\subsubsection{Cálculo de Mapas de Calor de RTT}
+\subsection{Algoritmos de análisis y computo de visualizaciones}
+
+\subsubsection{Cálculo de Mapas de Calor}
 
 \subsubsection{Cálculo de horas activas}
 
@@ -1194,6 +1344,68 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 \subsubsection{Cálculo de periodos de actividad continúa}
 
 \section{Casos de Uso}
+
+----- usuario no autenticado --------
+ver pagina principal
+login
+registro
+ver visualizacion compartida
+ver reporte publico
+---- usuario monitor -----
+recuperar contraseña
+ver monitores
+ver pagina de ayuda
+monitores >
+crear monitor
+ver monitor
+editar monitor
+ver monitor
+>enlaces
+agregar enlaces
+ver lista de enlaces
+editar enlace
+editar geo-localizacion a enlace
+>pruebas
+ver pruebas
+agregar pruebas
+configurar prueba
+ver historial de cambios de la prueba
+habilitar/deshabilitar pruebas
+>visualizaciones
+ver lista de visualizaciones
+ver visualizacion
+generar visualizacion
+regenerar visualizacion
+obtener enlace directo
+ver en nueva pestaña
+>sincronizaciones
+ver ultimas sincronizaciones
+solicitar sincronizacion
+configurar planificacion de sincronizaciones
+>cuenta
+cambiar password
+dar acceso a dropbox
+renovar acceso a dropbox
+> reportes
+crear reporte
+editar reporte
+hacer reporte publico/privado
+agregar grafica a reporte
+editar grafico en reporte
+eliminar grafica de reporte
+eliminar reporte
+----- admin ----------
+crear prueba
+editar prueba
+crear parametro de prueba
+editar parametro de prueba
+eliminar parametro de prueba
+crear visualizacion
+editar visualizacion
+se deberian incluir meta-casos de uso o solo los que son parte de la interfaz web en si????
+actualizar base de datos
+reiniciar servidor
+reiniciar celery cluster
 
 \section{Caching de gráficas}
 
