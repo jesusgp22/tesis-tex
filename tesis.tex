@@ -2,7 +2,7 @@
 
 \usepackage{ulamonog} % formato para la propuesta o proyecto de grado
 \usepackage[ansinew]{inputenc} % escribir acentos
-
+\setcounter{secnumdepth}{3}
 
 
 %\usepackage[activeacute,spanish]{babel}
@@ -16,7 +16,7 @@
 \usepackage[noend]{algpseudocode}
 \definecolor{light-gray}{gray}{0.95}
 \usepackage{listings}
-
+\usepackage{enumitem}
 % ***************************************************************** %
 % En el siguiente comando se pueden modificar:
 % Titulo, Autor, Palabras clave
@@ -397,7 +397,7 @@ Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a trav
 
 NOTA PARA EL PROFESOR: ayuda, no encontré ninguna cita que me ayudara a definir estos conceptos, sin embargo me parece que es importante incluir esto en el marco teórico.
 
-\subsection{Disponibilidad}
+\subsection{Disponibilidad} \label{sub:disponibilidad}
 
 Un servicio esta disponible para un cliente cuando dicho cliente puede comunicarse con el, análogamente un servicio no esta disponible para un cliente cuando no puede comunicarse con el, ya sea por un problema en el nodo final o en la red \cite{dahlin2003end}. 
 
@@ -421,7 +421,7 @@ Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análi
 
 El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito medico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
 
-\section{Visualización de datos}
+\section{Visualización de datos} \label{sec:visualizacion}
 
 La visualización de datos se refiere al aprovechamiento de elementos gráficos para representar información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
 
@@ -564,7 +564,7 @@ Json (JavaScript Object Notation) o notación de objectos javascript es un format
 
 Json soporta dos tipos de estructuras de datos:
 \begin{enumerate}
-	\item{Colecciones de pares nombre,valor comparable a un diccionario o tablashash.}
+	\item{Colecciones de pares $<$nombre,valor$>$ comparable a un diccionario o tablashash.}
 	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
 \end{enumerate}
 
@@ -1137,7 +1137,7 @@ La figura \ref{fig:results} muestra las entidades relacionadas a las vistas de r
 \end{figure}
 
 
-\subsubsection{Entidades}
+\subsubsection{Entidades} \label{subsub:entidades}
 
 Las siguientes tablas resumen las entidades y la función de las entidades que forman parte de la aplicacion web.
 
@@ -1258,7 +1258,7 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\item{\textbf{Pantalla de resultados,} esta pantalla muestra todas las visualizaciones disponibles para un monitor (a partir de las pruebas activas o planificadas en algún momento) y una barra de búsqueda para filtrar los resultados.}
 	
-	\item{\textbf{Pantalla de visualizaciones,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido}
+	\item{\textbf{Pantalla de visualización de resultados,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido}
 	
 	\item{\textbf{Pantalla de sincronizaciones,} esta pantalla muestra el tiempo desde la última sincronizacion y el tiempo  para la próxima así como un botón para forzar una sincronizacion inmediata, también muestra un formulario para definir el horario de sincronizacion y en un panel lateral muestra el historial de sincronizaciones, este ofrece información sobre la cantidad de archivos recolectados y el numero de errores encontrados durante las últimas sincronizaciones}
 	
@@ -1280,19 +1280,15 @@ En esta sección se explican los distintos componentes de software que son parte 
 
 \subsection{Enlazador de cuentas de Dropbox}
 
-Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicacion web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un flujo de autenticación que dará permisos a la aplicacion web de realizar estas peticiones a partir de un token de autenticacion, el flujo de autenticacion se puede observar en la siguiente función:
-
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
+Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicacion web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. El proceso de autenticacion es un algoritmo a dos pasos que se puede observar a continuación:
 
 
 \begin{algorithm}
-	\caption{Enlazamiento con Dropbox}\label{euclid}
+	\caption{Enlazamiento con Dropbox}\label{alg:linking}
 	\begin{algorithmic}[1]
-		\Procedure{link\_dropbox\_account}{}
+		\Procedure{link\_dropbox\_account}{request}
 		\If {$request.method = \textit{'POST'}$}
-			\State $\textit{form} \gets \textit{DropboxCodeForm }$
+			\State $\textit{form} \gets \Call{DropboxCodeForm }{}$
 			\If {$\textit{form} \text{ is valid}$}
 				\State $\textit{flow} \gets$ \Call{DropboxOAuth2FlowNoRedirect}{}
 				
@@ -1300,7 +1296,7 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 				\State $\textit{profile} \gets \Call{get}{\textit{UserProfile},id=request.user.id}$\Comment{Retira un objeto UserProfile por su id de la base de datos}
 				\State $\textit{profile.dropbox\_access\_token} \gets \textit{access\_token}$
 				\State $\textit{profile.dropbox\_user\_id} \gets \textit{user\_id}$
-				\State$\textit{profile.}\Call{save}$
+				\State$\textit{profile.}\Call{save}$\Comment{Guarda los cambios en la base de datos}
 				
 				\Return \Call{HttpResponseRedirect}{"/dropbox/link-account/done"}
 			\EndIf
@@ -1308,7 +1304,7 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 			\State $\textit{flow} \gets
 			\Call{DropboxOAuth2FlowNoRedirect}{}$
 			\State $\textit{url} \gets \textit{flow}$.\Call{start}{}
-			\State $\textit{form} \gets \textit{DropboxCodeForm }$
+			\State $\textit{form} \gets \Call{DropboxCodeForm }{}$
 			
 		\EndIf
 		
@@ -1318,30 +1314,247 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 	\end{algorithmic}
 \end{algorithm}
 
-La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo POST pasamos a validar la forma si es la válida entonces hacemos alguna operación (casi siempre actualizar la base de datos) y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario la forma es inválida y se dibuja la forma mostrando los mensajes de error correspondientes, si el método es GET entonces mostramos una forma en blanco.
+La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo POST pasamos a validar el formulario si es la válida entonces hacemos alguna operación (casi siempre actualizar la base de datos) y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario el formulario es inválido y se dibuja la plantilla mostrando los mensajes de error correspondientes, si el método es GET entonces mostramos una formulario en blanco.
 
+En este caso cuando el usuario visita la ruta '/dropbox/link-account/' con el método GET la aplicacion web crea un URL hacia el sitio de Dropbox y muestra al usuario un formulario con una caja para introducir un código y un enlace con el URL generado previamente, cuando el usuario hace click al URL este lo lleva al sitio de Dropbox que a su vez despliega un dialogo preguntando al usuario si dará permiso a la aplicacion de Octopus Monitor para hacer cambios en su carpeta personal, en caso positivo se genera un token que el usuario debe copiar en el formulario, cuando el usuario hace click en submit una peticion HTTP POST se envía al servidor, entonces este valida los datos introducidos y llama al método "finish" con el token, este método retorna el código de acceso al Dropbox del usuario para nuestra aplicacion y el identificador del usuario, guardamos los cambios en la base de datos y llevamos al usuario a una página indicando que el proceso de enlazamiento fue exitoso. 
 
+A partir de este momento tenemos los dos elementos necesarios para hacer peticiones al API de Dropbox: los permisos sobre la carpeta en la nube del usuario y el token de acceso a su dropbox.
 
 \subsection{Subidor de mensajes}
 
-Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los tentáculos (nuevo tentáculo registrado o cambios a un tentáculo existente) y los relacionados a las pruebas (nueva prueba, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
+Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los tentáculos (nuevo tentáculo registrado o cambios a un tentáculo existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
 
-Los archivos se suben en modo "overwrite" es decir que si ya existe un archivo con el mismo nombre en la carpeta este es reemplazado, esta política asegura que aunque el monitor este apagado y no esté leyendo los mensajes, la próxima vez que lo haga solo tenga que leer la última versión de los mensajes.
+Los mensajes que se suben a la nube se escriben en formato json, este formato ofrece grandes ventajas para el desarrollo de aplicaciones distribuidas ya que es fácil de codificar del lado del servidor y fácil de decodificar del lado del monitor es mucho mas ligero que otros formatos como XML y al mismo tiempo es legible para seres humanos, todos las funciones que suben archivos a la nube funcionan de forma simular (1) retiran de la base de datos el token de acceso a Dropbox del usuario (2) determinan el nombre del archivo a subir (3) codifican el archivo json a enviar (4) crean un objetivo tipo archivo o buffer en memoria (5) suben el archivo a la nube, el procedimiento se puede ver a continuación: 
 
+\begin{algorithm}
+	\caption{Subir prueba a Dropbox}\label{alg:upload}
+	\begin{algorithmic}[1]
+		\Procedure{upload\_test\_file}{monitor\_test,data}
+		\State $\textit{user} \gets \textit{monitor\_test.monitor.owner}$ \Comment{Retira el usuario relacionado}
+		
+		\State $\textit{profile} \gets \Call{get}{\textit{UserProfile},id=user.id}$\Comment{Retira el perfil de usuario}
+		\State $\textit{client} \gets \Call{DropboxClient}{profile.dropbox\_access\_token}$
+		\State $\textit{directory} \gets \textit{MONITOR\_FOLDER\_NAME}+\textit{monitor\_test.monitor.id} + \text{'mailbox'} $
+		\State $\textit{filename} \gets \textit{directory} + \text{'test\_'} + \textit{monitor\_test.id} + \text{'.json'}$
+		\State $\textit{buffer} \gets \Call{StringIO}{}$ \Comment{Crea un objeto tipo archivo en memoria}
+		
+		\State$\textit{json} \gets \Call{Dumps}{data}$\Comment{Codifica una cadena de caracteres json a partir de un objeto python}
+		\State$\textit{buffer}.\Call{Write}{json}$
+		
+		\State $\textit{client.}\Call{put\_file}{filename,buffer,overwrite=True}$
+		
+		\Return
+		
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
 
 \subsection{Recolector de datos} \label{sub:Recolector}
 
-\subsection{Cargador de visualizaciones}
+El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicacion web a su vez recolectar estos archivos y introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de "sincronizacion".
 
-\subsection{Algoritmos de análisis y computo de visualizaciones}
+El algoritmo general de sincronizacion (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el token de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de parsing de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronizacion, los cursores (de los cuales se hablará próximamente) y actualiza el tiempo de ultima sincronizacion del monitor.
+
+
+\begin{algorithm}
+	\caption{Sincronizar monitor}\label{alg:sync}
+	\begin{algorithmic}[1]
+		\Procedure{syncronize}{monitor\_id}
+		\State $\textit{monitor} \gets \Call{Get}{Monitor,id=monitor\_id}$ \Comment{Retira el monitor por su id}
+		
+		\State $\textit{profile} \gets \Call{get}{\textit{UserProfile},id=monitor.owner.id}$\Comment{Retira el perfil de usuario}
+		\State $\textit{client} \gets \Call{DropboxClient}{profile.dropbox\_access\_token}$
+		
+		\State $\textit{tests} \gets \text{Get all active tests for this } \textit{monitor} $
+		
+		\State $\textit{cursors} \gets \text{empty dictionary}$
+		\State $\textit{files} \gets 0$
+		\State $\textit{errors} \gets 0$
+		
+		
+		\For{\textit{test} \textbf{in} \textit{tests}}
+		\State $\textit{cursor,\_files,\_errors} \gets \Call{\_Syncronize}{test,monitor,client}$
+		\State $\text{Insert cursor on} \textit{ cursors } \text{using} \textit{ test } \text{as key}$
+		\State $\textit{files} \gets \textit{files} + \textit{\_files}$
+		\State $\textit{errors} \gets\textit{errors} + \textit{\_errors}$
+		\EndFor
+		
+		\State $\textit{sync} \gets \Call{Syncronization}{monitor,files,errores}$
+		\State $\textit{sync.}\Call{Save}{}$
+		
+		\For{\textit{key,value} \textbf{in} \textit{cursors}}
+		\State $\textit{cursor} \gets \Call{DropboxCursor}{value,sync,monitor\_test}$
+		\State $\textit{cursor.}\Call{Save}{}$
+		
+		\EndFor
+		
+		\State $\textit{monitor.last\_sync\_time} \gets \text{get current time}$
+		\State $\textit{monitor.}\Call{Save}{}$
+		
+		\Return
+		
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+Debemos recordar que los resultados de las pruebas se guardan en una carpeta por prueba, donde constantemente se están guardando nuevos archivos, por lo tanto, la subrutina de sincronizacion debe determinar cuales son los archivos nuevos desde la ultima sincronizacion, para esto, el API de Dropbox provee el método "delta", que determina los cambios realizados a una carpeta a partir de un momento específico, a continuación puede verse un ejemplo de la respuesta en formato json del obtenida tras llamar el método delta para una carpeta:
+
+\begin{lstlisting}][h,frame=single]
+{
+	"reset":false,
+	"cursor":"AAHskXVmJSRVG_bgh4Oq2VPQqG79nWM26Tl8jSmRyiGM3M0EGL...",
+	"has_more":false,
+	"entries":[
+		[
+			"/monitor1/ping/link_2_2015_11_02_15.txt",
+			{
+				"revision":3,
+				"rev":"30ec9923d",
+				"thumb_exists":false,
+				"bytes":0,"modified":
+				"Wed, 20 Mar 2013 05:58:43 +0000",
+				"path":"/proj1",
+				"is_dir":true,
+				"icon":"folder_app",
+				"root":"app_folder",
+				"size":"0 bytes"
+			}
+		],
+	]
+}
+\end{lstlisting}
+
+Como puede observarse es un diccionario con cuatro entradas:
+\begin{itemize}
+	\item{reset: determina si se debe limpiar el estado local antes de procesar las entradas delta, es verdadero solo durante la primera llamada a delta o en raras ocasiones.}
+	\item{cursor: el cursor es una cadena de caracteres de longitud 64, y representa el estado de la carpeta en un momento dado, se puede usar en llamadas sucesivas de "delta" para obtener los cambios a partir de ese momento.}
+	\item{has\_more: determina si hay mas entradas delta en la carpeta, en tal caso es necesario volver a llamar el método delta inmediatamente de nuevo, esto solo es necesario cuando hay cantidades considerables de archivos en una carpeta}
+	\item{entries: es una lista de "entradas delta" cada entrada representa un archivo o carpeta que cambió desde la ultima llamada a delta, cada entrada es un par $<$path,metadata$>$ donde "path" es el nombre del archivo y "metadata" es un diccionario conteniendo algunos datos relevantes al archivo, si "metadata" es "null" indica que el archivo fue eliminado.}
+\end{itemize}
+
+El algoritmo de sincronización entonces depende del cursor para determinar los cambios desde la última sincronización, llamar al método delta y obtener la lista de "entradas delta" luego recorre aquellas entradas delta cuya metada no es nula (no fueron borrados) y le pasa el contenido el archivo a un algoritmo de parsing, que lo lee y inserta su contenido en el formato apropiado en la base de datos, debemos recordar que cada archivo de traza puede tener un formato distinto dependiendo de a que tipo de prueba pertenezca, por lo que también es trabajo de del algoritmo de sincronización elegir el método correcto al cual pasará el archivo.
+
+\subsection{Computo de visualizaciones}
+
+El computo de las visualizaciones tiene tres partes que son comunes a todas las visualizaciones, primero, los datos necesarios son retirados de la base de datos, después los datos obtenidos son transformados de alguna manera, por ejemplo, los timestamps se transforman en horas localizadas según la zona horaria del monitor, o se retiran valores atípicos de la muestra y finalmente estos datos se combinan con una plantilla para generar una página HTML. 
+
+Muchas de las visualizaciones obtenidas en el sistema se pueden generar trivialmente pasando a Highcharts un arreglo de pares $<$x,y$>$ por ejemplo rtt vs tiempo, sin embargo otras visualizaciones requieren de algoritmos de análisis que hagan algún pre-procesamiento de los datos o saquen algún tipo de conclusión para mostrar al usuario, a continuación se explica el calculo de las visualizaciones no-triviales del sistema.
 
 \subsubsection{Cálculo de Mapas de Calor}
 
+En este trabajo usamos mapas de calor para representar el valor del RTT tiempo de respuesta promedio en relación a la fecha y la hora del día, los valores "altos" están representados por colores cálidos y los valores "bajos" están representados por colores fríos; cabe destacar que un valor de "alto" para un red de fibra óptica puede ser "bajo" para una red satelital, de modo que estos valores dependen unicamente de los datos en la muestra. 
+
+Los mapas de calor permiten evaluar rápidamente la fluctuación del RTT durante un día especifico o notar patrones a largo plazo, otra ventaja de los mapas de calor es que es posible observar periodos de inactividad de la red como "espacios en blanco" en la gráfica ya que para estos periodos no hay datos.
+
+Los parámetros de los mapas de calor son los siguientes:
+\begin{itemize}
+	\item{\textbf{Enlace:} el enlace o tentáculo seleccionado}
+	\item{\textbf{Intervalo de agrupación:} la granularidad del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo, el valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 240 puntos por día}
+	\item{\textbf{Rango de tiempo:} ajusta el periodo de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o "todo el tiempo".}
+\end{itemize}
+
+Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y periodo de tiempo, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación sin embargo cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, sumas, etc a la base de datos, si la tabla está apropiadamente indexada esta puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciendolos directamente en la aplicacion.
+
+Como se vio previamente la tabla "TracePing" tiene los campos "time\_60", "time\_30", "time\_15", "time\_20" y "time\_10" estos campos tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra, estas columnas facilitan al SMBD a agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor; un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
+
+\begin{table}[]
+	\centering
+	\label{tab:time}
+	\begin{tabular}{l|l|l|l}
+		timezone & time                & time\_60            & time\_10            \\ \hline
+		-4:30    & 2015-11-17 22:29:42 & 2015-11-17 17:00:00 & 2015-11-17 17:50:00 \\
+		UTC      & 2015-11-17 22:29:42 & 2015-11-17 22:00:00 & 2015-11-17 22:20:00
+	\end{tabular}
+	\caption{Ejemplo de los valores de time\_60 y time\_10 para la misma traza en UTC(+0:00) y Caracas (-4:30)}
+\end{table}
+
+Para acelerar aún mas el computo, evitamos usar el ORM para hacer consultas a la base de datos, esto se debe a que, a pesar de que el ORM en el fondo haga las mismas consultas, este desperdicia tiempo y recursos en convertir estos datos crudos en los objetos correspondientes según el modelo de la base de datos, por lo tanto, es preferible construir nuestras propias consultas SQL.
+
+La consulta realizada para retirar los valores de la base se puede ver a continuacion:
+
+\begin{lstlisting}[language=SQL,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false]
+SELECT time_n,AVG(rtt)
+FROM traceping 
+WHERE link_id=x AND time >= s AND time <= f AND rtt>0
+GROUP BY time_n
+
+\end{lstlisting}
+
+Donde:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+	\item{n: es el periodo de agrupación}
+	\item{x: es el id del enlace}
+	\item{s: es la fecha inicial}
+	\item{f: es la fecha final}
+\end{itemize}
+
+Esta consulta retorna entonces el promedio del valor del RTT de las trazas agrupadas según su intervalo de agrupamiento, ya teniendo estos datos es trivial desplegar el mapa de calor usando highcharts, sencillamente se prepara un arreglo de tuplas de tipo $<$fecha,hora,rtt promedio$>$ donde fecha es el día mes y año del grupo, hora es un flotante entre 0 y 24 que resulta de sumar la hora (0-23) al minuto dividido entre 60.
+
 \subsubsection{Cálculo de horas activas}
+
+En el marco de este trabajo llamaremos a una hora "activa" cuando se pudieron recoger al menos el 50\% de las muestras durante esa hora, análogamente una hora "inactiva" es aquella donde no se pudieron recoger el 50\% de las muestras, este concepto es útil para determinar la disponibilidad y calidad de un servicio, si tenemos una prueba tal que se esté recogiendo una muestra cada 5 segundos, entonces la hora se consideraría activa si se obtienen al menos 720*0.5 muestras durante esa hora.
+
+Al igual que el algoritmo anterior, debemos agrupar las trazas y contar el número de trazas por hora, afortunadamente podemos aprovechar la columna "time\_60" para hacer este agrupamiento, luego debemos comparar con el número de trazas esperado para esa hora específica, determinar el número de trazas esperado puede hacerse de varias maneras, la primera de ellas es buscar en el plan de monitoreo los parámetros que estuvieron activos para esa hora, sin embargo la tabla TracePing tiene un campo 'interval' que podemos usar para este propósito.
+
+Sabiendo esto, la consulta a la base de datos queda así:
+
+\begin{lstlisting}[language=SQL,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
+SELECT time_60, COUNT(*), AVG(`interval`)
+FROM traceping
+WHERE link_id=x AND time_60 >= s AND time_60 < f AND rtt>0
+GROUP BY time_60
+\end{lstlisting}
+
+Donde:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+	\item{x: es el id del enlace}
+	\item{s: es la fecha inicial}
+	\item{f: es la fecha final}
+\end{itemize}
+
+La consulta anterior retorna: un timestamp que representa la hora de agrupación, el número de muestras recogidas esa hora, y el intervalo entre pruebas promedio; calculamos el promedio ya que el usuario puede cambiar cualquier parámetro en cualquier momento, de modo que una misma hora puede tener muestras tomadas con distinto tiempo entre pruebas, si calculamos el promedio obtendremos un valor que es al menos "suficientemente bueno" para determinar la cantidad de muestras esperada.
+
+El algoritmo completo de cálculo de horas activas se puede ver a continuación: 
+
+\begin{algorithm}[H]
+	\caption{Calculo de horas activas}\label{alg:sync}
+	\begin{algorithmic}[1]
+		\Procedure{active\_hours}{parameters}
+		\State $\textit{link} \gets \Call{Get}{Link,id=parameters.link\_id}$ \Comment{Retira el enlace por su id}
+		
+		\State $\textit{start\_date} \gets \textit{parameters.start\_date} $
+		\State $\textit{start\_date} \gets \textit{parameters.end\_date} $
+			\State $\textit{array} \gets \text{get data from sql query}$\Comment{Ejecuta la consulta a la base de datos}
+			\State $\textit{days} \gets (\textit{start\_date}-\textit{end\_date}).\Call{days}{} $ \Comment{Número de dias total}
+			\State $\textit{total\_hours} \gets \textit{days}*24$
+			\State $\textit{hours} \gets \text{array[24]}$\Comment{Arreglo tamaño 24 inicializado en 0}
+			\If{\textit{array} lenght $>$ 0}
+				\State $\textit{j} \gets 0$
+				\For{\textit{i} \textbf{in} \Call{Range}{0,total\_hours}}
+					\State $\textit{current\_hour} \gets \textit{start\_date}+i$ \Comment{Suma a la hora inicial i horas}
+					\If{\textit{array[j][0]} = \textit{current\_hour}}
+						\If{\textit{j}= length of \textit{ array}} \Call{break}{} \EndIf
+						\If{\textit{array[j][1]} $\geqslant$ 1800/\textit{array[j][2]}}\Comment{Condicion para que la hora sea activa}
+							\State $ \textit{hours[i\%24]} \gets \textit{hours[i\%24]}+1$ \Comment{le suma a las horas activas para esa hora}
+						\EndIf
+					\EndIf
+					\State $\textit{j} \gets\textit{j} +1$
+				\EndFor
+			\EndIf
+		\Return \textit{hours}
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+El algoritmo totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es trivial calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
 
 \subsubsection{Cálculo de días activos}
 
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, como se explicó en la Subsección \ref{sub:disponibilidad} 
+
 \subsubsection{Cálculo de periodos de actividad continúa}
+
+\subsubsection{Cálculo de mapas geo-ip}
 
 \section{Casos de Uso}
 
@@ -1353,6 +1566,8 @@ ver visualizacion compartida
 ver reporte publico
 ---- usuario monitor -----
 recuperar contraseña
+cambiar contraseña
+vincular y revincular dropbox
 ver monitores
 ver pagina de ayuda
 monitores >
@@ -1413,8 +1628,70 @@ reiniciar celery cluster
 
 \chapter{Framework de integración de pruebas}
 
+\subsection{Cargador de visualizaciones}
+
+Uno de los objetivos fundamentales de la aplicacion web es ofrecer al usuario visualizaciones de los datos obtenidos a partir del monitoreo, ya que las visualizaciones pueden ser cualquier código HTML arbitrario desde simples tablas hasta complejas gráficas interactivas, mapas web o cualquier combinación de los anteriores, es imperativo tener una interfaz única que sea capaz de desplegar el formulario de configuración, solicitar asincronamente la gráfica al servidor a partir de los parámetros suministrados y desplegarla en el navegador del usuario, a su vez el servidor web debe tener un método para buscar en el cache o seleccionar y computar las visualizaciónes solicitadas de forma genérica. 
+
+Para entender los requisitos del cargador de visualizaciones, debemos entender el flujo de trabajo para observar resultados desde el punto de vista del usuario:
+\begin{enumerate}
+	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles}
+	\item{El sistema muestra un formulario para configurar la visualización}
+	\item{El usuario configura la visualización y hace click en "PLOT"}
+	\item{El sistema muestra una animación indicando que está cargando la visualización}
+	\item{La visualización es desplegada}
+\end{enumerate}
+
+Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sistema se guardan en la base de datos 
+
+\begin{enumerate}
+	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
+	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
+	\item{El usuario hace click en el boton "PLOT" para graficar}
+	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
+	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
+	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
+	\item{El servidor }
+	
+	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
+	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
+	\item{El usuario hace click en el boton "PLOT" para graficar}
+	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
+	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
+	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
+	\item{El servidor }
+\end{enumerate}
+
 \chapter{Conclusiones y Recomendaciones}
 
+Through the development of this work we built both a lightweight but powerful network monitor capable of monitoring links in arbitrary network setups as well as a web platform to manage, gather data and analyze the results from these monitors.
+
+The most relevant accomplishments made from a computational standpoint are listed below: 
+We built a monitor with the minimal amount of code to schedule periodic monitoring tasks according to a configuration file shared with the web app, the monitor, built in python is lightweight and perfect to deploy on embedded and low cost devices.
+We established a zero-cost file synchronization scheme between the web server and the remote monitors through the use of the free quotas that cloud storage services like Dropbox offer.
+A framework to easily integrate new tests and visualizations was designed and implemented, the framework was tested with three test types:
+Ping test: uses the ping command to determine round trip time between the monitor and a certain node, with this test it is possible to infer network congestion as well as activity and inactivity periods.
+HTTP test: sends an HTTP head request to determine the response time as well as status code, useful to determine availability of web services, activity and inactivity periods and infer about server congestion based on response time.
+Traceroute test: uses the traceroute command to determine the route that a package follows through a network to reach a certain node, this test can be used to find routing inefficiencies, congestion related to certain hosts and of course reachability.
+Several data visualization methods were conceptualized and proved to be a great way to infer facts about the network behavior, a prime example of this are latency heatmaps which are useful not only to get an idea about the latency at certain moments but clearly display patterns and inactivity periods as white spaces.
+An architecture able to handle the data gathering and visualization generation tasks efficiently with the available resources was defined, with the appropriate delegation of long-running and I/O blocking tasks a single web server is able to quickly handle more requests, that would otherwise be queued (or worse, dropped) increasing response times.
+We found a multi-layered modular architecture that can be scaled indefinitely, each part of the stack can be scaled independently to avoid possible bottlenecks, the challenges and considerations to scale certain components were analyzed and possible solutions were proposed.
+
+Through the development of this work we performed tests to determine the performance and stability of both the web server stack and the network monitor on real deployment environments, including real life use cases.
+
+A test monitor was deployed to test critical services of ULA’s network like ula.ve home page and saber.ula.ve knowledge repository, this test monitor has been running uninterrumptly since august 6th 2015 to the current date. The monitor proved to be stable and showed no apparent memory leaks that would slow its execution even after prolonged periods of time.
+The web app was deployed at a test server machine, constant integration and testing of new features in a production enviroment was crucial in the development of the test integration workflow, the web app is available at the following URL: http://150.185.138.59/octopusmonitor.
+The shared datastore synchronization along with the Dropbox API integration at the web app showed to be a reliable way to transfer the data from the monitor to the web app, although there is a limit for the API requests that can be made for each authenticated user, this limit has proven to be high enough even with the highest synchronization frequency.
+At the moment of the writing of this paragraph more than 1161533 traces has been synchronized  though this mechanism.
+The web app task scheduler proved to be reliable at launching tasks at the proper time as well as quick to update its internal state after changes to the schedule on the database were made.
+The test integration workflow was successfully executed several times during the development, allowing downtimes of merely a few minutes during each update deployment.
+Stress tests were performance against different server setups
+Although making analysis over the collected data it is out of the scope of this work, we made useful discoveries about the latency, availability, uptime, and reachability of the monitored links, for example, we found a clear pattern of lower and stable latency between the first hour of the day and the early hours of the morning that matches the usual pattern of network congestion, we found constant downtimes for the ula.ve home page as well as higher response time compared to saber.ula.ve, we found that both saber.ula.ve and ula.ve rejected ICMP echo requets and could only be monitored through the use HTTP, just to name a few relevant results.
+
+Future Work
+
+One of the key features that might make a network monitoring system attractive for potential users is having the ability to automatically detect when critical conditions are met and alert the user proactively, emitting push notifications through a mobile app or sending sms or email. Alerts could be attached to tests and conditions could be checked after every synchronization is performed. Examples of critical conditions that could trigger alerts are: a link goes down during a prolonged period of time, the latency is above a set threshold, a server is returning http status 500, etc. 
+
+Another obvious feature is the inclusion of other monitor types, currently we provide support only for one kind of monitor thought for low-cost devices that could be left unattended and are only able to perform tests periodically. New monitor types running in more powerful devices open up various possibilities where users are able to interact through the web app with their monitors, executing tests on-demand or even streaming data directly to the client, either by using the web app as a relay between the monitor and the client, or establishing a direct connection between the client and the monitor. 
 
 
 % ***************************************************************** %
