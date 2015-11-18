@@ -1517,13 +1517,13 @@ La consulta anterior retorna: un timestamp que representa la hora de agrupación,
 El algoritmo completo de cálculo de horas activas se puede ver a continuación: 
 
 \begin{algorithm}[H]
-	\caption{Calculo de horas activas}\label{alg:sync}
+	\caption{Calculo de horas activas}\label{alg:horasactivas}
 	\begin{algorithmic}[1]
 		\Procedure{active\_hours}{parameters}
 		\State $\textit{link} \gets \Call{Get}{Link,id=parameters.link\_id}$ \Comment{Retira el enlace por su id}
 		
 		\State $\textit{start\_date} \gets \textit{parameters.start\_date} $
-		\State $\textit{start\_date} \gets \textit{parameters.end\_date} $
+		\State $\textit{end\_date} \gets \textit{parameters.end\_date} $
 			\State $\textit{array} \gets \text{get data from sql query}$\Comment{Ejecuta la consulta a la base de datos}
 			\State $\textit{days} \gets (\textit{start\_date}-\textit{end\_date}).\Call{days}{} $ \Comment{Número de dias total}
 			\State $\textit{total\_hours} \gets \textit{days}*24$
@@ -1548,11 +1548,88 @@ El algoritmo completo de cálculo de horas activas se puede ver a continuación:
 
 El algoritmo totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es trivial calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
 
+\subsubsection{Cálculo de periodos de actividad continúa}
+
+Como se dijo en la Subsección \ref{sub:disponibilidad} llamaremos "actividad continua" a un evento durante el cual un servicio está continuamente disponible para un cliente, en este trabajo un servicio está disponible en un instante de tiempo cuando se ha capturado exitosamente una muestra durante ese instante, en caso contrario se guarda un valor de rtt de "-1" indicando que el servicio no estaba disponible, las pruebas que usamos para determinar periodos de actividad continua son las de ping y httping ya que ambas realizan un trabajo similar, pero usando protocolos distintos.
+
+El algoritmo de cálculo de periodos de actividad continúa recorre las trazas para el intervalo de tiempo seleccionado extendiendo periodos de actividad cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es positivo (hubo respuesta del TPS y por lo tanto el servicio está disponible) y de forma análoga extiende periodos de inactividad continua cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es -1 (no hubo respuesta). La consulta a la base de datos es muy sencilla ya que solo hace falta consultar el rtt y marca de tiempo de las trazas ordenadas por tiempo:
+
+\begin{lstlisting}[language=SQL,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
+SELECT time,rtt
+FROM traceping
+WHERE link_id=x AND time >= s AND time <= f
+ORDER BY time
+\end{lstlisting}
+
+Donde:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+	\item{x: es el id del enlace}
+	\item{s: es la fecha inicial}
+	\item{f: es la fecha final}
+\end{itemize}
+
+El algoritmo comienza ejecutando la consulta a la base y verifica que se tenga al menos una muestra, en caso de no tener muestras, a falta de información el periodo se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un periodo activo y se marca el inicio del periodo como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del periodo activo al tiempo de la traza negativa, este proceso se repite análogamente para el periodo inactivo así hasta llegar a la última traza, cada vez que se determina un periodo este se añade a una lista correspondiente. Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
+
+\begin{algorithm}[h!]
+	\caption{Calculo de periodos de actividad continua}\label{alg:continuo}
+	\begin{algorithmic}[1]
+		\Procedure{continuous\_activity}{parameters}
+		\State $\textit{link} \gets \Call{Get}{Link,id=parameters.link\_id}$ \Comment{Retira el enlace por su id}
+		
+		\State $\textit{start\_date} \gets \textit{parameters.start\_date} $
+		\State $\textit{end\_date} \gets \textit{parameters.end\_date} $
+		\State $\textit{traces} \gets \text{get data from sql query}$\Comment{Ejecuta la consulta a la base de datos}
+		
+		\State $\textit{num\_traces} \gets \text{length of } \textit{ traces}$
+		
+		\State $\textit{active\_periods} \gets \text{new array}$
+		\State $\textit{inactive\_periods} \gets \text{new array}$
+		
+		\If{\textit{num\_traces} = 0}
+			\State $\text{append to } \textit{inactive\_periodos } ( \textit{start\_date},\textit{end\_date})$
+			
+			\Return $\textit{active\_periods}, \textit{inactive\_periods}$
+		\EndIf
+		
+		
+		\State $\textit{period\_start} \gets \textit{start\_date} $
+		\If{\textit{traces[0][1]} $>$ 0} 
+			\State $\textit{period\_active} \gets \textbf{True}$
+		\Else
+			\State $\textit{period\_active} \gets \textbf{False}$
+		\EndIf
+		
+		\For{\textit{i} \textbf{in} \Call{Range}{1,\textit{num\_traces-1}}}
+			\If{\textit{period\_active} \textbf{and} \textit{traces[i][1] $<$0}}
+				\State $\text{append to } \textit{active\_periods } (duration,period\_start,traces[i][0])$
+				\State $\textit{period\_active} \gets \textbf{False}$
+				\State $\textit{period\_start} \gets \textit{traces[i][0]} $
+			\Else{ \textbf{if} !\textit{period\_active} \textbf{and} \textit{traces[i][1] $>$0} \textbf{then}}
+				\State $\text{append to } \textit{inactive\_periods } (duration,period\_start,traces[i][0])$
+				\State $\textit{period\_active} \gets \textbf{True}$
+				\State $\textit{period\_start} \gets \textit{traces[i][0]} $
+			\EndIf
+		\EndFor
+		
+		\If {\textit{period\_active}}
+			\State $\text{append to } \textit{active\_periods } (duration,period\_start,end\_time)$
+		\Else
+			\State $\text{append to } \textit{inactive\_periods } (duration,period\_start,end\_time)$
+		\EndIf
+		
+		\Return $\textit{active\_periods}, \textit{inactive\_periods}$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+
 \subsubsection{Cálculo de días activos}
 
-A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, como se explicó en la Subsección \ref{sub:disponibilidad} 
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua 
 
-\subsubsection{Cálculo de periodos de actividad continúa}
+
+
+
 
 \subsubsection{Cálculo de mapas geo-ip}
 
