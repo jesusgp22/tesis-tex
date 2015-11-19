@@ -1055,11 +1055,11 @@ La aplicación web "Octopus Head" hace las veces de interfaz entre el usuario fin
 
 \section{Diseño del sistema}
 
-Para el desarrollo de esta aplicación web se usó el Framework de desarrollo web Django que implementa un patrón MVC, ya que nuestra aplicación web se encargará de manejar tareas computacionalmente intensas, o de largo tiempo de ejecución, Django se integró con el sistema de procesamiento de tareas distribuido Celery, esto no solo con la finalidad de que el servidor web pueda delegar estas tareas y responder rápidamente al usuario, sino también para permitir una mejor escalabilidad del sistema, que entonces podrá responder a un mayor número de peticiones por unidad de tiempo.
+Para el desarrollo de esta aplicación se usó el Framework de desarrollo web Django que implementa un patrón MVC, ya que nuestra aplicación web se encargará de manejar tareas computacionalmente intensas, o de largo tiempo de ejecución, Django se integró con el sistema de procesamiento de tareas distribuido Celery, esto no solo con la finalidad de que el servidor web pueda delegar estas tareas y responder rápidamente al usuario, sino también para permitir una mejor escalabilidad del sistema, que entonces podrá responder a un mayor número de peticiones por unidad de tiempo.
 
 \subsection{Arquitectura}
 
-La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, administrador o quien sea que vea los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de negocio que es ejecutada por el servidor web que responde a las peticiones de los usuarios, delega tareas a la capa tres y retira y actualiza datos de la capa cuatro, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, etc.
+La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, administrador o quien sea que vea los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de servicio que es ejecutada por el servidor web, este responde a las peticiones de los usuarios, delega tareas a la capa tres y retira y actualiza datos de la capa cuatro, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, cache, datos en la nube, etc.
 
 \begin{figure}[h]
 \centering
@@ -1068,7 +1068,74 @@ La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o cap
 \label{fig:webapp-arch}
 \end{figure}
 
-NOTA: Agregar "carriles" para que queden claras las "capas"
+NOTA: Agregar "carriles" para que queden claras las "capas", actualizar la capa de servicio web para incluir el servidor estatico y el proxy, agregar el cache.
+
+\subsection{Capa 1: Presentación}
+
+La capa de presentación o front-end es la interfaz gráfica que permite la interacción del usuario con el sistema de monitoreo, esta se despliega a través de un navegador en cualquier dispositivo conectado a Internet y su propósito es ofrecer al usuario un flujo de trabajo claro para ingresar al sistema, configurar y manejar monitores TPS, planificar pruebas, observar los resultados obtenidos, entre otros.
+
+La capa de presentación puede ser extendida para permitir la implementación de distintos front-ends como aplicaciones nativas para sistemas operativos móviles o de escritorio a través de APIs programáticas. 
+
+\subsection{Capa 2: Servidor Web}
+
+El servidor web es el punto de entrada a la aplicacion, este responde a las peticiones realizadas desde el front-end a través del protocolo HTTP, el enfoque del servidor web es manejar tareas ligeras de la forma mas rápida posible y retornar respuestas para ofrecer al usuario baja latencia en su interacción con el sistema. 
+
+La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas, de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice; esto hace posible manejar un mayor numero de usuarios que visiten concurrentemente el sitio, igualmente el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
+
+El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a cada usuario particular que visite el sistema y peticiones de archivos estáticos como css, javascript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar severamente el servidor web en entornos de producción.
+
+Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como proxy entre el front-end y la aplicacion web, para esto existe una gran variedad de servidores ligeros como ngnix o lighthttpd, está tendrá una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. la aplicacion web podrá correr entonces en un proceso separado sobre un servidor web y solo atenderá peticiones dinámicas y se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
+
+\begin{table}[]
+	\centering
+
+	\label{table:routing}
+	\begin{tabular}{l|l}
+		& Acción            \\ \hline
+		/static/ & static serve      \\
+		/media/  & static serve      \\
+		/        & proxy to web  app
+	\end{tabular}
+	
+		\caption{Tabla de enrutamiento del servidor web}
+\end{table}
+
+\subsection{Capa 3: Procesamiento asíncrono de tareas}
+
+Mantener el servidor web ocupado con tareas largas puede degradar su calidad de servicio y ocupar rápidamente sus recursos disponibles, mas aún muchas veces no es posible dejar al usuario esperando indefinidamente, por este motivo es menester tener un sistema de procesamiento asíncrono de tareas, de manera que las tareas se puedan mandar a ejecutar y ofrecer una respuesta inmediata al usuario.
+
+Ya que es imposible conocer de antemano el número de tareas que se van a estar ejecutando concurrentemente necesitamos una manera de encolar las tareas para que puedan ser ejecutadas cuando alguno de los trabajadores se desocupe, de igual forma, para la implementación de de sincronización periódicas de los monitores, necesitamos tener un planificar que inicie las tareas según el horario definido.
+
+La inmensa mayoría de las peticiones realizadas por los usuarios pueden ser manejadas directamente por el servidor web, las tareas delegadas a este capa son las siguientes:
+\begin{itemize}
+	\item{\textbf{Conexiones con la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse "de largo tiempo de ejecucion" ya que es necesario obtener recursos presentes en Internet.}
+	\item{\textbf{Computo de visualizaciones:} el tiempo y poder de computo necesario para generar visualizaciones depende altamente de la visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando largos periodos de tiempo.}
+	\item{\textbf{Sincronizaciones:} las sincronizaciones combinan varias subtareas altamente costosas: la primera de ellas es descargar los archivos de la nube, esto depende altamente de la cantidad de archivos por descargar y el tamaño de los archivos, la segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos, la tercera es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
+\end{itemize}
+
+El sistema de procesamiento asíncrono de tareas está construido usando Celery, Celery no es solo cada uno de los micro-servicios necesarios para el procesamiento de las tareas, sino también el protocolo de comunicación entre ellos, a continuación se explica cada uno de los micro-servicios y su implementación en el marco de Octopus Head.
+
+\subsubsection{Planificador}
+
+El planificador retrasa la ejecucion de tareas según un horario de ejecucion dado, Celery incluye un planificador llamado Celery Beat que se ha integrado con Django usando la base de datos del sistema como 'back-end' el 'back-end' de planificador es el almacén donde el planificador guarda las tareas que debe mandar a ejecutar.
+
+he scheduler kicks off periodic scheduled tasks at the right time, we use both Celery Beat with the Django database backend, the scheduler constantly checks the database for changes and acts accordingly inserting deleting and re-schedule periodic tasks into it’s internal state. it is important to notice that the scheduler can’t be scaled horizontally as we have to be very careful to ensure that no periodic task is scheduled in more than one scheduler, even then it is unlikely that the scheduler needs to be scaled in the short run.
+
+
+
+\subsubsection{Cola de tareas}
+
+\subsubsection{Trabajadores}
+
+\subsubsection{Backend}
+
+\subsection{Capa 4: Datos}
+
+\subsubsection{Base de Datos}
+
+\subsubsection{Cache}
+
+\subsubsection{Alojamiento en la nube}
 
 \subsection{Modelo de la base de datos}
 
@@ -1225,7 +1292,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 \subsection{Diseño de Pantallas}
 
-Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos css y la lógica en archivos javascript para desplegar una pagina web adaptad al dispositivo del usuario.
+Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos css y la lógica en archivos javascript para desplegar una pagina web adaptada al dispositivo del usuario.
 
 Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama 'rendering'.
 
@@ -1622,16 +1689,111 @@ El algoritmo comienza ejecutando la consulta a la base y verifica que se tenga a
 	\end{algorithmic}
 \end{algorithm}
 
-
 \subsubsection{Cálculo de días activos}
 
-A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua 
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), con la excepción de que este funciona separando las trazas por días, y luego ejecutando el algoritmo de termina cuando encuentra un periodo de al menos una hora de actividad continua para un día especifico.
 
+Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfico de barras indicando el porcentaje de días activos, también es necesario determinar la cantidad de días totales en el periodo seleccionado por el usuario, luego cuando se tenga el total de días activos por día de la semana se puede dividir entre los días totales, un ejemplo del resultado deseado como salida del algoritmo de días activos puede ser visto en la Tabla \ref{table:diasactivos}
 
+\begin{table}[h]
+	\centering
+	
+	\label{table:diasactivos}
+	\begin{tabular}{l|l|l|l|l|l|l|l}
+		& L   & M   & W    & J   & V   & S & D   \\ \hline
+		Activos  & 4   & 5   & 3    & 4   & 4   & 3 & 4   \\
+		Porcentaje & 100 & 100 & 60 & 100 & 100 &75   & 100 \\
+		Totales    & 4   & 5   & 5    & 4   & 4   & 4 & 4  
+	\end{tabular}
+	
+	\caption{Tabla de días activos para el mes de septiembre del servidor de  RESIDE}
+\end{table}
 
+Para facilitar la comprensión del algoritmo este se va a separar en tres subrutinas, el Algoritmo \ref{alg:diastotales} corresponde al cálculo de días totales en el periodo, el Algoritmo \ref{alg:separardias} corresponde a la separación de trazas por día y el Algoritmo \ref{alg:diasactivos} corresponde al computo de días activos.
 
+\begin{algorithm}
+	\caption{Calculo de días totales}\label{alg:diastotales}
+	\begin{algorithmic}[1]
+		\Procedure{total\_days}{start\_date,end\_date}
+		\State $\textit{number\_of\_days} \gets (\textit{end\_date} - \textit{start\_date}).\Call{Days}{}$
+		
+		\State $\textit{total\_days} \gets \text{array[7]}$ \Comment{Arreglo de tamaño 7 inicializado en 0}
+		\For{\textit{i} \textbf{in} \Call{Range}{0,number\_of\_days}}
+			\State $\textit{current\_day} \gets \textit{start\_date} + 1$ \Comment{Suma a la fecha inicial un día}
+			\State $\textit{weekday} \gets \textit{current\_day}.\Call{Weekday}{}$\Comment{Toma el día de la semana de la fecha}
+			\State $\textit{total\_days[weekday]} \gets \textit{total\_days[weekday]} +1 $
+		\EndFor
+		\Return \textit{total\_days}
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
 
-\subsubsection{Cálculo de mapas geo-ip}
+\begin{algorithm}
+	\caption{Separación de trazas por día} \label{alg:separardias}
+	\begin{algorithmic}[1]
+		\Procedure{split\_traces}{traces}
+		\State $\textit{days} \gets \text{empty dictionary}$
+		
+		\For{\textit{trace} \textbf{in} \textit{traces}}
+		\State $\textit{ordinal} \gets \textit{trace[0].\Call{toordinal}{}}$ \Comment{Obtiene el ordinal proléptico gregoriano de la fecha}
+		\If{\textit{ordinal} \textbf{in} \textit{days}}
+			\State $\text{append} \textit{ trace } \text{to} \textit{days[ordinal]}$
+		\Else
+			\State $\textit{days[ordinal]} \gets \text{empty list}$
+			\State $\text{append} \textit{ trace } \text{to} \textit{days[ordinal]}$
+		\EndIf
+		\EndFor
+		\Return \textit{days}
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{Cálculo de días activos} \label{alg:diasactivos}
+	\begin{algorithmic}[1]
+		\Procedure{active\_days}{parameters}
+		
+		
+		\State $\textit{link} \gets \Call{get}{Link,id=parameters.link\_id}$
+		
+		\State $\textit{start\_date} \gets \textit{parameters.start\_date}$
+		
+		\State $\textit{end\_date} \gets \textit{parameters.end\_date}$
+		
+		\State $\textit{total\_days} \gets \Call{Total\_days}{start\_date,end\_date}$
+		
+		\State $\textit{active\_days} \gets array[7]$ \Comment{Arreglo tamaño 7 inicializado en 0}
+		
+		\State $\textit{traces} \gets \text{get data from sql query} $\Comment{ejecuta la consulta a la base de datos}
+		
+		\State $\textit{days} \gets \Call{Split\_traces}{traces}$
+		
+		\For{\textit{key} \textbf{in} \textit{days}.\Call{keys}{}} \Comment{itera el diccionario por claves}
+			\State $\textit{active\_period} \gets 0$
+			\State $\textit{traces} \gets \textit{days[key]} $
+			\State $\textit{length} \gets \text{length of} \textit{ traces}$
+			\For{\textit{i} \textbf{in} \Call{Range}{1,length}}
+				\If{traces[i][1]>0}
+					\State $delta\_seconds \gets traces[i][0] - traces[i-1][0]$
+					\State $active\_period \gets active\_period + delta\_seconds$
+					\If{active\_period $>$ 3600} \Comment{El día es activo}
+						\State $weekday \gets traces[i][0].\Call{Weekday}{}$
+						\State $active\_days[weekday] \gets active\_days[weekday] + 1$
+						\State $\textbf{break}$
+					\EndIf
+				\Else
+					\State $\textit{active\_period} \gets 0$
+				\EndIf
+			\EndFor		
+		\EndFor
+		
+		\Return \textit{total\_days,active\_days}
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+	\subsection{Cache de visualizaciones}
+
 
 \section{Casos de Uso}
 
@@ -1699,8 +1861,6 @@ actualizar base de datos
 reiniciar servidor
 reiniciar celery cluster
 
-\section{Caching de gráficas}
-
 \section{Pruebas de Rendimiento}
 
 \chapter{Framework de integración de pruebas}
@@ -1740,7 +1900,7 @@ Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sist
 
 \chapter{Conclusiones y Recomendaciones}
 
-Through the development of this work we built both a lightweight but powerful network monitor capable of monitoring links in arbitrary network setups as well as a web platform to manage, gather data and analyze the results from these monitors.
+A través del desarrollo de este trabajo, construimos un agente monitor de redes ligero y a la vez flexible, capaz de monitorear enlaces en despliegues arbitrarios de red tales como redes comunitarias; y una plataforma web para manejar, recolectar y analizar la data generada por los monitores remotos.
 
 The most relevant accomplishments made from a computational standpoint are listed below: 
 We built a monitor with the minimal amount of code to schedule periodic monitoring tasks according to a configuration file shared with the web app, the monitor, built in python is lightweight and perfect to deploy on embedded and low cost devices.
