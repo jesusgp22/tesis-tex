@@ -697,7 +697,7 @@ Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferenci
 
 Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
 
-\chapter{Monitor de Red "Tentacle Monitor"}
+\chapter{Monitor de Red "Tentacle Monitor"} \label{cap:monitor}
 
 Tentacle Monitor es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo.
 
@@ -1113,31 +1113,73 @@ La inmensa mayoría de las peticiones realizadas por los usuarios pueden ser mane
 	\item{\textbf{Sincronizaciones:} las sincronizaciones combinan varias subtareas altamente costosas: la primera de ellas es descargar los archivos de la nube, esto depende altamente de la cantidad de archivos por descargar y el tamaño de los archivos, la segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos, la tercera es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
 \end{itemize}
 
-El sistema de procesamiento asíncrono de tareas está construido usando Celery, Celery no es solo cada uno de los micro-servicios necesarios para el procesamiento de las tareas, sino también el protocolo de comunicación entre ellos, a continuación se explica cada uno de los micro-servicios y su implementación en el marco de Octopus Head.
+El sistema de procesamiento asíncrono de tareas está construido usando Celery, Celery no es solo cada uno de los micro-servicios necesarios para el procesamiento distribuido de las tareas, sino también el protocolo de comunicación entre ellos. Hay que tener en mente que el esquema de Celery \textbf{no incluye ninguna autoridad central} que lleve la cuenta de todos los entes participantes. A continuación se explica cada uno de los micro-servicios y su implementación en el marco de Octopus Head. 
 
 \subsubsection{Planificador}
 
-El planificador retrasa la ejecucion de tareas según un horario de ejecucion dado, Celery incluye un planificador llamado Celery Beat que se ha integrado con Django usando la base de datos del sistema como 'back-end' el 'back-end' de planificador es el almacén donde el planificador guarda las tareas que debe mandar a ejecutar.
+El planificador retrasa la ejecucion de tareas según un horario dado, Celery incluye un planificador llamado Celery Beat que se puede configurar fácilmente para usar la base de datos de la aplicacion web a modo de almacén para sus tareas a ejecutar. Celery Beat consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicacion web solo modifica esa tabla y deja que Celery Beat se encargue de inciar las tareas en el momento adecuado.
 
-he scheduler kicks off periodic scheduled tasks at the right time, we use both Celery Beat with the Django database backend, the scheduler constantly checks the database for changes and acts accordingly inserting deleting and re-schedule periodic tasks into it’s internal state. it is important to notice that the scheduler can’t be scaled horizontally as we have to be very careful to ensure that no periodic task is scheduled in more than one scheduler, even then it is unlikely that the scheduler needs to be scaled in the short run.
+El planificador Celery Beat no funciona muy distinto al planificador usado por el monitor, a diferencia de que Celery Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
 
+\subsubsection{Broker de Mensajería}
 
+El broker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan usando una o mas colas de prioridad. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando ciertas tareas rápidamente al tope la cola. 
 
-\subsubsection{Cola de tareas}
+Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes a la carpeta del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, las sincronizaciones planificadas por otra parte pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable.
+
+Existen distintos sistemas que pueden hacer el papel de broker de mensajería, algunas opciones populares incluyen RabbitMQ, un sistema de mensajería robusto y persistente, Redis del que se habló en la Sección \ref{sub:redis} o algún SMBD, la elección del message broker debe depender de volumen de tareas que se va a manejar, el uso de base de datos puede ser aceptable cuando se maneja una cantidad reducida de tareas, pero sistemas más rápidos como RabbitMQ y Redis son preferibles en entornos de producción.
 
 \subsubsection{Trabajadores}
 
-\subsubsection{Backend}
+Los trabajadores son los encargados de ejecutar las tareas encoladas, estos se subscriben a una o mas colas y toman las tareas en el tope, determinar la cantidad necesaria de trabajadores para cada cola es esencial para evitar que las colas crezcan indefinidamente (y por lo tanto tambien, el tiempo de espera de las tareas).
+
+Tener múltiples trabajadores permite tener un gran control sobre los recursos computacionales usados por el sistema, es posible instanciar nuevos trabajadores ejecutándose en distintas maquinas físicas durante los momentos de alta carga del sistema, y liberar estos recursos cuando no se estén usando, esto hace posible manejar una escala variable y minimiza los costos de operación.
+
+Ya que los trabajadores se pueden estar ejecutando en múltiples máquinas físicas es necesario tener alguna manera de controlarlos remotamente, para esto, los trabajadores se subscriben a una cola de 'broadcasting' de alta prioridad en la que se pueden dirigir comandos a todos o a un grupo específico de trabajadores. Existe un conjunto de comandos predefinidos para realizar acciones básicas como revocar tareas, apagar trabajadores o hacer "ping", sin embargo, también es posible implementar nuevos comandos, por ejemplo sería posible implementar un comando para que los trabajadores puedan actualizar su propio código y reiniciar, de este modo podrían aceptar nuevas tareas implementadas.
+
+\subsubsection{Backend de Resultados}
+
+Ya que Celery es un sistema distribuido sin una autoridad central que conozca el estado de todo el sistema, es necesario tener algún micro-servicio donde los distintos entes puedan publicar y consultar el estado de las tareas y su valor de retorno. Tener un backend de resultados permite hacer seguimiento del estado de las tareas e implementar mecanismos como barras de carga que indiquen el progreso de alguna tarea particularmente costosa, es posible crear estados personalizados para estos fines, los estados incorporados por omisión en el sistema se pueden ver en la Tabla \ref{table:task-states}
+
+\begin{table}[h]
+	\centering
+
+	\label{table:task-states}
+	\begin{tabular}{l|l|l}
+		Estado  & Descripcion                            & Metadata                      \\ \hline
+		PENDING & La tarea está esperando  ser ejecutada & -                             \\
+		STARTED & La tarea ha sido iniciada              & pid y hostname del trabajador \\
+		SUCESS  & La tarea se ejecuto con exito          & valor de retorno de la tarea  \\
+		FAILURE & La tarea no se ejecuto con exito       & traza de la exepcion          \\
+		RETRY   & Se está reintando ejecutar la tarea    & traza de la última excepcion  \\
+		REVOKED & La tarea se ha cancelado               & -                            
+	\end{tabular}
+	\caption{Estados de las tareas}
+\end{table}
+
+Para este sistema hemos elegido Redis como backend, ya que guarda el estado de las tares en memoria ofreciendo consultas rápidas y poco costosas a costo, el comportamiento por defecto del backend es poner un tiempo de vencimiento a sus registros, pasado el cual son eliminados y no pueden volver a ser consultados.
 
 \subsection{Capa 4: Datos}
 
+La capa de datos incluye todos los sistemas encargados de almacenar o alojar datos de forma persistente ya sea a través de bases de datos, estructuras de archivos o la nube.
+
 \subsubsection{Base de Datos}
 
-\subsubsection{Cache}
+La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parametros de conexion a Dropbox, y sirve como backend del Framework de Integracion de Pruebas del que se hablará en el capitulo \ref{cap:framework}.
+
+El diseño de la base de datos es uno de los pilares fundamentales del diseño del sistema, el correcto diseño e indexación de las tablas de la base de datos tiene repercusiones importantes en la escalabilidad y tiempo de respuesta del sistema, el diseño de la base de datos se explica a fondo en la Sección \ref{sub:basededatos}
+
+\subsubsection{Caché de archivos}
+
+El caché de archivos es un almacén de archivos con el objetivo principal de almacenar visualizaciones pre-computadas y así evitar la repetición de procesamiento ya realizado.
+
+Los archivos se guardan en distintos directorios dependiendo del tipo de visualización, cada visualización tiene un código hash asociado que se genera a partir de sus parámetros, por lo tanto el acceso a los archivos en el caché es directo, la velocidad de búsqueda en el caché depende de la implementación del sistema de archivos (por ejemplo ext3, ext4, XFS), los sistemas de archivos modernos pueden manejar cientos de miles de archivos en el mismo directorio sin ningún problema de rendimiento. Usar un caché de archivos ciertamente es mas lento que usar un caché en memoria pero es capaz de almacenar una cantidad mucho mayor de datos a un menor costo. 
 
 \subsubsection{Alojamiento en la nube}
 
-\subsection{Modelo de la base de datos}
+El alojamiento en la nube sirve como intermediario entre la aplicacion web OH y los monitores remotos TPS, la nube ofrece muchas ventajas con respecto a la escalabilidad y facilidad de implementación del sistema. Usamos el alojamiento en la nube para guardar los archivos de trazas generados por los monitores en las redes remotas y también a modo de "buzón" para enviar mensajes a los monitores remotos. 
+
+\subsection{Diseño de la base de datos} \label{sub:basededatos}
 
 La base de datos de Octopus Head esencialmente modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), los resultados obtenidos para cada tentáculo (o monitor) de cada una de sus pruebas, las pruebas y sus parámetros, el historial de cambios en el plan de monitoreo, entre otros. Ya que Django usa un ORM para manejar la base de datos, desde el punto de vista de la aplicación cada entidad es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos, como herencia de clases, clases abstractas implementación de métodos específicos a un modelos y sobrecarga de métodos de los padres, a continuación se describen las entidades que se desa modelar:
 
@@ -1792,7 +1834,7 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 	\end{algorithmic}
 \end{algorithm}
 
-	\subsection{Cache de visualizaciones}
+\subsection{Cache de visualizaciones}
 
 
 \section{Casos de Uso}
@@ -1863,7 +1905,7 @@ reiniciar celery cluster
 
 \section{Pruebas de Rendimiento}
 
-\chapter{Framework de integración de pruebas}
+\chapter{Framework de integración de pruebas} \label{cap:framework}
 
 \subsection{Cargador de visualizaciones}
 
