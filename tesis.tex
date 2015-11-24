@@ -2449,15 +2449,42 @@ El mecanismo general de recolección de datos se ha explicado detalladamente en l
 
 \subsection{Almacén de datos}
 
-Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas, desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en algún formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
+Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas, desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente cientos de millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en cualquier formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
 
+Estos argumentos evidencian la necesidad de definir modelos específicos diseñados para ajustarse a las necesidades de cada prueba y optimizados para facilitar y acelerar el cálculo de las visualizaciones relacionadas a las pruebas, como ya se vio con el calculo de mapas de calor para las datos de ping y httping.
 
+Al diseñar el almacén de datos el desarrollador debe tomar en cuenta las características de los resultados de las pruebas, por ejemplo, muchas pruebas podrían ajustarse fácilmente al formato de una marca de tiempo seguida por un conjunto definido de valores obtenidos para ese instante, sin embargo, los resultados de las pruebas podrían tener cualquier otra estructura o estar compuestas de datos no-esturcturados; por ejemplo, traceroute tiene como resultado una lista de \textit{n} saltos para alcanzar el host destino y cada salto a su vez está compuesto de \textit{m} sondas.
+ 
+%una primera aproximación podría ser guardar las marcas de tiempo y un identificador de la prueba en una tabla y en otra tabla guardar las sondas con su número de salto, host, ip, rtt y el id de la prueba relacionada, pero preferimos guardar en la base de datos el número de saltos total y un booleano indicando si se pudo alcanzar el host objetivo y guardar los datos de las sondas en un campo text ya que en ningún m
 
-The datastore class is necessary to store the test results (or traces) collected from the monitoring, while a single generic table with a timestamp, related link identifier and a json field to store unstructured data would suffice, this would be wasteful  and make filtering and calculating averages prohibitively inefficient, for this reason a custom-made datastore class (that will be later mapped to a database table by Django ORM) should be created to fit the needs of each specific test.
+Django incluye un poderoso ORM que puede ayudar a construir y mantener cualquier modelo de base de datos estructurada, los cambios hechos al modelo son registrados por archivos de migración que pueden ser creados en el entorno de desarrollo y luego aplicados fácilmente en el entorno de producción con un comando de migración, de esta manera crear y agregar nuevas columnas e indices a los almacenes de datos es sencillo y rápido.
 
-Django includes a powerful ORM that can help building and maintain any arbitrary sql database structure, changes done to models are tracked by migration files that can be created on the development environment and quickly applied to the production environment with a migration command. 
+\subsection{Procesamiento de archivos de trazas}
 
+Ya que los requisitos y características de cada prueba son distintas, el desarrollador de las pruebas tiene la libertad de establecer cualquier formato al guardar sus archivos de trazas, es por esto que el sincronizador no tiene una forma "generica" de procesador dichos archivos; depende del desarrollador escribir la función o \textit{parser} que tome como entrada un archivo de trazas en el formato establecido para el tipo de prueba y lo transforme en objetos a introducir en la base de datos.
 
+Para elegir la función correcta para procesar un archivo de trazas específico el mecanismo de sincronización busca en la base de datos la dirección absoluta del método y lo importa, python incluye funcionalidades para importar módulos en tiempo de ejecucion y pasar métodos a modo de variables, esto puede verse en al Algoritmo \ref{alg:loadsync}.
+
+\begin{algorithm}[h]
+	\caption{Getter de la función de sincronización}\label{alg:loadsync}
+	\begin{algorithmic}[1]
+		\Procedure{get\_parser}{test}
+		\State $\textit{function\_path} \gets \textit{test.sync\_function}$ \Comment{Se obtiene la ruta absoluta del parser}
+		
+		\State $\textit{module\_name,function\_name} \gets \text{split \textit{function\_path}}$ \Comment{Se separa la ruta separando el nombre de la funcíon del nombre del módulo}
+		
+		\State $\textit{module} \gets \Call{import}{module\_name}$ 
+		
+		\State $\textit{function} \gets \Call{get}{module,function\_name}$ \Comment{Retorna la funcion buscándola en el modulo}
+		
+		\Return $\textit{function}$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la base de datos como implementar la función en sí, la función puede vivir en cualquier parte del código pero por convención se colocan en el módulo \textit{parsing.py} dentro del paquete \textit{management}.
+
+El parser debe manejar archivos corruptos o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba, por ejemplo, no tiene sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un host en o valores imposiblemente altos, introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
 
 \section{Cargador de visualizaciones}
 
