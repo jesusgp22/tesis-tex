@@ -7,6 +7,7 @@
 
 %\usepackage[activeacute,spanish]{babel}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage{color}
 \usepackage[colorlinks]{hyperref}
 \usepackage[table,xcdraw]{xcolor}
@@ -1834,35 +1835,453 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{Cache de visualizaciones}
-
-
+\FloatBarrier
 \section{Casos de Uso}
 
------ usuario no autenticado --------
-ver pagina principal
-login
-registro
-ver visualizacion compartida
-ver reporte publico
----- usuario monitor -----
-recuperar contraseña
-cambiar contraseña
-vincular y revincular dropbox
-ver monitores
+En esta sección se explica el flujo de trabajo y casos de uso del sistema desde el punto de vista de los distintos actores del sistema: usuario no autenticado, usuario y administrador.
+
+\subsection{Usuario no autenticado}
+
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver Página Principal}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UN-01}} & \multicolumn{2}{l}{\textit{Ver página principal}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea visitar la página principal del sistema.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario escribe el URL del sitio y presional enter. \\
+			& 2 & El servidor retorna la página principal. \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si el servicio no está disponible el usuario ve un mensaje de error 503. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
+			
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Inicio de sesión}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UN-02}} & \multicolumn{2}{l}{\textit{Iniciar sesión}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ingresar al sistema.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace de login. \\
+			& 2 & El servidor muestra el formulario de login. \\
+			& 3 & El usuario ingresa sus credenciales. \\
+			& 4 & El usuario hace click en el botón login. \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si las credenciales son incorrectas el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Usuario autenticado y Pantalla "Home".}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Registro de usuario}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UN-03}} & \multicolumn{2}{l}{\textit{Registro de usuario}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea registrarse para ingresar al sistema.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{pantalla principal del sistema.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace de registro. \\
+			& 2 & El servidor muestra el formulario de registro. \\
+			& 3 & El usuario ingresa su nombre de usuario \\
+			& 4 & El usuario ingresa su contraseña\\
+			& 5 & El usuario ingresa su correo electrónico \\
+			& 6 & El usuario hace click en el botón submit \\
+			& 7 & El servidor envía un correo electrónico de confirmación \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 7 & Si el nombre de usuario o correo electronico son incorrectos el servidor informa del error. \\
+			& 8 & Si las contraseñas no coinciden el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{usuario registrado y correo enviado.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Confirmación de usuario}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UN-04}} & \multicolumn{2}{l}{\textit{Confirmación de usuario}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea confirmar su cuenta.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Correo de confirmación enviado (UN-03).}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace de confirmación \\
+			& 2 & El servidor activa la cuenta del usuario \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si el código de confirmación está vencido la activación falla. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Cuenta de usuario activa y Pantalla de Login.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Recuperar contraseña}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UN-05}} & \multicolumn{2}{l}{\textit{Recuperar contraseña}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario ha olvidado su contraseña y desea recuperarla.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de login.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "forgot password" \\
+			& 2 & El usuario ingresa su correo electrónico\\
+			& 3 & El servidor envía un correo electrónico de recuperación de contraseña\\
+			& 4 & El usuario hace click en el enlace de recuperación\\
+			& 5 & El usuario ingresa una nueva contraseña \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 6 & Si las contraseñas no coinciden el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Contraseña restablecida.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\FloatBarrier
+\subsection{Usuario}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Cambiar contraseña}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-01}} & \multicolumn{2}{l}{\textit{Cambiar contraseña}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea cambiar su contraseña.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "cambiar contraseña" \\
+			& 2 & El usuario ingresa su nueva contraseña\\
+			& 3 & El usuario confirma su nueva contraseña\\
+			& 4 & El servidor actualiza la contraseña\\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 6 & Si las contraseñas no coinciden el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Contraseña actualizada.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Vincular cuenta de Dropbox}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-02}} & \multicolumn{2}{l}{\textit{Vincular cuenta de Dropbox}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea vincular su cuenta de Dropbox con Octopus Monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "vincular cuenta de Dropbox" \\
+			& 2 & El servidor retorna un enlace a Dropbox y un formulario\\
+			& 3 & El usuario hace click en el enlace\\
+			& 4 & El usuario ingresa a Dropbox\\
+			& 5 & El usuario da permisos a la aplicacion de Octopus Monitor\\
+			& 6 & Dropbox muestra un código al usuario\\
+			& 7 & El usuario ingresa el código en el formulario\\
+			& 8 & El servidor envía el codigo a Dropbox\\
+			& 9 & Dropbox retorna el código de acceso del usuario\\
+			& 10 & El servidor actualiza el perfil del usuario\\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si el usuario no da permisos a la aplicacion el flujo termina. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Cuenta de Dropbox vinculada.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver monitores}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-03}} & \multicolumn{2}{l}{\textit{Ver monitores}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la lista de sus monitores.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla "Home".}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "monitores" en el menú lateral \\
+			& 2 & El servidor retorna la lista de los monitores\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Crear monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-04}} & \multicolumn{2}{l}{\textit{Crear monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea crear un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el boton de agregar monitor \\
+			& 2 & El servidor envía el formulario de datos básicos\\
+			& 3 & El usuario ingresa los datos básicos del monitor\\
+			& 3 & El usuario hace click en "next"\\
+			& 4 & El servidor envía el formulario de localización\\
+			& 5 & El usuario ingresa los datos de localización\\
+			& 6 & El usuario hace click en "next"\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 2 & Si los datos no son validos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de instrucciones de instalación del monitor.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-05}} & \multicolumn{2}{l}{\textit{Ver monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver los detalles de un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace "view" de un monitor \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Editar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-05}} & \multicolumn{2}{l}{\textit{Editar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar los detalles de un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el boton "edit" del monitor \\
+			& 2 & El servidor envía el formulario de edición \\
+			& 3 & El usuario ingresa los datos \\
+			& 4 & El usuario hace click en el botón "done" \\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son validos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Eliminar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-06}} & \multicolumn{2}{l}{\textit{Eliminar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el boton "delete" del monitor \\
+			& 2 & El servidor envía un dialogo de confirmación \\
+			& 3 & El usuario confirma que desea continuar \\
+			& 4 & El servidor elimina el monitor y todos las entradas relacionadas en el base de datos \\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si el usuario no confirma el flujo termina. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver Tentáculos}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-07}} & \multicolumn{2}{l}{\textit{Ver Tentáculos}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la lista de tentáculos para un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace "tentaculos" del sub-menu lateral del monitor \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Tentáculos.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Registrar tentáculo}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-08}} & \multicolumn{2}{l}{\textit{ Registrar tentáculo}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea registrar un tentáculo.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el botón "register tentacle" \\
+			& 2 & El servidor envía el formulario de registro de tentáculo\\
+			& 3 & El usuario ingresa los datos del tentáculo \\
+			& 4 & El usuario hace click en "submit" \\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Editar tentáculo}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-09}} & \multicolumn{2}{l}{\textit{ Editar tentáculo}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar un tentáculo.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el ícono de lapiz del tentáculo en la lista. \\
+			& 2 & El servidor envía el formulario de edición de tentáculo\\
+			& 3 & El usuario ingresa los datos del tentáculo \\
+			& 4 & El usuario hace click en "submit" \\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Editar localización del tentáculo}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-10}} & \multicolumn{2}{l}{\textit{ Editar tentáculo}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar la localización un tentáculo.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el ícono del marcador de mapa del tentáculo en la lista. \\
+			& 2 & El servidor envía el formulario de localizacion de tentáculo\\
+			& 3 & El usuario ingresa los datos de localización tentáculo \\
+			& 4 & El usuario hace click en "submit" \\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver plan de monitoreo}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-11}} & \multicolumn{2}{l}{\textit{ Ver plan de monitoreo}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el plan de plan de monitoreo.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "tests" en el menú lateral de navegación. \\
+			& 2 & El servidor envía un menú para seleccionar el tipo de prueba a observar\\
+			& 3 & El usuario selecciona un tipo de prueba y hace click en "view test plan" \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Plan de Monitoreo para una prueba.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Planificar prueba periódica}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-12}} & \multicolumn{2}{l}{\textit{ Planificar prueba periódica}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba de tipo periódico.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el botón "schedule periodic tests". \\
+			& 2 & El servidor envía una lista de pruebas disponibles para el monitor\\
+			& 3 & El usuario selecciona una prueba de la lista. \\
+			& 4 & El servidor envía el formulario de planificacion y configuracion de prueba \\
+			& 5 & El usuario ingresa la fecha inicial, final y el intervalo entre pruebas \\
+			& 6 & El usuario ingresa los parámetros de la prueba \\
+			& 7 & El usuario hace click en el boton "submit" \\
+			& 8 & El servidor guarda la prueba y sube un mensaje al buzón del monitor\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si la fechas son inválidas o el intervalo no es un número el servidor informa del error. \\
+			& 6 & Si alguno de los parámetros es invalido el servidor informa del error\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Planificar prueba periódica}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-13}} & \multicolumn{2}{l}{\textit{ Planificar prueba de una sola vez}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba de tipo periódico.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el botón "schedule periodic tests". \\
+			& 2 & El servidor envía una lista de pruebas disponibles para el monitor\\
+			& 3 & El usuario selecciona una prueba de la lista. \\
+			& 4 & El servidor envía el formulario de planificacion y configuracion de prueba \\
+			& 5 & El usuario ingresa la fecha inicial, final y el intervalo entre pruebas \\
+			& 6 & El usuario ingresa los parámetros de la prueba \\
+			& 7 & El usuario hace click en el boton "submit" \\
+			& 8 & El servidor guarda la prueba y sube un mensaje al buzón del monitor\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+
+
+\FloatBarrier
 ver pagina de ayuda
-monitores >
-crear monitor
-ver monitor
-editar monitor
-ver monitor
+
 >enlaces
-agregar enlaces
-ver lista de enlaces
-editar enlace
-editar geo-localizacion a enlace
+
 >pruebas
-ver pruebas
 agregar pruebas
 configurar prueba
 ver historial de cambios de la prueba
@@ -1907,7 +2326,140 @@ reiniciar celery cluster
 
 \chapter{Framework de integración de pruebas} \label{cap:framework}
 
-\subsection{Cargador de visualizaciones}
+A pesar de que Octopus Monitor incluye un conjunto de pruebas como ping, httping, traceroute y iperf que proveen datos sobre latencia, rendimiento, disponibilidad y alcanzabilidad de los enlaces y servicios monitoreados, una de sus características mas importantes es la facilidad de implementación de nuevas pruebas. 
+
+El framework de integración de pruebas le ahorra al desarrollador la repetición de las tareas comunes a todas las pruebas como definición de URLs, formularios de parámetros, lógica de las vistas, escritura de plantillas,etc. Gracias a esto, el desarrollador se puede concentrar en escribir solo el código especifico a cada prueba particular facilitando y acelerando la expansión de la aplicacion.
+
+Para entender los requisitos que resultarán en los distintos componentes que serán parte del framework, debemos entender el flujo de trabajo del monitoreo a través del cual se obtienen datos de las redes monitoreadas:
+
+\begin{enumerate}
+	\item{El usuario selecciona una prueba de la lista de pruebas disponibles para el monitor.}
+	\item{La aplicación web despliega un formulario donde el usuario puede planificar la ejecución de la prueba seleccionada y establecer sus parámetros.}
+	\item{La aplicacion web sube un mensaje al buzón del monitor de red con los detalles de la prueba planificada.}
+	\item{El monitor es notificado del nuevo mensaje, lee su contenido y prepara la prueba para su ejecucion}
+	\item{El monitor ejecuta la prueba y guarda los resultados en un archivo de trazas temporal}
+	\item{El monitor sube los archivos generados a la nube para su almacenamiento a largo plazo}
+	\item{La aplicacion web inicia una rutina de sincronización la cual descarga los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
+	\item{El usuario selecciona una visualización dada de la lista de visualizaciones disponibles y selecciona los datos y las opciones a través de un formulario.}
+	\item{El servidor busca la visualización solicitada en el caché, si no la encuentra, llama a la función correspondiente para computarla, la introduce en el cache para futuras consultas y la muestra al usuario.}
+\end{enumerate}
+
+A partir de este flujo podemos inferir los siguientes requisitos:
+
+\begin{enumerate}
+	\item{Un módulo de planificación genérico de pruebas que incluya los siguientes componentes:}
+	\begin{itemize}
+			\item{Definiciones de las pruebas disponibles}
+			\item{Una lista de parámetros para cada una de las pruebas}
+			\item{Un formulario para permitir la selección de los parámetros cada vez que el usuario planifica una prueba}
+	\end{itemize}
+	\item{Un módulo de sincronización genérico que pueda procesar los archivos de trazas y almacenar los datos de las pruebas.}
+	\item{Un módulo de análisis y visualización de los datos recolectados que incluya los siguientes componentes:}
+	\begin{itemize}
+			\item{Definiciones de las visualizaciones disponibles para los datos de cada prueba.}
+			\item{Un formulario de configuración para cada visualización.}
+			\item{Una función para computar cada visualización.}
+			\item{Un mecanismo de caching genérico.}
+			\item{Una plantilla para dibujar cada visualización.}
+	\end{itemize}
+\end{enumerate}
+
+\section{Planificación genérica de pruebas}
+
+La planificación genérica de pruebas provee una interfaz única que permite a los usuarios agregar pruebas a ejecutar para sus monitores remotos. Como ya se explicó en la Sección \ref{sub:basededatos} mantenemos en la base de datos dos tablas que describen las pruebas que son parte del sistema, la tabla "Test" que incluye los detalles básicos de cada prueba como su nombre, descripción y \textit{nombre de módulo} y la tabla "Parameter" que incluye el nombre, tipo, valor por omisión, ámbito y otros detalles de los parámetros, una prueba puede ser vista como una agregación de sus parámetros. El sistema soporta parámetros de tipo bolean, entero, flotante y cadena de caracteres, sin embargo nuevos tipos podrían ser implementados para ser parte del sistema.
+
+Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionadas, esta tabla guarda los parámetros de la prueba en formato json y la información de la planificación (intervalo entre prueba, fecha inicial (o fecha de ejecucion), fecha final, estado, etc.)
+
+Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares a partir de una fecha inicial y hasta una fecha final y pruebas de una sola ejecucion que pueden ser ejecutadas en un tiempo específico. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente, otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas mucho mas largo en caso de planificarse de forma periódica.
+
+Cuando un usuario desea planificar una prueba, el sistema filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor, de esta manera, por ejemplo, un dispositivo de bajo poder de computo como un raspberry pi no tendría disponible una prueba computacionalmente intensiva de troughput multi-flujos, esto se podría extender también para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para cada sistema operativo. Por ahora, el sistema filtra las pruebas según el esquema de planificación: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas.
+
+Cuando el usuario selecciona una prueba el sistema crea un formulario partir de la lista de parámetros, ya se mencionó que los parámetros pueden ser de tipo bolean, entero, flotante y cadena de caracteres, pero también pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace.
+
+Los formularios en Django se modelan a través de una clase "Form" que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario, cuando deseamos crear un nuevo formulario debemos crear una subclase de "Form" e incluir todos los campos que serán parte del formulario y cualquier validación especial de dichos campos.
+
+\subsection{Formulario de Parámetros de la Prueba}
+
+Es posible crear clases de forma dinámica en tiempo de ejecucion usando las características de meta-programación de python; el Algoritmo \ref{alg:formgen} muestra la estructura básica para agregar campos al formulario según el tipo de datos de los parámetros, sin embargo cada parámetro también incluye datos para determinar si el campo es obligatorio, texto de ayuda y valor por omisión.
+
+
+\begin{algorithm}[h]
+	\caption{Generación dinámica de formularios}\label{alg:formgen}
+	\begin{algorithmic}[1]
+		\Procedure{make\_parameter\_form}{test,monitor}
+		\State $\textit{parameters} \gets \text{get all parameters for } \textit{test}$
+		
+		\State $\textit{form\_fields} \gets \text{empty ordered dictionary}$
+		
+		
+		\For{\textit{field}  \textbf{in} \textit{parameters}}
+		
+		\If{field is global}
+			 \State $\textit{form\_fields[field.name]} \gets \Call{get\_field}{field.type}$
+		\Else
+			\State $\textit{links} \gets \text{all \textit{monitor} links}$
+			\For{\textit{link}  \textbf{in} \textit{links}}
+				\State $\textit{key} \gets \text{concatenate \textit{field.name} '\_' \textit{link.id}}$
+				\State $\textit{form\_fields[key]} \gets \Call{get\_field}{field.type}$
+			\EndFor
+		\EndIf
+		\EndFor
+		
+		\Return $\text{A class inheriting FORM base class containing \textit{form\_fields}}$
+		\EndProcedure
+		
+		\Procedure{get\_field}{type}
+			\If{type is boolean}
+			\Return \text{boolean field}
+			\ElsIf{type is integer}
+			\Return \text{integer field}
+			\ElsIf{type is float}
+			\Return \text{float field}
+			\ElsIf{type is string}
+			\Return \text{char field}		
+			\Else
+			\State $\textbf{throw exception } \text{"The type is unsuported"}$
+			\EndIf
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+La clase generada luego es pasada a una plantilla genérica capaz de dibujar cualquier formulario dado, cuando el usuario introduce los datos estos son validados por la misma forma, el formulario generado incluye validaciones básicas de tipos de datos, un trabajo futuro podría incluir validaciones mas complejas como intervalos máximos y mínimos para los capos numéricos o validaciones personalizables para campos  de tipo "string".
+
+\subsection{Formulario de Planificación}
+
+Junto con el formulario de parámetros debemos incluir un formulario para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola vez.
+
+La validación de este formulario es usada para asegurar las reglas de negocio del sistema:
+	\begin{enumerate}
+		\item{La fecha inicial y la fecha final no pueden ser previas al tiempo actual}
+		\item{la fecha final no puede ser previa a la fecha inicial}
+		\item{La fecha inicial no puede ser modificada después de que la prueba ya ha comenzado}
+		\item{El intervalo entre pruebas no puede ser menor o igual que 0.}
+		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor, es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo periodo}
+	\end{enumerate}
+
+Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se verifica que la prueba a insertar en el plan de monitoreo no se intercepte con ninguna otra.
+
+La pantalla de planificación genérica de pruebas puede ser vista en la figura \ref{}.
+
+\section{Sincronización genérica de datos}
+
+El mecanismo general de recolección de datos se ha explicado detalladamente en la Sección \ref{sub:Recolector}, se ha dicho que por cada prueba activa para el monitor se llama a una subrutina de sincronización que descarga los archivos de trazas e introduce los resultados en la base de datos, sin embargo no se ha entrado en detalle sobre el método de procesamiento de los archivos y la forma en que los datos de cada prueba se almacenan en la base de datos.
+
+\subsection{Almacén de datos}
+
+Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas, desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en algún formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
+
+
+
+The datastore class is necessary to store the test results (or traces) collected from the monitoring, while a single generic table with a timestamp, related link identifier and a json field to store unstructured data would suffice, this would be wasteful  and make filtering and calculating averages prohibitively inefficient, for this reason a custom-made datastore class (that will be later mapped to a database table by Django ORM) should be created to fit the needs of each specific test.
+
+Django includes a powerful ORM that can help building and maintain any arbitrary sql database structure, changes done to models are tracked by migration files that can be created on the development environment and quickly applied to the production environment with a migration command. 
+
+
+
+\section{Cargador de visualizaciones}
 
 Uno de los objetivos fundamentales de la aplicacion web es ofrecer al usuario visualizaciones de los datos obtenidos a partir del monitoreo, ya que las visualizaciones pueden ser cualquier código HTML arbitrario desde simples tablas hasta complejas gráficas interactivas, mapas web o cualquier combinación de los anteriores, es imperativo tener una interfaz única que sea capaz de desplegar el formulario de configuración, solicitar asincronamente la gráfica al servidor a partir de los parámetros suministrados y desplegarla en el navegador del usuario, a su vez el servidor web debe tener un método para buscar en el cache o seleccionar y computar las visualizaciónes solicitadas de forma genérica. 
 
@@ -1939,6 +2491,8 @@ Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sist
 	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
 	\item{El servidor }
 \end{enumerate}
+
+\section{Workflow de integración de pruebas}
 
 \chapter{Conclusiones y Recomendaciones}
 
