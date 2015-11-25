@@ -1384,6 +1384,10 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 \end{itemize}
 
+\subsection{Diseño de URLs}
+
+TODO
+
 \section{Componentes}
 
 En esta sección se explican los distintos componentes de software que son parte de la aplicacion web y su funcionalidad.
@@ -2486,38 +2490,129 @@ Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la 
 
 El parser debe manejar archivos corruptos o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba, por ejemplo, no tiene sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un host en o valores imposiblemente altos, introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
 
-\section{Cargador de visualizaciones}
+En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json, luego el parser puede leer el archivo y mapear los diccionarios a objetos e introducirlos en la tabla correspondiente a la prueba en la base de datos, eso se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf.
 
-Uno de los objetivos fundamentales de la aplicacion web es ofrecer al usuario visualizaciones de los datos obtenidos a partir del monitoreo, ya que las visualizaciones pueden ser cualquier código HTML arbitrario desde simples tablas hasta complejas gráficas interactivas, mapas web o cualquier combinación de los anteriores, es imperativo tener una interfaz única que sea capaz de desplegar el formulario de configuración, solicitar asincronamente la gráfica al servidor a partir de los parámetros suministrados y desplegarla en el navegador del usuario, a su vez el servidor web debe tener un método para buscar en el cache o seleccionar y computar las visualizaciónes solicitadas de forma genérica. 
+\section{Visualización genérica de datos}
 
-Para entender los requisitos del cargador de visualizaciones, debemos entender el flujo de trabajo para observar resultados desde el punto de vista del usuario:
-\begin{enumerate}
-	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles}
-	\item{El sistema muestra un formulario para configurar la visualización}
-	\item{El usuario configura la visualización y hace click en "PLOT"}
-	\item{El sistema muestra una animación indicando que está cargando la visualización}
-	\item{La visualización es desplegada}
-\end{enumerate}
+Después de haber recolectado y almacenado los datos de las pruebas el ultimo paso lógico y el objetivo final del sistema de monitoreo es la visualización de los datos; las visualizaciones son cargadas y desplegadas a través de una interfaz genérica que incluye un formulario para seleccionar las opciones y los datos a visualizar, herramientas como re-computo de visualizaciones (para incluir los datos mas recientes en visualizaciones que estén obsoletas) , creación de enlaces directos para compartir y opciones para ver en una nueva pestaña.
 
-Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sistema se guardan en la base de datos 
+Las visualizaciones al igual que las pruebas se guardan en su propia tabla en la base de datos; como ya se dijo en la Sección \ref{sub:basededatos}, esta tabla lleva el nombre de \textit{ResultView}, y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear urls legibles y desplegar el formulario apropiado cuando se genera la gráfica. Los tipos de visualizaciones incluidos en el sistema se pueden ver en la Tabla \ref{tab:visual-types}
 
-\begin{enumerate}
-	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
-	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
-	\item{El usuario hace click en el boton "PLOT" para graficar}
-	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
-	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
-	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
-	\item{El servidor }
+\begin{table}[h]
+	\begin{tabular}{p{2.5cm}|p{12cm}}
+		tipo        & descripción                                                                                                                                                                               \\ \hline
+		heatmap     & Mapa de calor, útil para mostrar mostrar la densidad o concentración de una variable sobre un plano 2D.                                                       \\ \hline
+		bar chart   & Gráfica de barras, útil para mostrar las proporciones entre un conjunto de valores.                                                                                                       \\ \hline
+		line chart  & Gráfica lineal, útil para mostrar la evolución de una variable con respecto a otra.                                                                                                       \\ \hline
+		scatter chart     & Gráfica de puntos, generalmente usada para mostrar los valores de un conjunto de muestras sobre un plano 2D                                                                               \\ \hline
+		map         & Cualquier tipo de mapa útil para mostrar información geográfica.                                                                                                                          \\ \hline
+		network     & Gráfica de red, útil para mostrar la relación entre distintas entidades.                                                                                                                  \\ \hline
+		table       & Tabla, útil para mostrar todo tipo de información.                                            
+		\\ \hline
+		pie chart   & Gráfica de pie, útil para mostrar la proporción entre dos variables                                                                                                                       \\ \hline
+		stock chart & Gráfica de stock, útil para mostrar la evolución de una variable y conjuntos especialmente grandes de datos.                                                                              \\ \hline
+		csv         & \textit{Comma separated values} un tipo de archivo popularmente usado para analizar conjuntos de datos estructurados, podría ser usado para permitir análisis de datos externos a octopus \\ 
+		json        & Formato json, podría usarse en versiones futuras para permitir implementar visualizaciones en otras plataformas o con otras herramientas.                                                 \\ \hline
+		other       & Cualquier tipo de visualización que no quepa en las categorías anteriores.                                                                                                                \\
+	\end{tabular}
+	\caption{Tipos de visualizaciones soportadas por el sistema}
+	\label{tab:visual-types}
+	\
+\end{table}
+
+\subsection{Construcción de URLs genéricos}
+
+Debemos recordar que estamos desarrollando un framework en el tope de una aplicacion web, por lo tanto, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una visualización específica, en la mayoría de los casos sencillamente incluimos el identificador del objeto, por ejemplo, la dirección \textit{"/monitor/2/"} identifica de forma única la página del monitor con id 2, podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre, a este tipo de cadenas de caracteres se les da el nombre de \textit{slug} y se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII. Cuando deseamos ver una visualización específica en vez de visitar un url como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
+
+Para generar el slug correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}, ya que solo deseamos generar el slug la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma la cadena de caracteres en un slug válido, los slugs pueden ser de hasta 50 caracteres, así que el si el slug es muy largo debe ser cortado, finalmente debemos asegurarnos de que  sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo slug y si se encuentra anexamos al final un guión y un número, esto se repite hasta hallar un slug único de hasta 50 caracteres.
+
+\subsection{Interfaz de visualización}
+
+Cuando un usuario selecciona una visualización de la lista de visualizaciones disponibles para su monitor, el servidor elije el formulario correspondiente, cada visualización tiene distintos parámetros de configuración, por ejemplo algunas pueden pedir al usuario que introduzca un tiempo inicial y un tiempo final para filtrar los datos, otras podrían tener opciones para seleccionar un mes específico, o un periodo de tiempo desde el momento actual como "últimas 24 horas" o "la semana pasada", algunas visualizaciones toman en cuenta los datos de todos los tentáculos de un monitor, otras piden seleccionar primero un tentáculo específico. Como hemos visto en varias oportunidades antes, los formularios no son mas que clases que podemos importar con el método definido en el Algoritmo \ref{alg:loadsync}, para esto la tabla \textit{ResultView} guarda una referencia a la clase del formulario en la columna \textit{form\_class}.
+
+Ya que los formularios de las visualizaciones generalmente incluyen los mismos campos, el framework incluye algunos formularios que pueden ser reutilizados o extendidos para lograr cualquier comportamiento deseado; todos los formularios de visualizaciones heredan de un formulario base llamado \textit{BaseResultForm}, este recibe el id del monitor que luego podría ser usado por algún formulario que tome en cuenta los enlaces del monitor. Por ejemplo, la clase \textit{LinkSelectionForm} crea un menú para seleccionar de entre la lista de enlaces del monitor, todos los formularios predefinidos pueden ser vistos en la tabla \ref{table:formularios}
+
+\begin{table}[h!]
+	\centering
+
+	\label{table:formularios}
+	\begin{tabular}{l|l|p{8cm}}
+		Clase               & Clase Base        & Descripción                                                                  \\ \hline
+		BaseResultForm      & Form              & Formulario base para todas las visualizaciones                               \\
+		LinkSelectionForm   & BaseResultForm    & Formulario para seleccionar enlace de un monitor                             \\
+		SampleForm          & LinkSelectionForm & Formulario para seleccionar un número de muestras a graficar                 \\
+		DateRangeForm       & BaseResultForm    & Formulario para seleccionar un periodo de tiempo a graficar                  \\
+		ElapsedForm         & BaseResultForm    & Formulario para seleccionar un periodo de tiempo a partir del momento actual \\
+		LinkMultiselectForm & BaseResultForm    & Formulario para seleccionar un conjunto de enlaces de un monitor            
+	\end{tabular}
+	\caption{Formularios predefinidos}
+\end{table}
+
+Una característica muy poderosa de los formularios es que se les puede "adjuntar" archivos javascript y hojas de estilo, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario, por ejemplo, el formulario de los mapas de calor de RTT permite seleccionar entre periodos de "todo el tiempo", "por año" y "por mes"; si se selecciona "año" se muestra un campo para introducir el año y si se selecciona "mes" se muestra un dropdown para seleccionar el mes. Los archivos css y javascript van dentro del paquete "management" en la carpeta "static/css" y "static/js" respectivamente.
+
+FALTA: tabla de formularios predefinidos!
+
+Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina javascript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta json:
+\begin{itemize}
+	\item{Si el formulario es válido, el servidor codifica un url de la visualización con los parámetros en formato GET y un "url directo".}
+	\item{Si el formulario es inválido el archivo json contiene un código HTML que luego se incrusta en el tope del formulario e indica los errores de validación.}
+	\item{Si no se recibe respuesta del servidor o el código de estado de la respuesta es distinto de "200 OK", entonces la rutina javascript muestra un mensaje indicando al usuario que ocurrió un problema.}
+\end{itemize}
+
+Para desplegar las visualizaciones se usa un elemento HTML llamado \textit{iframe}, este elemento se usa para incrustar páginas html dentro de otras a partir de un URL dado, la rutina javascript le pasa al iframe el URL retornado en el archivo json y el iframe a su vez lo solicita al servidor, del lado del servidor el cargador genérico devuelve una visualización en formato HTML.
+
+Algunas veces las visualizaciones pueden tardar largos periodos de tiempo en computarse, para ofrecer al usuario retroalimentación es recomendable mostrar algún tipo de animación de carga o indicador de progreso de la operación. Para implementar esta funcionalidad, se muestra una animación de carga inmediatamente después de que el usuario hace click en el botón "PLOT" o "Re-compute", luego es posible aprovechar una señal emitida por el iframe cuando obtiene respuesta del servidor para ocultar esta animación.
+
+La característica de re-computar visualizaciones funciona de manera análoga al flujo normal de visualización, con la única diferencia de que se solicita al cargador genérico que ignore el caché y force el computo de la visualización, el proceso completo explicado en esta subsección puede verse en la Figura \ref{fig:visualizacion}
+
+TODO: insertar diagrama de actividades de la interfaz de visualizacion
+
+\subsection{Cargador genérico de visualizaciones}
+
+El cargador genérico de visualizaciones maneja la tarea de retornar visualizaciones listas en formato HTML, el cargador recibe el slug correspondiente a la visualización y una cadena de parámetros GET, el cargador no computa las visualizaciones inmediatamente, sino que primero se asegura de que la visualización exista en el caché.
+
+Se puede decir que una visualización existe en el caché cuando los parámetros de dicha visualización son los mismos que los parametros GET pasados al cargador, sin embargo, revisar esta condición traería una complejidad innecesaria ya que habría que guardar en alguna parte la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
+
+Para evitar esta complejidad, las visualizaciones se identifican a través de un código hash que se genera a partir de la lista de parámetros, luego es tan simple como buscar el archivo por nombre en la carpeta correspondiente, ya que la búsqueda en un directorio depende de la cantidad de archivos en el, dividimos el caché por carpetas 
+
+The genetic visualization getter handles creation of hash names for visualizations, cache lookups, saving new files to the cache and calling the right function to generate each visualization, the ResultView table holds a fully qualified reference to the generating function, this function is loaded dynamically in run time.
+
+the only requirement for the generating function is to return a valid html string, this function can be placed anywhere in the codebase as long as the path is properly set in the database, by convention generating functions go into their own module into the ‘visual app’.
+
+\subsubsection{Plantillas}
+
+As it was mentioned before, any valid html can be rendered to be a visualization, for this work Highcharts[5] and Google Maps[6] have been chosen for this reason visualization code is tightly tied to it, several “generic templates” are available like generic heatmap, generic stockcharts, generic multi-series stockcharts and so on, these remove the repetitive task of writing the same template over and over for similar visualization types.
+
+%Uno de los objetivos fundamentales de la aplicacion web es ofrecer al usuario visualizaciones de los datos obtenidos a partir del monitoreo, ya que las visualizaciones pueden ser cualquier código HTML arbitrario desde simples tablas hasta complejas gráficas interactivas, mapas web o cualquier combinación de los anteriores, es imperativo tener una interfaz única que sea capaz de desplegar el formulario de configuración, solicitar asincronamente la gráfica al servidor a partir de los parámetros suministrados y desplegarla en el navegador del usuario, a su vez el servidor web debe tener un método para buscar en el cache o seleccionar y computar las visualizaciónes solicitadas de forma genérica. 
+
+%Para entender los requisitos del cargador de visualizaciones, debemos entender el flujo de trabajo para observar resultados desde el punto de vista del usuario:
+%\begin{enumerate}
+%	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles}
+	%\item{El sistema muestra un formulario para configurar la visualización}
+	%\item{El usuario configura la visualización y hace click en "PLOT"}
+	%\item{El sistema muestra una animación indicando que está cargando la visualización}
+%	\item{La visualización es desplegada}
+%\end{enumerate}
+
+%Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sistema se guardan en la base de datos 
+
+%\begin{enumerate}
+%	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
+%	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
+%	\item{El usuario hace click en el boton "PLOT" para graficar}
+%	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
+%	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
+%	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
+%	\item{El servidor }
 	
-	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
-	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
-	\item{El usuario hace click en el boton "PLOT" para graficar}
-	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
-	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
-	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
-	\item{El servidor }
-\end{enumerate}
+%	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
+%	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
+%	\item{El usuario hace click en el boton "PLOT" para graficar}
+%	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
+%	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
+%	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
+%	\item{El servidor }
+%\end{enumerate}
 
 \section{Workflow de integración de pruebas}
 
