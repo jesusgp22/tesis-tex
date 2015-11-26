@@ -615,7 +615,6 @@ Otra heuristica en la creación de sitios web adaptables es escalar o esconder el
 \label{fig:responsive}
 \end{figure}
 
-
 El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se este visitando.
 
 \subsection{Highcharts}
@@ -2550,8 +2549,6 @@ Ya que los formularios de las visualizaciones generalmente incluyen los mismos c
 
 Una característica muy poderosa de los formularios es que se les puede "adjuntar" archivos javascript y hojas de estilo, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario, por ejemplo, el formulario de los mapas de calor de RTT permite seleccionar entre periodos de "todo el tiempo", "por año" y "por mes"; si se selecciona "año" se muestra un campo para introducir el año y si se selecciona "mes" se muestra un dropdown para seleccionar el mes. Los archivos css y javascript van dentro del paquete "management" en la carpeta "static/css" y "static/js" respectivamente.
 
-FALTA: tabla de formularios predefinidos!
-
 Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina javascript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta json:
 \begin{itemize}
 	\item{Si el formulario es válido, el servidor codifica un url de la visualización con los parámetros en formato GET y un "url directo".}
@@ -2571,50 +2568,52 @@ TODO: insertar diagrama de actividades de la interfaz de visualizacion
 
 El cargador genérico de visualizaciones maneja la tarea de retornar visualizaciones listas en formato HTML, el cargador recibe el slug correspondiente a la visualización y una cadena de parámetros GET, el cargador no computa las visualizaciones inmediatamente, sino que primero se asegura de que la visualización exista en el caché.
 
-Se puede decir que una visualización existe en el caché cuando los parámetros de dicha visualización son los mismos que los parametros GET pasados al cargador, sin embargo, revisar esta condición traería una complejidad innecesaria ya que habría que guardar en alguna parte la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
+Se puede decir que una visualización existe en el caché cuando los parámetros de dicha visualización son los mismos que los parámetros GET pasados al cargador, sin embargo, revisar esta condición traería una complejidad innecesaria ya que habría que guardar una arreglo de la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
 
-Para evitar esta complejidad, las visualizaciones se identifican a través de un código hash que se genera a partir de la lista de parámetros, luego es tan simple como buscar el archivo por nombre en la carpeta correspondiente, ya que la búsqueda en un directorio depende de la cantidad de archivos en el, dividimos el caché por carpetas 
+Para evitar esta complejidad, las visualizaciones se identifican a través de un código hash que se genera a partir de la lista de parámetros, luego es tan simple como buscar el archivo por nombre en la carpeta correspondiente, ya que la búsqueda en un directorio depende de la cantidad de archivos en el, dividimos el caché por carpetas para acelerar las consultas al caché, las carpetas tienen como nombre el slug de la visualización a la que pertenecen, por lo tanto un archivo en el caché se identifica como: $CACHE\_ROOT/<slug>/<hash>.html$
 
-The genetic visualization getter handles creation of hash names for visualizations, cache lookups, saving new files to the cache and calling the right function to generate each visualization, the ResultView table holds a fully qualified reference to the generating function, this function is loaded dynamically in run time.
+Cuando una búsqueda en el caché no obtiene resultados, entonces el sistema pasa a computar la gráfica, para esto, se guarda una referencia a la función en la base de datos, y esta se carga dinámicamente como ya se vió en el Algoritmo \ref{alg:loadsync}, las funciones de cómputo de visualizaciones se guardan dentro del paquete \textit{visual}, en un módulo con el nombre $<test>\_visual.py$ donde test es el nombre de módulo de la prueba a la pertenece dicha visualización.
 
-the only requirement for the generating function is to return a valid html string, this function can be placed anywhere in the codebase as long as the path is properly set in the database, by convention generating functions go into their own module into the ‘visual app’.
+El único requisito para las funciones de computo es retornar una cadena de caracteres válida en formato HTML (sin embargo los formatos CSV y JSON también son soportados), en caso de retornar algún otro tipo objeto (o retornar nulo) el usuario verá la representación en unicode de dicho objeto en la Interfaz de Visualización.
 
-\subsubsection{Plantillas}
+Se recomienda manejar apropiadamente las excepciones dentro de esta función, en caso contrario, estas se propagarán al cargador de visualizaciones que a su vez responderá con una página de error 500 que se cargará en el marco de la Interfaz de visualización.
 
-As it was mentioned before, any valid html can be rendered to be a visualization, for this work Highcharts[5] and Google Maps[6] have been chosen for this reason visualization code is tightly tied to it, several “generic templates” are available like generic heatmap, generic stockcharts, generic multi-series stockcharts and so on, these remove the repetitive task of writing the same template over and over for similar visualization types.
+\subsubsection{Plantillas genéricas}
 
-%Uno de los objetivos fundamentales de la aplicacion web es ofrecer al usuario visualizaciones de los datos obtenidos a partir del monitoreo, ya que las visualizaciones pueden ser cualquier código HTML arbitrario desde simples tablas hasta complejas gráficas interactivas, mapas web o cualquier combinación de los anteriores, es imperativo tener una interfaz única que sea capaz de desplegar el formulario de configuración, solicitar asincronamente la gráfica al servidor a partir de los parámetros suministrados y desplegarla en el navegador del usuario, a su vez el servidor web debe tener un método para buscar en el cache o seleccionar y computar las visualizaciónes solicitadas de forma genérica. 
+Las plantillas son archivos que se usan para introducir el contenido variable de una página web dinámica a través del uso de un micro-lenguaje, el desarrollador tiene la libertad que escribir cualquier código HTML que desee, así como vincular cualquier dependencia como hojas de estilo, imágenes o archivos javascript. Para este trabajo se ha usado principalmente HighCharts y Google Maps, para dibujar la mayoría de las visualizaciones.
 
-%Para entender los requisitos del cargador de visualizaciones, debemos entender el flujo de trabajo para observar resultados desde el punto de vista del usuario:
-%\begin{enumerate}
-%	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles}
-	%\item{El sistema muestra un formulario para configurar la visualización}
-	%\item{El usuario configura la visualización y hace click en "PLOT"}
-	%\item{El sistema muestra una animación indicando que está cargando la visualización}
-%	\item{La visualización es desplegada}
-%\end{enumerate}
+El desarrollador debe seguir una serie de pautas al escribir plantillas para visualizaciones, ninguna de ellas es obligatoria pero son recomendables para asegurar que el usuario tenga una experiencia consistente:
+\begin{itemize}
+	\item{La plantilla debe ajustarse responsivamente al ancho de la pantalla.}
+	\item{Siempre se deben usar HighCharts o Google Maps sobre otras bibliotecas que tengas las mismas funcionalidades o similares.}
+	\item{Las visualizaciones deben estar preferiblemente sobre fondo blanco.}
+	\item{En caso de que no se encontraran datos para el periodo seleccionado, se debe mostrar un mensaje de alerta en vez de una visualización en blanco.}
+	\item{se deben usar las hojas de estilo de Bootstrap al dibujar visualizaciones que estén compuestas de elementos HTML.}
+\end{itemize}
 
-%Como se vio en la Subsección \ref{subsub:entidades} las visualizaciones del sistema se guardan en la base de datos 
+Para simplificar la tarea de escribir código repetitivo, se ha incluido un conjunto plantillas predefinidas, algunas de ellas pueden ser extendidas para escribir nuevas visualizaciones, otras son plantillas listas para usar que aceptan alguna estructura de datos y resultan en una visualización, las plantillas predefinidas se pueden ver en la Tabla \ref{table:plantillas}.
 
-%\begin{enumerate}
-%	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
-%	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
-%	\item{El usuario hace click en el boton "PLOT" para graficar}
-%	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
-%	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
-%	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
-%	\item{El servidor }
-	
-%	\item{El sistema elije el formulario a desplegar para la visualización y retorna una página HTML con el formulario}
-%	\item{El usuario configura la visualización, ya sea eligiendo un periodo de tiempo, filtrando datos, estableciendo opciones, etc.}
-%	\item{El usuario hace click en el boton "PLOT" para graficar}
-%	\item{Una rutina javascript captura el evento, retira los datos del formulario y los envía a través de una petición HTTP al servidor via AJAX}
-%	\item{El servidor valida el formulario si es válido prepara un url que será usado para obtener la visualizacion, si no, prepara un archivo json que será usado para indicar los errores en el formulario}
-%	\item{Del lado del navegador la rutina javascript recibe la respuesta y le pasa a un iframe\footnote{HTML iframe tag - W3Schools." 2002. 17 Sep. 2015 <http://www.w3schools.com/tags/tag\_iframe.asp>} el url, el iframe inmediatamente envía una petición al servidor con el URL}
-%	\item{El servidor }
-%\end{enumerate}
+\begin{table}[h!]
+	\centering
+	\label{table:plantillas}
+	\begin{tabular}{l|p{10cm}}
+		Plantilla                        & Descripcion                                                                                                               \\ \hline
+		base-visual.html                             & Plantilla base para todas las visualizaciones                                                                             \\
+		base-highcharts.html                   & Plantilla base para todas las visualizaciones con HighCharts                                                              \\
+		base-highstock.html                    & Plantilla base para todas las visualizaciones con HighStock (submódulo de Hihcharts para dibujar stockcharts)            \\
+		base-googlemaps.html                   & Plantilla base para visualizaciones con Google Maps.                                                                      \\
+		generic-heatmap.html                  & Plantilla base para mapas de calor de tipo $<$hora,tiempo,valor$>$\\
+		generic-stock.html              & Plantilla base para Stockcharts de tipo $tiempo,valor$                                                  \\
+		generic-stock-multi.html & Plantilla base para Stockcharts de tipo \textless tiempo,valor\textgreater   con múltiples series.                             \\
+		generic-line.html                & Plantilla base para gráficas de linea de tipo \textless time,value\textgreater                                             \\
+		generic-line-multi.html   & Plantilla base para gráficas de linea de tipo \textless time,value\textgreater con múltiples series,                      
+	\end{tabular}
+	\caption{Plantillas Predefinidas}
+\end{table}
 
 \section{Workflow de integración de pruebas}
+
+
 
 \chapter{Conclusiones y Recomendaciones}
 
