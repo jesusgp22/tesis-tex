@@ -1077,6 +1077,7 @@ La capa de presentación o front-end es la interfaz gráfica que permite la intera
 La capa de presentación puede ser extendida para permitir la implementación de distintos front-ends como aplicaciones nativas para sistemas operativos móviles o de escritorio a través de APIs programáticas. 
 
 \subsection{Capa 2: Servidor Web}
+\label{sub:servidorweb}
 
 El servidor web es el punto de entrada a la aplicacion, este responde a las peticiones realizadas desde el front-end a través del protocolo HTTP, el enfoque del servidor web es manejar tareas ligeras de la forma mas rápida posible y retornar respuestas para ofrecer al usuario baja latencia en su interacción con el sistema. 
 
@@ -1129,7 +1130,7 @@ Establecer un esquema apropiado de prioridades y encolamiento es esencial para a
 
 Existen distintos sistemas que pueden hacer el papel de broker de mensajería, algunas opciones populares incluyen RabbitMQ, un sistema de mensajería robusto y persistente, Redis del que se habló en la Sección \ref{sub:redis} o algún SMBD, la elección del message broker debe depender de volumen de tareas que se va a manejar, el uso de base de datos puede ser aceptable cuando se maneja una cantidad reducida de tareas, pero sistemas más rápidos como RabbitMQ y Redis son preferibles en entornos de producción.
 
-\subsubsection{Trabajadores}
+\subsubsection{Trabajadores} \label{sub:trabajadores}
 
 Los trabajadores son los encargados de ejecutar las tareas encoladas, estos se subscriben a una o mas colas y toman las tareas en el tope, determinar la cantidad necesaria de trabajadores para cada cola es esencial para evitar que las colas crezcan indefinidamente (y por lo tanto tambien, el tiempo de espera de las tareas).
 
@@ -2613,7 +2614,53 @@ Para simplificar la tarea de escribir código repetitivo, se ha incluido un conju
 
 \section{Workflow de integración de pruebas}
 
+Habiendo entendido todos los componentes que son parte del Framework de Integración de pruebas, solo queda explicar como usarlos para integrar rápidamente una prueba en un entorno de producción. El workflow de integración de pruebas consiste a de dos etapas: la etapa de desarrollo y la etapa de despliegue, esto puede ser visto en la figura \ref{fig:workflow}.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{img/workflow}
+\caption{El workflow de integración de pruebas}
+\label{fig:workflow}
+\end{figure}
+ 
+
+\subsection{Etapa de Desarrollo}
+
+Como su nombre lo indica, durante la etapa de desarrollo se diseñan, implementan y validan las pruebas y visualizaciones que serán parte del sistema en el futuro próximo; la etapa de desarrollo ocurre en un "entorno de desarrollo" que se configura para ser lo más parecido posible al entorno de producción y así evitar potenciales inconsistencias que devengan en errores críticos. 
+
+Para desarrollar código fácilmente en distintos entornos se usa un repositorio de código \textit{git}, los cambios hechos en el entorno de desarrollo pueden ser descargados en el entorno de producción y aplicados al servidor web, los trabajadores celery y la base de datos; todos los componentes deben compartir la misma versión del código antes de ir a producción para evitar comportamientos inesperados.
+
+Cuando se desea desarrollar una prueba, el primer paso es entender y describir los requisitos de la prueba, para facilitar el entendimiento de esta sección usaremos como ejemplo el diseño una prueba que determine la pérdida de paquetes usando ping en modo flood, es decir, que ping generará y enviará paquetes tan rápido como pueda hasta pasar una cierta cantidad de paquetes; esta prueba funcionará de forma similar a ping, en la figura \ref{fig:pkglossmod} se puede ver el módulo de prueba, este escribirá archivos en formato csv donde cada linea del archivo tiene la forma $<$marca de tiempo,paquetes enviados, paquetes recibidos,porcentaje de pérdidas$>$
+
+Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a incluir en el modelo de la base de datos la tabla que alojará las trazas de esta prueba, para eso escribimos la clase \textit{TracePkgLoss}, en la Figura \ref{pkglossclass} se puede observar que esta consiste de un marca de tiempo (time), el identificador de enlace (link), el número de paquetes enviados (sent\_packets), el número de paquetes recibidos (recieved\_packets) y un índice que incluye las columnas \textit{time} y \textit{link}.
+
+Cuando hacemos cambios al modelo de la base de datos debemos crear archivos llamados \textit{migrations} que describen los cambios que deben realizarse sobre el modelo de la base de datos, para crear estos archivos, Django crea un archivo de migración inicial que luego compara con el modelo de la base de datos y así descubre los cambios que se han hecho, para realizar esta operación Django incluye el comando \textit{makemigrations}, las migraciones son guardadas en un paquete y conforman una especie de "historial" que puede ser aplicado a la base de datos en el entorno de producción.
+
+El siguiente paso es crear el parser del archivo de trazas, ya que el archivo de trazas viene en formato csv es muy sencillo leer el archivo linea por linea, separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, este proceso verse en la figura \ref{}
+
+Ahora que tenemos los elementos necesarios para alojar los datos obtenidos de las pruebas solo nos queda definir las visualizaciones que harán uso de esas pruebas, por motivos de simplicidad solo definiremos una visualización que muestre una gráfica de stock de la pérdida de paquetes desde el momento actual hasta una cantidad dada de tiempo en el pasado como 24 horas.
+
+En la figura \ref{} se puede observar el código de la visualización, primero tomamos del diccionario de parámetros en número de horas seleccionadas, luego hacemos una consulta a la base de datos extrayendo todas las trazas para el periodo, luego recorremos el arreglo para ajustar los timestamp a la zona horaria del monitor, finalmente llamamos al método \textit{render\_to\_string} que dibuja una plantilla, en este caso usamos la plantilla genérica \textit{generic-stock.html}.
+
+Habiendo definido todas las clases y funciones necesarias, solo falta introducir en la base de datos los registros necesarios para que el sistema sepa de la nueva prueba y donde buscar sus funciones correspondientes. Esto puede hacerse directamente desde el CRUD del sistema, sin embargo, es recomendable crear un archivo de migración e introducir estos registros programaticamente, de modo que se introduzcan a la base de datos cuando se ejecutan las migraciones, se pueden crear archivos de migraciones vacíos llamando al comando \textit{makemigrations} con la opción --empty, en la figura \ref{} puede verse que las migraciones consiste de una lista de operaciones, es posible definir operaciones que corran código python arbitrario, definimos el método \textit{create\_entries}, que introducirá en la base de datos la prueba, los parámetros y la visualización.
+
+Antes de pasar a la siguiente etapa es recomendable probar exhaustivamente todo el código usando distintos conjuntos de datos, parámetros, y escribiendo pruebas unitarias.
+
+\subsection{Etapa de Despliegue}
+
+En la etapa de despliegue se aplicarán en el entorno de producción todos los cambios realizados en la etapa de desarrollo; esta etapa consiste en una serie de pasos intencionalmente simples y rápidos para evitar largas interrupciones de servicio mientras que estos son aplicados, después de que finaliza la etapa de despliegue la nueva prueba estará disponible para que los usuarios la incluyan a sus monitores. 
+
+La etapa de despliegue comienza descargando la última versión del código del repositorio y parando el servidor web para evitar cualquier petición durante este periodo, es buena idea planificar los despliegues para momentos de baja carga del servidor, y notificar a los usuarios con previo avisto.
+
+Para actualizar el servidor web y los trabajadores basta con reemplazar el código que estos ejecutan, sin embargo, para actualizar la base de datos se hace uso de archivos de migraciones que se crear en la etapa de desarrollo; las migraciones pueden ser aplicadas con el comando \textit{migrate}, para saber cual fue la última migración aplicada Django mantiene una tabla para llevar cuenta del estado de la base de datos, así es posible saber cuales de las migraciones deben ser aplicadas. Se debe tener especial ciudado al ejecutar migraciones, mientras algunas veces estas pueden ser rápidas y seguras, algunas migraciones incluyen operaciones costosas como agregar indices a tablas existentes o actualizar todas las entradas de una tabla, también es importante tomar en cuenta que las migraciones no incurran en conflictos con datos contenidos en la base de datos, por ejemplo, aplicar una restricción de unicidad sobre una columna con valores repetidos.
+
+En la Sección \ref{sub:servidorweb} se dijo que la aplicacion web Django no se encarga de servir los archivos estáticos al cliente, es por esto que generalmente un entidad desacoplada ya sea el mismo servidor web configurado para servir ciertas rutas sin pasarlas a Django o otro servidor web aparte deben proveer este servicio, sin embargo los archivos estáticos viven junto al resto del código de la aplicacion, para que el servidor desacoplado pueda encontrar estos archivos, estos deben ser copiados al directorio apuntado por la variable \textit{STATIC\_ROOT}, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
+
+El paso final de despliegue es reiniciar los componentes que lo requieran, en otras palabras el servidor web y los trabajadores de modo que estos puedan importar el nuevo código, los demás micro-servicios como broker de mensajería, planificador y backend de resultados no requieren ser reiniciados durante los despliegues. 
+
+Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicacion para forzar a apache a releer todo el código antes de levantar la aplicacion. 
+
+Reiniciar los trabajadores puede hacerse de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo broadcast para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina host del trabajador previamente, en futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
 
 \chapter{Conclusiones y Recomendaciones}
 
