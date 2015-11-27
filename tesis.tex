@@ -262,8 +262,10 @@ Existen muchos otros ejemplos en los que es importante tener datos del estado de
   A pesar de que Malawinet Network Monitor podría ofrecer estadísticas de tiempo de ida y vuelta (RTT) y disponibilidad de un enlace solo a partir de las trazas capturadas con Ping, se desea además implementar un marco de trabajo que permita agregar nuevas pruebas automatizadas que ayuden a obtener una imagen más completa de la red.
   
 \section{Justificacion}
-  
-Ya que las redes están compuestas de arreglos de nodos conectados entre si y muchas veces resultan de despliegues caóticos y no-coordinados sobre los que no se tiene control o conocimiento y existe una enorme cantidad de variables como 
+
+Ante la aparición de nuevos paradigmas en la distribución del acceso a Internet, tales como redes comunitarias caracterizadas por despliegues caóticos y descoordinados o redes inalámbricas con enlaces de larga distancia que pueden ser poco confiables, se evidencia la necesidad de tener herramientas de bajo costo, sencillas de desplegar y mantener que puedan ayudar a los interesados a tener conocimiento del estado de la red. 
+
+A pesar de que existe una gran variedad de herramientas para el monitoreo de despliegues de redes arbitrarias, se desea construir una plataforma que  facilite el monitoreo a través de una interfaz clara y metáforas intuitivas que abstraigan las entidades monitoreadas y que permita extender rápidamente el sistema cuando se deseen monitorear características de la red que no fueron consideradas de antemano. 
 
 \section{Objetivos}
 
@@ -301,11 +303,25 @@ El cuarto ciclo consiste en hacer análisis del rendimiento del sistema y hacer l
 
 \section{Alcance}
 
-
+El alcance de este trabajo remite al diseño y detalles de implementación tanto de una aplicacion web que sirva como plataforma central de coordinación del monitoreo, y un agente monitor de redes ligero y robusto que pueda ser controlado remotamente. Se pretende diseñar un sistema flexible y un esquema de coordinación entre sus distintos entes a través de la nube.
 
 \section{Estructura del Documento}
 
+El presente trabajo se estructura de la siguiente manera:
 
+Capítulo 1. Introducción, este capítulo consiste de los antecedentes relevantes al tema a tratar, planteamiento del problema, justificación, objetivos, metodología a emplear y el alcance de este trabajo.
+
+Capítulo 2. Marco Teórico, define brevemente los conceptos y herramientas usados durante el desarrollo de este trabajo y que son esenciales para su comprensión; tales como conceptos de alto nivel de monitoreo de redes, principio fin-a-fin, métricas de la calidad de un enlace, visualización de datos y los y sistemas de software usados para su implementación.
+
+Capítulo 3. Aplicacion Web, contiene el diseño general del sistema de monitoreo, así como la arquitectura de la aplicacion web, sus sub-sistemas, componentes relevantes, casos de uso y finalmente análisis de rendimiento. 
+
+Capitulo 4. Monitor de Red, explica el diseño del monitor de red remoto, su arquitectura, componentes y los módulos de prueba implementados.
+
+Capitulo 5. Framework de Integracion de Pruebas, describe los requisitos del marco de trabajo para la implementación de nuevas pruebas, así como todos sus componentes genéricos, finalmente explica como usar dichos componentes para integrar nuevas características a un sistema en producción.
+
+Capitulo 6. Conclusiones y Recomendaciones, contiene las conclusiones obtenidas a partir del diseño e implementación del sistema, así como recomendaciones y posibles mejoras a incluir en trabajos futuros.
+
+Finalmente se presentan las referencias bibliogr aficas.
 %
 %******************************
 %FIN DE CAPITULO I
@@ -696,358 +712,6 @@ Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferenci
 \end{itemize}
 
 Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
-
-\chapter{Monitor de Red "Tentacle Monitor"} \label{cap:monitor}
-
-Tentacle Monitor es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo.
-
-Tentacle Monitor ejecuta pruebas periódicas siguiendo un plan de monitoreo definido por el usuario con el objetivo recoger datos sobre las métricas relevantes a la red a monitorear, los resultados de las pruebas son guardados temporalmente en la memoria del dispositivo y se suben a la nube regularmente, la frecuencia en que se suben los datos a la nube depende de la cantidad de memoria disponible en el dispositivo, la cantidad de datos generados por el monitoreo y el ancho de banda disponible.
-
-Uno de los objetivos principales de Tentacle Monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. Como ya se mencionó, el comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre Tentacle Monitor y Octopus Head se realiza a través de la nube, Octopus Head transfiere el plan de monitoreo a través de archivos a modo de mensajes y los guarda en una carpeta a modo de buzón; Tentacle Monitor mantiene una conexión con la nube para ser notificado de cambios en dicha carpeta con baja latencia de esta manera se pueden leer los mensajes rápidamente y tomar las acciones necesarias, como incluir nuevas pruebas, replanificar pruebas, cambiar los parámetros de ejecución, o incluir nuevos enlaces a monitorear.
-
-\section{Diseño del Monitor}
-
-El diseño del monitor esta sujeto a los siguientes baremos: 
-
-\begin{itemize}
-	\item{\textbf{Estabilidad} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá los resultados esperados en la aplicación web.}
-	\item{\textbf{Flexibilidad} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando.}
-	\item{\textbf{Planificación precisa} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de manera fiel el plan de monitoreo.}
-	\item{\textbf{Ejecutable en equipos de bajo costo} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del host.}
-	\item{\textbf{Configuración remota} el monitor debe incluir algún protocolo para actualizar su plan de monitoreo a partir de cambios hechos en la aplicación web.}
-	\item{\textbf{Bitácora} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre los eventos relevantes durante la ejecución.}
-\end{itemize}
-
-\subsection{Arquitectura}
-
-Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Monitor tiene una arquitectura basada en componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de la aplicación; cada uno de estos componentes puede ser reemplazado fácilmente siempre y cuando la interfaz entre ellos se mantenga intacta.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=1\textwidth]{img/tentacle-components.png}
-	\caption{Diagrama de Componentes Octopus Tentacle}
-	\label{fig:tentacle-components.png}
-\end{figure} 
-
-\subsection{Diagrama de actividades}
-
-La ejecución del monitor comienza en el cliente, el cliente es el encargado de instanciar el proceso daemon y lo hace a través del método bien conocido de doble fork. Para asegurarse de no ejecutar múltiples instancias del monitor se revisa un archivo .pid, si el archivo existe significa que el monitor se está ejecutando y el cliente informa del error al usuario. 
-
-Después de que el proceso esta daemonizado comienza la fase de inicializacion, para esto se crea el planificador y se cargan las tareas del jobstore, importando el codigo de las pruebas a ejecutar. A este punto las pruebas están planificadas tentativamente y cargadas en memoria pero solo serán ejecutadas después de que se inicie el planificador.
-
-Al iniciar el planificador este pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. Cuando el planificador inicia una tarea se la pasa al ejecutor en este caso un grupo de subprocesos previamente inicializados, cuando un subproceso termina de ejecutar una tarea informa al planificador, esto con la finalidad de implementar políticas de concurrencia de tareas.
-
-Mientras tanto, el hilo principal se conecta a la nube usando el API de Dropbox que posee un método para notificar a los clientes sobre cambios a una carpeta en tiempo real y con baja latencia, el método consiste en abrir una conexión HTTP con un alto valor de timeout (entre 30 y 120 segundos), si ocurre un cambio en la carpeta, el servidor de Dropbox responde de inmediato indicando que ocurrieron cambios y el monitor procederá a manejar este evento (descargando los archivos nuevos y aplicando los cambios al plan de monitoreo), en caso contrario, Dropbox responde indicando que no ocurrieron cambios y el monitor reinicia la conexión. 
-
-Los eventos relevantes al monitor tentacle son los siguientes: (1) una prueba se ha agrega al plan de monitoreo y debe cargarse a memoria y planificarse (2) una prueba se ha eliminado y debe ser eliminada del plan de monitoreo (3) el intervalo entre pruebas de una prueba ha cambiado y debe replanificarse la próxima ejecución (4) los parámetros de una prueba han cambiado (5) se ha agregado un nuevo enlace a monitorear (6) se ha eliminado un enlace monitoreado.
-
-El monitor solo puede detenerse a través de una señal del sistema operativo (SIGTERM), el cliente utiliza el archivo pid para determinar el id del proceso y enviar la señal. El manejador de excepciones del monitor entonces inicia una secuencia de apagado, deteniendo las pruebas, apagando el planificador y desbloqueado el archivo .pid.
-
-Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activity}.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\linewidth]{img/tentacle-activity}
-\caption{Diagram de actividades de Tentacle}
-\label{fig:tentacle-activity}
-\end{figure}
-
-
-\section{Componentes}
-
-\subsection{Cliente}
-
-El cliente de Octopus Tentacle es el programa encargado de iniciar o detener la ejecución del monitor en modo daemon y funge como interfaz entre el usuario y monitor.
-
-Se puede invocar el cliente con los siguientes comandos:
-
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-
-\begin{table}[h!]
-	\centering
-	\label{my-label}
-	\begin{tabular}{p{2cm}p{13cm}}
-		\rowcolor{light-gray} Comando & Descripción \\ 
-		\hline start & Inicia el monitor como un proceso daemon, falla si el archivo .pid ya existe (el monitor se esta ejecutando) \\ 
-		\hline stop & Detiene el monitor enviando la señal SIGTERM al proceso daemon, falla si el archivo pid no existe (el monitor no se esta ejecutando) \\  
-		\hline restart & Detiene e inicia el monitor \\ 
-		\hline jobs & Muestra las tareas pendientes en el planificador (plan de monitoreo) \\ 
-		\hline 
-	\end{tabular} 
-	\caption{Comandos del cliente Octopus Tentacle}
-\end{table}
-
-Los comandos start y restart se pueden invocar con la opción --no-daemon para iniciar el monitor en modo consola (sin daemonizar) 
-
-\subsection{Hilo Principal}
-
-El hilo principal de ejecución es el punto de partida desde el momento en que el proceso ya se ha convertido en un daemon, se encarga de inicializar el planificador el cual a su vez pasa a ejecutarse en segundo plano, luego, su tarea consiste en mantener el plan de monitoreo al día a partir de los cambios que se hagan en Octopus Head.
-
-El hilo principal mantiene una conexión constante con el servidor de Dropbox para ser notificado de cambios en el plan de monitoreo, si hay cambios, este llama los métodos para leer los archivos y a partir de ellos hacer cambios en plan de monitoreo, como eliminar pruebas o agregar nuevos enlaces monitoreados.
-
-\subsection{Planificador}
-
-Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite retrasar la ejecución de código python; el planificador se puede ejecutar como un subproceso de modo que es posible agregar, eliminar y re-planificar tareas en cualquier momento desde el hilo principal de la aplicación. 
-
-APScheduler consiste de un conjunto de componentes configurables que se pueden extender o re-usar para obtener cualquier comportamiento deseado, a continuación se explica su funcionamiento y como se usaron en el marco de esta aplicación.
-
-\subsubsection{Triggers (Gatillos)}
-
-Los triggers contienen la lógica para determinar en que momento se debe ejecutar una tarea, la biblioteca incluye varios triggers predefinidos, de los cuales dos se han usado para el desarrollo de esta aplicación: 
-
-\begin{itemize}
-	\item{Interval Trigger: ejecuta pruebas en intervalos regulares, opcionalmente se pueden suministrar fechas finales e iniciales de modo que las pruebas solo se ejecuten durante un periodo especifico}
-	\item{Date Trigger: ejecuta la prueba en una fecha especifica dada, una sola vez, útil para desplegar pruebas que usen muchos recursos de red como benchmarks de ancho de banda o capturas de tráfico de la red.}
-\end{itemize}
-
-\subsubsection{Executors (Ejecutores)}
-
-El ejecutor es el ente encargado de llevar a cabo la ejecución de las tareas, en nuestro caso se ha hecho uso de un grupo de subprocesos (thread pool), la cantidad de hilos en el grupo esta dado por el numero de pruebas que estaremos ejecutando de modo que siempre se tenga al menos un hilo disponible cuando se inicia una prueba. 
-
-\subsubsection{Almacén de tareas (Job store)}
-
-El almacén de tareas guarda las tareas planificadas, el comportamiento por defecto es guardar las tareas en memoria, pero existen distintos tipos de almacenes como redis (ver sección \ref{sub:redis}) y bases de datos; hemos usado el SQLAlchemy job store que permite guardar tareas en una base de datos ligera como sqlite y así asegurar la persistencia de los datos de la aplicación.
-
-\subsection{Almacenamiento Compartido}
-
-El almacenamiento compartido se encarga de alojar los resultados de las pruebas en archivos de trazas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos.
-
-Para mantener el numero de archivos en el almacenamiento compartido razonablemente pequeño se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese periodo se anexan al archivo correspondiente; el costo de alojar archivos en la nube no depende del numero de archivos sino del espacio total de disco en uso, ya que existe un limite de peticiones diarias por usuario debemos intentar minimizar la cantidad de peticiones que realizamos a Dropbox. Este tema se explicará a profundidad en la sección \ref{fig:sub:sincronizacion}.
-
-\section{Pruebas Implementadas}
-
-Gracias a la arquitectura de Tentacle, implementar una prueba es tan sencillo como crear un paquete e implementar la función "run" en el archivo init.py, todas las pruebas implementadas hasta ahora comparten una flujo de ejecución similar:
-\begin{enumerate}
-	\item{Se lee el archivo de configuración}
-	\item{Se obtienen los enlaces a monitorear y los parámetros globales}
-	\item{Se ejecuta la prueba por cada enlace monitoreado (ya sea en paralelo o en secuencia).}
-	\item{Se ejecuta un comando externo externo como ping o traceroute o se usa una biblioteca python para evaluar alguna métrica del enlace.}
-	\item{(opcional) si se ejecuta un comando externo se hace un parsing para extraer los resultados relevantes de la salida del programa}
-	\item{Se guardan los resultados en un archivo de trazas; generalmente el resultado de una prueba está representado por una linea en archivo de trazas, sin embargo el desarrollador tiene libertad total sobre el formato que utilice para generar archivos de trazas}
-\end{enumerate}
-
-Durante el desarrollo de este proyecto se han implementado las siguientes pruebas:
-
-\subsection{Ping}
-
-Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como ya se menciono en la sección \ref{sub:ping} ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo.
-
-La prueba consiste en ejecutar el comando ping para cada uno de los enlaces monitoreados, ejecutamos el comando con la opción -D para que ping imprima cada resultado de latencia con una marca de tiempo entre corchetes, un ejemplo de la salida de ping se puede ver en la figura \ref{fig:ping-out}. 
-
-Es muy sencillo extraer los datos relevantes de la salida de ping, para esto recorremos la salida descartando las lineas que no comiencen con el carácter '[', separamos la salida en palabras, la palabra en la posición 0 corresponde a la marca de tiempo, luego buscamos las palabras que comiencen por "icmp\_seq o icmp\_req y time" para obtener numero de secuencia icmp y tiempo de ida y vuelta respectivamente.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.9\linewidth]{img/ping-out}
-	\caption{Ping output}
-	\label{fig:ping-out}
-\end{figure}
-
-Independientemente del número de sondas que se envíen elegiremos solo un resultado de latencia por prueba (la mediana), si para una prueba no se obtiene ninguna respuesta entonces guardamos una traza con rtt=-1, indicando que el enlace está inactivo o el nodo está rechazando el protocolo.
-
-\begin{table}[h]
-	\centering
-	\label{table:ping-parameters}
-	\begin{tabular}{rp{2cm}p{9cm}}
-		\rowcolor{light-gray} 
-		Parametro              &  Tipo & Descripcion                                                                \\ \hline
-		Numero de sondas       & Entero                      & Número de sondas icmp a enviar.                                            \\ \hline
-		Timeout                & Float                       & Tiempo a esperar por una respuesta antes de asumir una sonda como perdida. \\ \hline
-		Intervalo entre sondas & Float                       & Tiempo entre el envío de cada sonda individual.                           
-	\end{tabular}
-		\caption{Parametros de la prueba ping}
-\end{table}
-
-\subsection{Httping}
-
-Esta prueba usa el protocolo HTTP para hacer un HEAD Request y obtener el tiempo de respuesta y código de estatus HTTP, a diferencia de la prueba con ping esta no ejecuta un comando externo sino que llama a una función de la biblioteca 'requests' que hace la petición directamente por lo que no es necesario ningún tipo de parsing. 
-
-La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba httping,
-
-\begin{table}[h!]
-	\centering
-	\label{table:httping-parameters}
-	\begin{tabular}{rp{2cm}p{9cm}}
-		\rowcolor{light-gray} 
-		Parametro              &  Tipo & Descripcion                                                                \\ \hline
-		Timeout       & Float                      & Tiempo a esperar por una respuesta                                        \\ \hline
-		Path                & String                       & Cadena de caracteres que se adjunta al ip o nombre de dominio del enlace, especialmente útil para probar servicios específicos de una aplicación o servicio web.. \\ \hline
-		Port & Entero                       & Espeficia el puerto al que se envía la peticion HTTP.                           
-	\end{tabular}
-	\caption{Parametros de la prueba httping}
-\end{table}
-
-Esta prueba es útil para monitorear todo tipo de servidores web y posee la ventaja sobre ping de utilizar un protocolo de capa aplicación por lo que da una idea mas precisa de la experiencia del usuario al visitar dicho servicio; a diferencia de ping, el resultado obtenido no solo es la latencia de la red, sino la suma de la latencia de la red y el tiempo de respuesta del servidor, que puede estar sujeto, por ejemplo, al nivel de carga que esté manejando dicho servicio, o a la petición especifica que se esté realizando.
-
-\subsection{Traceroute}
-
-Esta prueba ejecuta el comando traceroute para obtener la ruta entre un par de nodos a través de una red ip, llamamos ruta a una secuencia de saltos (hops) que hace un paquete al atravesar un enrutador. 
-
-El comando traceroute imprime la ruta como una lista ordenada donde cada linea representa un salto, con su dirección ip, nombre de dominio y latencia, dependiendo del numero de sondas que se estén enviando por salto pueden existir casos en que se obtenga respuesta de mas de una dirección ip, este comportamiento se puede ver en la figura \ref{fig:traceroute-out} en el salto 9 se observa que obtenemos una respuesta de la dirección ip 154.54.31.230 y dos de 154.54.47.154 
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=1\textwidth]{img/traceroute-out-white.png}
-	\caption{Salida del comando traceroute}
-	\label{fig:traceroute-out}
-\end{figure}
-
-
-A partir de la salida de traceroute se debe obtener una estructura de datos que facilite el análisis de la ruta, para esto se usó el modulo tracerouteparser.py\footnote{tracerouteparser.py es cortesia del proyecto Netalyzr: http://netalyzr.icsi.berkeley.edu}, que extrae la información de la cabecera (ip destino y nombre de dominio), asi como una lista de hops (saltos), cada hop es a su vez una lista de probes (sondas), cada sonda tiene dirección ip, nombre de dominio, rtt y anotaciones; ya que el ip destino es conocido, solo se guarda en el archivo de trazas la lista de saltos en formato json. 
-
-El formato esta compuesto de la siguiente manera:
-
-\lstset{
-	numbers=left,
-	stepnumber=1,    
-	firstnumber=1,
-	numberfirstline=true,
-	numberstyle=\tiny,
-	basicstyle =\small
-}
-
-\begin{lstlisting}][h,frame=single]
-[
-	[
-		{
-			"anno": anno_1,
-			"rtt": rtt_1,
-			"ipaddr": ipaddr_1,
-			"name": name_1
-		},
-		{
-			"anno":  anno_2,
-			"rtt": rtt_2,
-			"ipaddr": ipaddr_2,
-			"name": name_2
-		},
-		...
-	],
-	...
-]
-\end{lstlisting}
-
-Cada vez que se realiza una prueba con traceroute se anexa al archivo de trazas una entrada con la marca de tiempo de inicio de la prueba, un carácter de separación y luego una cadena en el formato json antes mostrado. 
-
-Las parámetros de esta prueba son los siguientes:
-
-\begin{table}[h]
-	\centering
-	\begin{tabular}{lll}
-		\rowcolor[HTML]{C0C0C0} 
-		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
-		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
-		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\ \hline
-	\end{tabular}
-		\caption{Parametros de la prueba con traceroute}
-		\label{tab:traceroute-params}
-\end{table}
-
-\subsection{Throughput con Iperf}
-
-La prueba de throughput con iperf mide el ancho de banda entre un par de nodos usando el programa Iperf, como se pudo ver en las pruebas anteriores, siempre es necesario que el equipo destino (Tentacle Probe Destination) ofrezca algún tipo de respuesta ya sea en forma de ICMP Echo Reply o HTTP Response, en estos casos no necesariamente hace falta instalar o configurar el equipo destino pues estos ya implementan dichos servicios, sin embargo en el caso de Iperf el usuario que realiza el monitoreo debe asegurarse de mantener una instancia de Iperf en modo servidor para realizar las pruebas, en otras palabras el usuario debe tener acceso o contar con la colaboración explicita de los puntos finales a monitorear.
-
-\begin{table}[h]
-	\centering
-	\begin{tabular}{lll}
-		\rowcolor[HTML]{C0C0C0} 
-		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
-		Probar este enlace & Booleano                      & Determina si se debe o no ejecutar la prueba para un enlace especifico.                      \\ \hline
-		Tiempo de transmisión       & Entero                      & Numero de segundos para transmitir datos durante la prueba. \\ \hline
-		Bytes a enviar      & String                      & Cantidad de bytes a enviar durante la prueba, se puede especificar si el numero es en bytes o megabytes usando las letras B o M respectivamente, este parámetro se ignora si se establece el parametro anterior.. \\ \hline
-		Numero de flujos       & Entero                      & Numero de flujos TCP simultáneos a usar durante la prueba. \\ \hline
-		Puerto       & Entero                      & Especifica el puerto en que el servidor está escuchando en el TPS. \\ \hline
-	\end{tabular}
-	\caption{Parametros de la prueba con iperf}
-	\label{tab:traceroute-params}
-\end{table}
-
-\section{Casos de uso}
-
-Ya que el monitor de red Tentacle funciona de forma automatizada y todas las acciones de configuración y visualización de los datos recolectados por el se realizan en la aplicación web, solo se tienen cuatro casos de uso para el monitor.
-
-\begin{table}[H]
-	\caption{Caso de uso – Iniciar monitor}
-	\begin{center}
-		\begin{tabular}{r|p{2cm}p{8cm}}
-			\textbf{\textit{TM-01}} & \multicolumn{2}{l}{\textit{Iniciar monitor}}\\
-			\hline
-			% Linea de descripción 
-			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea iniciar el monitor de red tentacle.}\\
-			% Linea de Secuencia normal
-			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario invoca el cliente con el comando "start". \\
-			& 2 & El cliente crea el proceso daemon y retorna. \\
-			% Linea de Secuencia excepciones
-			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 3 & Si el archivo pid existe entonces el cliente muestra un mensaje de error indicando que el monitor ya se esta ejecutando. \\
-		\end{tabular}
-	\end{center}
-\end{table}
-
-
-\begin{table}[H]
-	\caption{Caso de uso – Detener monitor}
-	\begin{center}
-		\begin{tabular}{r|p{2cm}p{8cm}}
-			\textbf{\textit{TM-02}} & \multicolumn{2}{l}{\textit{Detener monitor}}\\
-			\hline
-			% Linea de descripción 
-			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea detener el monitor que se esta ejecutando en modo daemon.}\\
-			% Linea de Secuencia normal
-			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario invoca el cliente con el comando "stop". \\
-			& 2 & El cliente abre el archivo pid y envía la señal SIGTERM al proceso daemon. \\
-			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
-			% Linea de Secuencia excepciones
-			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 4 & Si el archivo pid no existe, el cliente informa al usuario que el monitor no se esta ejecutando. \\
-		\end{tabular}
-	\end{center}
-\end{table}
-
-\begin{table}[H]
-	\caption{Caso de uso – Reiniciar monitor}
-	\begin{center}
-		\begin{tabular}{r|p{2cm}p{8cm}}
-			\textbf{\textit{TM-03}} & \multicolumn{2}{l}{\textit{Reiniciar monitor}}\\
-			\hline
-			% Linea de descripción 
-			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea reiniciar el monitor que se esta ejecutando en modo daemon.}\\
-			% Linea de Secuencia normal
-			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario invoca el cliente con el comando "restart". \\
-			& 2 & El cliente abre el archivo pid y envía la señal SIGTERM al proceso daemon. \\
-			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
-			& 4 & El cliente crea el proceso daemon y retorna. \\
-			% Linea de Secuencia excepciones
-			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 5 & Si el archivo pid no existe, el cliente informa al usuario que el monitor no se esta ejecutando. \\
-		\end{tabular}
-	\end{center}
-\end{table}
-
-\begin{table}[H]
-	\caption{Caso de uso – Ver Plan de Monitoreo}
-	\begin{center}
-		\begin{tabular}{r|p{2cm}p{8cm}}
-			\textbf{\textit{TM-04}} & \multicolumn{2}{l}{\textit{Ver Plan de Monitoreo}}\\
-			\hline
-			% Linea de descripción 
-			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el plan de ejecución del monitor.}\\
-			% Linea de Secuencia normal
-			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario invoca el cliente con el comando "jobs". \\
-			& 2 & El cliente abre la base de datos y retira la información. \\
-			& 3 & El cliente muestra por pantalla las tareas planificadas y los enlaces monitoreados y retorna. \\
-			% Linea de Secuencia excepciones
-			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 5 & Si la base de datos no se ha creado muestra una lista vacía. \\
-		\end{tabular}
-	\end{center}
-\end{table}
 
 \chapter{Aplicación Web "Optopus Head"}
 
@@ -2327,6 +1991,359 @@ reiniciar servidor
 reiniciar celery cluster
 
 \section{Pruebas de Rendimiento}
+
+
+\chapter{Monitor de Red "Tentacle Monitor"} \label{cap:monitor}
+
+Tentacle Monitor es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo.
+
+Tentacle Monitor ejecuta pruebas periódicas siguiendo un plan de monitoreo definido por el usuario con el objetivo recoger datos sobre las métricas relevantes a la red a monitorear, los resultados de las pruebas son guardados temporalmente en la memoria del dispositivo y se suben a la nube regularmente, la frecuencia en que se suben los datos a la nube depende de la cantidad de memoria disponible en el dispositivo, la cantidad de datos generados por el monitoreo y el ancho de banda disponible.
+
+Uno de los objetivos principales de Tentacle Monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. Como ya se mencionó, el comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre Tentacle Monitor y Octopus Head se realiza a través de la nube, Octopus Head transfiere el plan de monitoreo a través de archivos a modo de mensajes y los guarda en una carpeta a modo de buzón; Tentacle Monitor mantiene una conexión con la nube para ser notificado de cambios en dicha carpeta con baja latencia de esta manera se pueden leer los mensajes rápidamente y tomar las acciones necesarias, como incluir nuevas pruebas, replanificar pruebas, cambiar los parámetros de ejecución, o incluir nuevos enlaces a monitorear.
+
+\section{Diseño del Monitor}
+
+El diseño del monitor esta sujeto a los siguientes baremos: 
+
+\begin{itemize}
+	\item{\textbf{Estabilidad} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá los resultados esperados en la aplicación web.}
+	\item{\textbf{Flexibilidad} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando.}
+	\item{\textbf{Planificación precisa} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de manera fiel el plan de monitoreo.}
+	\item{\textbf{Ejecutable en equipos de bajo costo} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del host.}
+	\item{\textbf{Configuración remota} el monitor debe incluir algún protocolo para actualizar su plan de monitoreo a partir de cambios hechos en la aplicación web.}
+	\item{\textbf{Bitácora} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre los eventos relevantes durante la ejecución.}
+\end{itemize}
+
+\subsection{Arquitectura}
+
+Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Monitor tiene una arquitectura basada en componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de la aplicación; cada uno de estos componentes puede ser reemplazado fácilmente siempre y cuando la interfaz entre ellos se mantenga intacta.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{img/tentacle-components.png}
+	\caption{Diagrama de Componentes Octopus Tentacle}
+	\label{fig:tentacle-components.png}
+\end{figure} 
+
+\subsection{Diagrama de actividades}
+
+La ejecución del monitor comienza en el cliente, el cliente es el encargado de instanciar el proceso daemon y lo hace a través del método bien conocido de doble fork. Para asegurarse de no ejecutar múltiples instancias del monitor se revisa un archivo .pid, si el archivo existe significa que el monitor se está ejecutando y el cliente informa del error al usuario. 
+
+Después de que el proceso esta daemonizado comienza la fase de inicializacion, para esto se crea el planificador y se cargan las tareas del jobstore, importando el codigo de las pruebas a ejecutar. A este punto las pruebas están planificadas tentativamente y cargadas en memoria pero solo serán ejecutadas después de que se inicie el planificador.
+
+Al iniciar el planificador este pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. Cuando el planificador inicia una tarea se la pasa al ejecutor en este caso un grupo de subprocesos previamente inicializados, cuando un subproceso termina de ejecutar una tarea informa al planificador, esto con la finalidad de implementar políticas de concurrencia de tareas.
+
+Mientras tanto, el hilo principal se conecta a la nube usando el API de Dropbox que posee un método para notificar a los clientes sobre cambios a una carpeta en tiempo real y con baja latencia, el método consiste en abrir una conexión HTTP con un alto valor de timeout (entre 30 y 120 segundos), si ocurre un cambio en la carpeta, el servidor de Dropbox responde de inmediato indicando que ocurrieron cambios y el monitor procederá a manejar este evento (descargando los archivos nuevos y aplicando los cambios al plan de monitoreo), en caso contrario, Dropbox responde indicando que no ocurrieron cambios y el monitor reinicia la conexión. 
+
+Los eventos relevantes al monitor tentacle son los siguientes: (1) una prueba se ha agrega al plan de monitoreo y debe cargarse a memoria y planificarse (2) una prueba se ha eliminado y debe ser eliminada del plan de monitoreo (3) el intervalo entre pruebas de una prueba ha cambiado y debe replanificarse la próxima ejecución (4) los parámetros de una prueba han cambiado (5) se ha agregado un nuevo enlace a monitorear (6) se ha eliminado un enlace monitoreado.
+
+El monitor solo puede detenerse a través de una señal del sistema operativo (SIGTERM), el cliente utiliza el archivo pid para determinar el id del proceso y enviar la señal. El manejador de excepciones del monitor entonces inicia una secuencia de apagado, deteniendo las pruebas, apagando el planificador y desbloqueado el archivo .pid.
+
+Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activity}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{img/tentacle-activity}
+	\caption{Diagram de actividades de Tentacle}
+	\label{fig:tentacle-activity}
+\end{figure}
+
+
+\section{Componentes}
+
+\subsection{Cliente}
+
+El cliente de Octopus Tentacle es el programa encargado de iniciar o detener la ejecución del monitor en modo daemon y funge como interfaz entre el usuario y monitor.
+
+Se puede invocar el cliente con los siguientes comandos:
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+
+\begin{table}[h!]
+	\centering
+	\label{my-label}
+	\begin{tabular}{p{2cm}p{13cm}}
+		\rowcolor{light-gray} Comando & Descripción \\ 
+		\hline start & Inicia el monitor como un proceso daemon, falla si el archivo .pid ya existe (el monitor se esta ejecutando) \\ 
+		\hline stop & Detiene el monitor enviando la señal SIGTERM al proceso daemon, falla si el archivo pid no existe (el monitor no se esta ejecutando) \\  
+		\hline restart & Detiene e inicia el monitor \\ 
+		\hline jobs & Muestra las tareas pendientes en el planificador (plan de monitoreo) \\ 
+		\hline 
+	\end{tabular} 
+	\caption{Comandos del cliente Octopus Tentacle}
+\end{table}
+
+Los comandos start y restart se pueden invocar con la opción --no-daemon para iniciar el monitor en modo consola (sin daemonizar) 
+
+\subsection{Hilo Principal}
+
+El hilo principal de ejecución es el punto de partida desde el momento en que el proceso ya se ha convertido en un daemon, se encarga de inicializar el planificador el cual a su vez pasa a ejecutarse en segundo plano, luego, su tarea consiste en mantener el plan de monitoreo al día a partir de los cambios que se hagan en Octopus Head.
+
+El hilo principal mantiene una conexión constante con el servidor de Dropbox para ser notificado de cambios en el plan de monitoreo, si hay cambios, este llama los métodos para leer los archivos y a partir de ellos hacer cambios en plan de monitoreo, como eliminar pruebas o agregar nuevos enlaces monitoreados.
+
+\subsection{Planificador}
+
+Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite retrasar la ejecución de código python; el planificador se puede ejecutar como un subproceso de modo que es posible agregar, eliminar y re-planificar tareas en cualquier momento desde el hilo principal de la aplicación. 
+
+APScheduler consiste de un conjunto de componentes configurables que se pueden extender o re-usar para obtener cualquier comportamiento deseado, a continuación se explica su funcionamiento y como se usaron en el marco de esta aplicación.
+
+\subsubsection{Triggers (Gatillos)}
+
+Los triggers contienen la lógica para determinar en que momento se debe ejecutar una tarea, la biblioteca incluye varios triggers predefinidos, de los cuales dos se han usado para el desarrollo de esta aplicación: 
+
+\begin{itemize}
+	\item{Interval Trigger: ejecuta pruebas en intervalos regulares, opcionalmente se pueden suministrar fechas finales e iniciales de modo que las pruebas solo se ejecuten durante un periodo especifico}
+	\item{Date Trigger: ejecuta la prueba en una fecha especifica dada, una sola vez, útil para desplegar pruebas que usen muchos recursos de red como benchmarks de ancho de banda o capturas de tráfico de la red.}
+\end{itemize}
+
+\subsubsection{Executors (Ejecutores)}
+
+El ejecutor es el ente encargado de llevar a cabo la ejecución de las tareas, en nuestro caso se ha hecho uso de un grupo de subprocesos (thread pool), la cantidad de hilos en el grupo esta dado por el numero de pruebas que estaremos ejecutando de modo que siempre se tenga al menos un hilo disponible cuando se inicia una prueba. 
+
+\subsubsection{Almacén de tareas (Job store)}
+
+El almacén de tareas guarda las tareas planificadas, el comportamiento por defecto es guardar las tareas en memoria, pero existen distintos tipos de almacenes como redis (ver sección \ref{sub:redis}) y bases de datos; hemos usado el SQLAlchemy job store que permite guardar tareas en una base de datos ligera como sqlite y así asegurar la persistencia de los datos de la aplicación.
+
+\subsection{Almacenamiento Compartido}
+
+El almacenamiento compartido se encarga de alojar los resultados de las pruebas en archivos de trazas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos.
+
+Para mantener el numero de archivos en el almacenamiento compartido razonablemente pequeño se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese periodo se anexan al archivo correspondiente; el costo de alojar archivos en la nube no depende del numero de archivos sino del espacio total de disco en uso, ya que existe un limite de peticiones diarias por usuario debemos intentar minimizar la cantidad de peticiones que realizamos a Dropbox. Este tema se explicará a profundidad en la sección \ref{fig:sub:sincronizacion}.
+
+\section{Pruebas Implementadas}
+
+Gracias a la arquitectura de Tentacle, implementar una prueba es tan sencillo como crear un paquete e implementar la función "run" en el archivo init.py, todas las pruebas implementadas hasta ahora comparten una flujo de ejecución similar:
+\begin{enumerate}
+	\item{Se lee el archivo de configuración}
+	\item{Se obtienen los enlaces a monitorear y los parámetros globales}
+	\item{Se ejecuta la prueba por cada enlace monitoreado (ya sea en paralelo o en secuencia).}
+	\item{Se ejecuta un comando externo externo como ping o traceroute o se usa una biblioteca python para evaluar alguna métrica del enlace.}
+	\item{(opcional) si se ejecuta un comando externo se hace un parsing para extraer los resultados relevantes de la salida del programa}
+	\item{Se guardan los resultados en un archivo de trazas; generalmente el resultado de una prueba está representado por una linea en archivo de trazas, sin embargo el desarrollador tiene libertad total sobre el formato que utilice para generar archivos de trazas}
+\end{enumerate}
+
+Durante el desarrollo de este proyecto se han implementado las siguientes pruebas:
+
+\subsection{Ping}
+
+Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como ya se menciono en la sección \ref{sub:ping} ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo.
+
+La prueba consiste en ejecutar el comando ping para cada uno de los enlaces monitoreados, ejecutamos el comando con la opción -D para que ping imprima cada resultado de latencia con una marca de tiempo entre corchetes, un ejemplo de la salida de ping se puede ver en la figura \ref{fig:ping-out}. 
+
+Es muy sencillo extraer los datos relevantes de la salida de ping, para esto recorremos la salida descartando las lineas que no comiencen con el carácter '[', separamos la salida en palabras, la palabra en la posición 0 corresponde a la marca de tiempo, luego buscamos las palabras que comiencen por "icmp\_seq o icmp\_req y time" para obtener numero de secuencia icmp y tiempo de ida y vuelta respectivamente.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{img/ping-out}
+	\caption{Ping output}
+	\label{fig:ping-out}
+\end{figure}
+
+Independientemente del número de sondas que se envíen elegiremos solo un resultado de latencia por prueba (la mediana), si para una prueba no se obtiene ninguna respuesta entonces guardamos una traza con rtt=-1, indicando que el enlace está inactivo o el nodo está rechazando el protocolo.
+
+\begin{table}[h]
+	\centering
+	\label{table:ping-parameters}
+	\begin{tabular}{rp{2cm}p{9cm}}
+		\rowcolor{light-gray} 
+		Parametro              &  Tipo & Descripcion                                                                \\ \hline
+		Numero de sondas       & Entero                      & Número de sondas icmp a enviar.                                            \\ \hline
+		Timeout                & Float                       & Tiempo a esperar por una respuesta antes de asumir una sonda como perdida. \\ \hline
+		Intervalo entre sondas & Float                       & Tiempo entre el envío de cada sonda individual.                           
+	\end{tabular}
+	\caption{Parametros de la prueba ping}
+\end{table}
+
+\subsection{Httping}
+
+Esta prueba usa el protocolo HTTP para hacer un HEAD Request y obtener el tiempo de respuesta y código de estatus HTTP, a diferencia de la prueba con ping esta no ejecuta un comando externo sino que llama a una función de la biblioteca 'requests' que hace la petición directamente por lo que no es necesario ningún tipo de parsing. 
+
+La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba httping,
+
+\begin{table}[h!]
+	\centering
+	\label{table:httping-parameters}
+	\begin{tabular}{rp{2cm}p{9cm}}
+		\rowcolor{light-gray} 
+		Parametro              &  Tipo & Descripcion                                                                \\ \hline
+		Timeout       & Float                      & Tiempo a esperar por una respuesta                                        \\ \hline
+		Path                & String                       & Cadena de caracteres que se adjunta al ip o nombre de dominio del enlace, especialmente útil para probar servicios específicos de una aplicación o servicio web.. \\ \hline
+		Port & Entero                       & Espeficia el puerto al que se envía la peticion HTTP.                           
+	\end{tabular}
+	\caption{Parametros de la prueba httping}
+\end{table}
+
+Esta prueba es útil para monitorear todo tipo de servidores web y posee la ventaja sobre ping de utilizar un protocolo de capa aplicación por lo que da una idea mas precisa de la experiencia del usuario al visitar dicho servicio; a diferencia de ping, el resultado obtenido no solo es la latencia de la red, sino la suma de la latencia de la red y el tiempo de respuesta del servidor, que puede estar sujeto, por ejemplo, al nivel de carga que esté manejando dicho servicio, o a la petición especifica que se esté realizando.
+
+\subsection{Traceroute}
+
+Esta prueba ejecuta el comando traceroute para obtener la ruta entre un par de nodos a través de una red ip, llamamos ruta a una secuencia de saltos (hops) que hace un paquete al atravesar un enrutador. 
+
+El comando traceroute imprime la ruta como una lista ordenada donde cada linea representa un salto, con su dirección ip, nombre de dominio y latencia, dependiendo del numero de sondas que se estén enviando por salto pueden existir casos en que se obtenga respuesta de mas de una dirección ip, este comportamiento se puede ver en la figura \ref{fig:traceroute-out} en el salto 9 se observa que obtenemos una respuesta de la dirección ip 154.54.31.230 y dos de 154.54.47.154 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{img/traceroute-out-white.png}
+	\caption{Salida del comando traceroute}
+	\label{fig:traceroute-out}
+\end{figure}
+
+
+A partir de la salida de traceroute se debe obtener una estructura de datos que facilite el análisis de la ruta, para esto se usó el modulo tracerouteparser.py\footnote{tracerouteparser.py es cortesia del proyecto Netalyzr: http://netalyzr.icsi.berkeley.edu}, que extrae la información de la cabecera (ip destino y nombre de dominio), asi como una lista de hops (saltos), cada hop es a su vez una lista de probes (sondas), cada sonda tiene dirección ip, nombre de dominio, rtt y anotaciones; ya que el ip destino es conocido, solo se guarda en el archivo de trazas la lista de saltos en formato json. 
+
+El formato esta compuesto de la siguiente manera:
+
+\lstset{
+	numbers=left,
+	stepnumber=1,    
+	firstnumber=1,
+	numberfirstline=true,
+	numberstyle=\tiny,
+	basicstyle =\small
+}
+
+\begin{lstlisting}][h,frame=single]
+[
+[
+{
+"anno": anno_1,
+"rtt": rtt_1,
+"ipaddr": ipaddr_1,
+"name": name_1
+},
+{
+"anno":  anno_2,
+"rtt": rtt_2,
+"ipaddr": ipaddr_2,
+"name": name_2
+},
+...
+],
+...
+]
+\end{lstlisting}
+
+Cada vez que se realiza una prueba con traceroute se anexa al archivo de trazas una entrada con la marca de tiempo de inicio de la prueba, un carácter de separación y luego una cadena en el formato json antes mostrado. 
+
+Las parámetros de esta prueba son los siguientes:
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		\rowcolor[HTML]{C0C0C0} 
+		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
+		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
+		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\ \hline
+	\end{tabular}
+	\caption{Parametros de la prueba con traceroute}
+	\label{tab:traceroute-params}
+\end{table}
+
+\subsection{Throughput con Iperf}
+
+La prueba de throughput con iperf mide el ancho de banda entre un par de nodos usando el programa Iperf, como se pudo ver en las pruebas anteriores, siempre es necesario que el equipo destino (Tentacle Probe Destination) ofrezca algún tipo de respuesta ya sea en forma de ICMP Echo Reply o HTTP Response, en estos casos no necesariamente hace falta instalar o configurar el equipo destino pues estos ya implementan dichos servicios, sin embargo en el caso de Iperf el usuario que realiza el monitoreo debe asegurarse de mantener una instancia de Iperf en modo servidor para realizar las pruebas, en otras palabras el usuario debe tener acceso o contar con la colaboración explicita de los puntos finales a monitorear.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lll}
+		\rowcolor[HTML]{C0C0C0} 
+		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
+		Probar este enlace & Booleano                      & Determina si se debe o no ejecutar la prueba para un enlace especifico.                      \\ \hline
+		Tiempo de transmisión       & Entero                      & Numero de segundos para transmitir datos durante la prueba. \\ \hline
+		Bytes a enviar      & String                      & Cantidad de bytes a enviar durante la prueba, se puede especificar si el numero es en bytes o megabytes usando las letras B o M respectivamente, este parámetro se ignora si se establece el parametro anterior.. \\ \hline
+		Numero de flujos       & Entero                      & Numero de flujos TCP simultáneos a usar durante la prueba. \\ \hline
+		Puerto       & Entero                      & Especifica el puerto en que el servidor está escuchando en el TPS. \\ \hline
+	\end{tabular}
+	\caption{Parametros de la prueba con iperf}
+	\label{tab:traceroute-params}
+\end{table}
+
+\section{Casos de uso}
+
+Ya que el monitor de red Tentacle funciona de forma automatizada y todas las acciones de configuración y visualización de los datos recolectados por el se realizan en la aplicación web, solo se tienen cuatro casos de uso para el monitor.
+
+\begin{table}[H]
+	\caption{Caso de uso – Iniciar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{TM-01}} & \multicolumn{2}{l}{\textit{Iniciar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea iniciar el monitor de red tentacle.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "start". \\
+			& 2 & El cliente crea el proceso daemon y retorna. \\
+			% Linea de Secuencia excepciones
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si el archivo pid existe entonces el cliente muestra un mensaje de error indicando que el monitor ya se esta ejecutando. \\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+\begin{table}[H]
+	\caption{Caso de uso – Detener monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{TM-02}} & \multicolumn{2}{l}{\textit{Detener monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea detener el monitor que se esta ejecutando en modo daemon.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "stop". \\
+			& 2 & El cliente abre el archivo pid y envía la señal SIGTERM al proceso daemon. \\
+			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
+			% Linea de Secuencia excepciones
+			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 4 & Si el archivo pid no existe, el cliente informa al usuario que el monitor no se esta ejecutando. \\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\caption{Caso de uso – Reiniciar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{TM-03}} & \multicolumn{2}{l}{\textit{Reiniciar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea reiniciar el monitor que se esta ejecutando en modo daemon.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "restart". \\
+			& 2 & El cliente abre el archivo pid y envía la señal SIGTERM al proceso daemon. \\
+			& 3 & El monitor maneja la excepción deteniendo su ejecución. \\
+			& 4 & El cliente crea el proceso daemon y retorna. \\
+			% Linea de Secuencia excepciones
+			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si el archivo pid no existe, el cliente informa al usuario que el monitor no se esta ejecutando. \\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\caption{Caso de uso – Ver Plan de Monitoreo}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{TM-04}} & \multicolumn{2}{l}{\textit{Ver Plan de Monitoreo}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el plan de ejecución del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario invoca el cliente con el comando "jobs". \\
+			& 2 & El cliente abre la base de datos y retira la información. \\
+			& 3 & El cliente muestra por pantalla las tareas planificadas y los enlaces monitoreados y retorna. \\
+			% Linea de Secuencia excepciones
+			\multirow{3}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si la base de datos no se ha creado muestra una lista vacía. \\
+		\end{tabular}
+	\end{center}
+\end{table}
 
 \chapter{Framework de integración de pruebas} \label{cap:framework}
 
