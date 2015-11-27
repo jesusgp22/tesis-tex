@@ -356,8 +356,8 @@ A continuación se explican las métricas mas comúnmente utilizadas para determina
 
 La latencia es el tiempo que le toma a un paquete o mensaje viajar desde su origen hasta el punto destino \cite{Grigorik:13}. Teóricamente la latencia está relacionada directamente con la distancia entre los puntos finales de una comunicación, en la practica los paquetes viajan a través de una red de enrutadores que retransmiten el mensaje hasta su destino, la latencia total será la suma de cada uno de los siguientes factores para cada uno de los enrutadores que atraviese el paquete\cite{Grigorik:13}:
 \begin{itemize}
-\item{\textbf{Retraso de Propagación:} es el tiempo que tarda un mensaje en viajar del emisor al receptor y es función de la distancia por la velocidad a la que la señal se propaga}
-\item{\textbf{Retraso de Transmisión:} es el tiempo que tarda el emisor en poner todos los bits de un mensaje en el medio de transmisión y es función de la longitud del paquete y el ancho de banda del enlace}
+\item{\textbf{Retraso de Propagación:} es el tiempo que tarda un mensaje en viajar del emisor al receptor y es función de la distancia por la velocidad a la que la señal se propaga.}
+\item{\textbf{Retraso de Transmisión:} es el tiempo que tarda el emisor en poner todos los bits de un mensaje en el medio de transmisión y es función de la longitud del paquete y el ancho de banda del enlace.}
 \item{\textbf{Retraso de Procesamiento:} tiempo requerido para revisar la cabecera del paquete, buscar errores y determinar el destino del paquete.}
 \item{\textbf{Retraso de Colas:} Cantidad de tiempo que un paquete pasa en la cola de una interfaz esperando su turno por ser procesado.}
 \end{itemize}
@@ -382,9 +382,9 @@ Mientras puede parecer que la perdida de paquetes es siempre producto de un prob
 
 Se llama jitter a la fluctuación de la latencia durante la transmisión de un conjunto de paquetes, estas fluctuaciones vienen dadas principalmente por la variación del retraso que los paquetes experimentan en las colas en los enrutadores\cite{Kurose:13}, sin embargo todos los factores mencionados en la sección \ref{sub:lat} pueden contribuir en menor medida.
 
-El término jitter puede tener distintas connotaciones sin embargo es usado frecuentemente por científicos en el área de la computación como la variación de una métrica (comúnmente latencia) con respecto a otra métrica de referencia (como latencia mínima o promedio), a esto también se le llama variación en el retraso de los paquetes (PDV por sus siglas en ingles), este termino es a veces preferido por ser mas preciso \cite{rfc3393}
+El término jitter puede tener distintas connotaciones sin embargo es usado frecuentemente por científicos en el área de la computación como la variación de una métrica (comúnmente latencia) con respecto a otra métrica de referencia (como latencia mínima o promedio), a esto también se le llama variación en el retraso de los paquetes (PDV por sus siglas en ingles), este termino es a veces preferido por ser mas preciso \cite{rfc3393}.
 
-El jitter puede afectar considerablemente transmisiones en tiempo real como VoIP o streaming sin embargo la correcta implementación de políticas de buffering del lado del receptor puede minimizar e incluso mitigar este efecto\cite{Kurose:13}
+El jitter puede afectar considerablemente transmisiones en tiempo real como VoIP o streaming sin embargo la correcta implementación de políticas de buffering del lado del receptor puede minimizar e incluso mitigar este efecto\cite{Kurose:13}.
 
 \subsection{Throughput}
 
@@ -432,11 +432,11 @@ Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional q
 
 \section{Big Data}
 
-Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información que no se hubiera hecho evidente usando otros métodos de análisis. 
+Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información y hacer descubrimientos que habrían sido imposibles anteriormente. 
 
 Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, Big Data es un termino relativamente impreciso ya que no existe un convenio sobre la cantidad de datos a la que se refiere, pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}. 
 
-El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito medico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
+El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito médico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
 
 \section{Visualización de datos} \label{sec:visualizacion}
 
@@ -444,7 +444,7 @@ La visualización de datos se refiere al aprovechamiento de elementos gráficos pa
 
 Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y columnas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
 
-Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc, cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados, por ejemplo, es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas de esta manera se pueden expresar datos de variable al mismo tiempo que se da una idea de su posición geográfica.
+Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc, cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados. Es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas que pueden expresar datos de la densidad de una variable al mismo tiempo que se da una idea de su posición geográfica.
 
 \begin{figure}
 \centering
@@ -454,7 +454,7 @@ Hay una variedad de métodos apropiados para visualizar distintos conjuntos de da
 \label{fig:crimespotting}
 \end{figure}
 
-En la figura \ref{fig:crimespotting} se puede observar como se usan distintos métodos para representar datos sobre crímenes como robo de vehículos, homicidios y asaltos con armas letales en un área del distrito de Columbia, un mapa es usado para mostrar la localización en que se ocurrieron los crímenes, en esta representación se puede observar rápidamente que zonas son mas propensas a cada tipo de crimen y obtener una idea de su frecuencia, a la izquierda se puede ver una gráfica de barras mostrando la cantidad de ocurrencias coloreadas por tipo de crimen y separados por día de la semana, de esta manera es posible no solo observar que crímenes son mas frecuentes sino que días y semanas son las peores. También se ofrecen herramientas para filtrar los crímenes por fecha, tipo de crimen y distrito, este tipo de herramientas de visualización de datos interactivas son cada vez mas populares en todo tipo de organizaciones ya que facilitan el análisis efectivo de sus datos.
+En la figura \ref{fig:crimespotting} se puede observar como se usan distintos métodos para representar datos sobre crímenes como robo de vehículos, homicidios y asaltos con armas letales en un área del distrito de Columbia, un mapa es usado para mostrar la localización en que se ocurrieron los crímenes, en esta representación se puede observar rápidamente que zonas son mas propensas a cada tipo de crimen y obtener una idea de su frecuencia, a la izquierda se puede ver una gráfica de barras mostrando la cantidad de ocurrencias coloreadas por tipo de crimen y separados por día de la semana, de esta manera es posible no solo observar que crímenes son mas frecuentes sino que días y semanas son las mas propensas. También se ofrecen herramientas para filtrar los crímenes por fecha, tipo de crimen y distrito, este tipo de herramientas de visualización de datos interactivas son cada vez mas populares en todo tipo de organizaciones ya que facilitan el análisis efectivo de sus datos.
 
 \section{Computación en la nube}
 
@@ -515,13 +515,13 @@ La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de n
 
 El controlador es el encargado de dirigir el flujo de control de la aplicación a partir de mensajes externos, como datos introducidos por el usuario en el caso de una aplicación de escritorio o peticiones HTTP en el caso de aplicaciones web. A partir de estos estímulos, el controlador se encargará de invocar las vistas apropiadas, actualizar el modelo y hacer todas las acciones necesarias.
 
-Distintas implementaciones del patrón MVC se toman la libertad de establecer la linea que separa el controlador y la vista de forma distinta, por ejemplo en algunas implementaciones el controlador se encarga tanto de actualizar el modelo y las vistas como de responder a los mensajes externos, es decir que el controlador es el encargado de ejecutar toda la lógica, y la vista meramente contiene la presentación de los datos, en otras implementaciones como veremos en la próxima sección la vista es la encarga tanto de seleccionar los datos que van a mostrarse así como de desplegar la presentación, esta ultima es una variación de MVC a veces llamado MTV (Modelo-Template-Vista)
+Distintas implementaciones del patrón MVC se toman la libertad de establecer la linea que separa el controlador y la vista de forma distinta, por ejemplo en algunas implementaciones el controlador se encarga tanto de actualizar el modelo y las vistas como de responder a los mensajes externos, es decir que el controlador es el encargado de ejecutar toda la lógica, y la vista meramente contiene la presentación de los datos, en otras implementaciones, la vista es la encargada tanto de seleccionar los datos que van a mostrarse así como de desplegar la presentación, esta ultima es una variación de MVC a veces llamado MTV (Modelo-Template-Vista)
 
 \subsection{Django}
 
-Django es un framework de desarrollo de aplicaciones web construido en python, en este trabajo usamos Django como el fundamento para Octopus Head. Django permite construir aplicaciones web rápidamente gracias a su filosofía de "baterias incluidas", es decir, que incluye una inmensa gama de características comunes a la mayoría de las aplicaciones web como validaciones de formularios, autenticación de usuarios, manejo de sesiones entre muchos otros; de esta manera el desarrollador puede concentrarse en escribir la lógica que es especifica a su aplicación y dejar que Django maneje los aspectos repetitivos y muchas veces tediosos de la pila de desarrollo web.
+Django es un framework de desarrollo de aplicaciones web construido en python, en este trabajo usamos Django como el fundamento para Octopus Head. Django permite construir aplicaciones web rápidamente gracias a su filosofía de "baterias incluidas", es decir, que incluye una inmensa gama de características comunes a la mayoría de las aplicaciones web como validaciones de formularios, autenticación de usuarios, manejo de sesiones entre muchos otros \cite{DjangoWebsite}; así el desarrollador puede concentrarse en escribir la lógica que es especifica a su aplicación y dejar que Django maneje los aspectos repetitivos y muchas veces tediosos de la pila de desarrollo web.
 
-Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que los datos son presentados. 
+Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que dichos datos son presentados. 
 
 Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (template) para generar la respuesta que será devuelta, en la figura \ref{fig:django-arch} puede verse el ciclo de petición-respuesta tal como se ha descrito.
 
@@ -538,22 +538,24 @@ Django ha demostrado ser escalable y flexible, se sabe de instancias de Django a
 
 \subsection{Celery}
 
-Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios) que son: 
+Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios)\cite{CeleryWebsite}: 
 
 \begin{itemize}
-	\item{Bróker de mensajería: el message broker es el encargado almacenar las tareas que deben ser ejecutadas, este consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que ejecutores.}
-	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico, el planificador no puede asegurar que las tareas sean ejecutadas exactamente en el tiempo planificado ya que el tiempo de ejecución depende del tamaño de la cola y de las tareas que ya estén siendo ejecutadas por los ejecutores.}
-	\item{Workers (Ejecutores): los ejecutores son los encargados de ejecutar las tareas; estos se subscriben a una o mas colas y consumen los mensajes según la prioridad establecida en la cola finalmente escriben los resultados obtenidos en un result backend}
-	\item{Result Backend: sirve como un almacen donde se guardan los resultados de las tareas ejecutadas durante un periodo de tiempo dado, esto hace posible consultar los resultados obtenidos por un tarea}
+	\item{Bróker de mensajería: es el encargado almacenar las tareas que deben ser ejecutadas y pasarlas entre los distintos entes, este consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que trabajadores.}
+	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico.}
+	\item{Workers (Ejecutores): como su nombre lo indica, estos son los encargados de ejecutar las tareas; estos se subscriben a una o mas colas y consumen los mensajes según la prioridad establecida en la cola finalmente escriben el estado y resultados obtenidos en un backend de resultados}
+	\item{Backend de Resultados: sirve como un almacén donde se guarda el estado y los resultados de las tareas durante un periodo de tiempo dado, esto hace posible hacer seguimiento de las tareas y obtener sus valores de retorno.}
 \end{itemize}
 
 Uno de los problemas comunes en el desarrollo de aplicaciones web es la ejecución de tareas largas o altamente bloqueantes que mantienen ocupado al servidor web durante periodos prolongados y peor aun mantienen al usuario final esperando, para evitar este escenario el servidor web debe tener una forma de delegar este tipo de tareas para ser ejecutadas después y responder inmediatamente.
 
-Celery es usado comúnmente junto a Django y permite a una aplicación web escalar indefinidamente ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas físicas (o maquinas virtuales en un servicio IaaS) como sea necesario. 
+Celery es usado comúnmente junto a Django y permite a una aplicación web escalar a bajo costo ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas como sea necesario. 
 
 \subsection{Redis} \label{sub:redis}
 
-Redis es un almacén de estructuras de datos en memoria que puede ser usado como base de datos, cache o bróker de mensajería; se caracteriza por su velocidad de respuesta ya que todos sus datos se mantienen en memoria principal y no invierte recursos en asegurar la persistencia de sus datos, evidentemente esto tiene como consecuencia que se pierden sus datos almacenados en caso de que ocurra cualquier falla inesperada. Redis puede ser usado como bróker de mensajería o como result backend por una aplicación Celery. 
+Redis es un almacén de estructuras de datos en memoria que soporta una amplia gama de tipos como cadenas de caracteres, hashes, listas, conjuntos, conjuntos ordenados, mapas de bits, indices geo-espaciales, etc \cite{RedisWebsite}. 
+
+Redis es comúnmente usado como base de datos, cache o bróker de mensajería; y se caracteriza por su velocidad de respuesta ya que todos sus datos se mantienen en memoria principal y solo invierte recursos en asegurar ciertos niveles de persistencia, sin embargo, por omisión, los datos almacenados se pierden en caso de que ocurra cualquier falla inesperada.
 
 \subsection{Bases de Datos}
 
@@ -565,7 +567,7 @@ SQL por sus siglas en ingles "Structured Query Language" (lenguaje de consulta e
 
 \subsubsection{Mysql}
 
-Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus siglas en ingles) de codigo abierto bajo la licencia GPL (GNU General Public License). Mysql se caracteriza por ser rápido, confiable, escalable y fácil de usar, es posible instalar Mysql tanto en una maquina junto a otras aplicaciones como servidores web o también instarlo en maquinas dedicadas para que use todo el poder disponible. Mysql posee características para ejecutarse en clusters de maquinas junto con un motor de replicacion para obtener una alta escalabilidad \cite{MysqlDev}.
+Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus siglas en ingles) de codigo abierto bajo la licencia GPL (GNU General Public License). Mysql se caracteriza por ser rápido, confiable, escalable y fácil de usar, es posible instalar Mysql tanto en una maquina junto a otras aplicaciones como servidores web o también instarlo en maquinas dedicadas para que use todo el poder de cómputo disponible. Mysql posee características para ejecutarse en clusters de maquinas junto con un motor de replicacion para obtener una alta escalabilidad \cite{MysqlDev}.
 
 \subsubsection{Mapeo Objeto-Relacional}
 
@@ -585,7 +587,7 @@ Json soporta dos tipos de estructuras de datos:
 	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
 \end{enumerate}
 
-Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes escritas o cualquier permutacion de dichas estructuras anidadas. 
+Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes descritas o cualquier permutación de dichas estructuras anidadas. 
 
 Los tipos de datos soportados por json son:
 \begin{itemize}
@@ -593,26 +595,26 @@ Los tipos de datos soportados por json son:
 	\item{String: cadenas de caracteres unicode encerradas en dobles comillas} 
 	\item{Boolean: true o false}
 	\item{Arreglo: secuencia de valores ordenados}
-	\item{Objeto: colección no ordenada de pares nombre,valor}
-	\item{null: nulo o vacío}
+	\item{Objeto: colección no ordenada de pares $<$nombre,valor$>$}
+	\item{Null: nulo o vacío}
 \end{itemize}
 
 \subsection{Dropbox}
 
 Dropbox es una plataforma de almacenamiento de datos en la nube de tipo PaaS y SaaS que permite compartir y sincronizar archivos entre un número arbitrario de clientes.
 
-Dropbox es usado por aproximadamente 400 millones de personas y 100000 organizaciones\cite{Dropbox} y posee aplicaciones en Windows, Linux, Mac OS X, iOS, Android, Blackberry y web. 
+Dropbox es usado por aproximadamente 400 millones de personas y 100.000 organizaciones\cite{Dropbox} y posee aplicaciones en Windows, Linux, Mac OS X, iOS, Android, Blackberry y web. 
 
-Como todo servicio en la nube es atractivo para desarrolladores por ser robusto y confiable y es gratis hasta cierta cuota de almacenamiento a partir del cual el pago escala según la cantidad de almacenamiento usado.
+Como todo servicio en la nube es atractivo para desarrolladores por ser robusto y confiable y es gratis hasta alcanzar una cierta cantidad de espacio de almacenamiento usado, a partir de ese punto incluye planes de pago que dependen de la cantidad de espacio usado.
 
 
 \subsubsection{API de Dropbox}
 
-Un API (Aplication Programming Interface) o interfaz de programación de aplicaciones, es una serie de métodos o funciones orientados a la comunicación maquina-maquina, en el caso de la computación en la nube un API conforma un servicio que permite desarrollar aplicaciones una plataforma (en este caso Dropbox).
+Un API (Aplication Programming Interface) o interfaz de programación de aplicaciones, es una serie de métodos o funciones orientados a la comunicación maquina-maquina, en el caso de la computación en la nube un API conforma un servicio que permite desarrollar aplicaciones sobre una plataforma (en este caso Dropbox).
 
 El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento del usuario.
 
-El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones durante un cierto periodo de tiempo, sin embargo el limite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
+El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones en un periodo corto de tiempo, sin embargo el limite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
 
 \subsection{Diseño web adaptable}
 
@@ -631,7 +633,7 @@ Otra heuristica en la creación de sitios web adaptables es escalar o esconder el
 \label{fig:responsive}
 \end{figure}
 
-El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se este visitando.
+El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se esté visitando.
 
 \subsection{Highcharts}
 
@@ -706,8 +708,8 @@ Iperf es una herramienta que permite medir el rendimiento (throughput) entre un 
 Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferencias entre ellos:
 
 \begin{itemize}
-		\item{Ya que UDP a diferencia de TCP no implementa ningún algoritmo de control de congestión se podría obtener un rendimiento ligeramente superior con este protocolo *Nota para el profesor: yo se que esto es "verdad" pero me gustaría poder sustentarlo un poco mejor o incluir una cita}
-		\item{Con UDP se puede obtener una estadística de la perdida de paquetes durante la prueba}
+		\item{Ya que UDP a diferencia de TCP no implementa ningún algoritmo de control de congestión se podría obtener un rendimiento ligeramente superior con este protocolo.}
+		\item{Con UDP se puede obtener una estadística de la perdida de datagramas durante la prueba.}
 		\item{Con UDP es el servidor el que totaliza los resultados, ya que el cliente no tiene manera de saber que datagramas se han recibido.}
 \end{itemize}
 
