@@ -717,9 +717,32 @@ Para obtener una buena medición del rendimiento del enlace hay que ajustar los p
 
 \chapter{Aplicación Web "Optopus Head"}
 
-La aplicación web "Octopus Head" hace las veces de interfaz entre el usuario final y sus monitores de red, ademas es el encargado de recolectar los datos obtenidos del monitoreo y crear poderosas visualizaciones interactivas a partir de ellos, mientras los monitores realizan la tarea relativamente sencilla de recolectar datos de las redes a monitorear en Octopus Head se define el plan de monitoreo y se ejecutan las tareas pesadas de análisis de los datos recolectados para computar periodos de actividad continua, mapas de calor, horas y días activos, etc.
+El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos principales: (1) La aplicación web "Octopus Head" que funciona como cerebro y coordinador del monitoreo, (2) un conjunto de agentes monitores de red "Tentacle Probe Source" que realizan acciones de monitoreo a partir de las instrucciones de Octopus Head, (3) Nodos a monitorear "Tentacle Probe Destination" y (4) La nube, que ofrece funcionalidades de paso de mensajes y alojamiento de datos compartido entre los distintos entes.
 
-\section{Diseño del sistema}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{img/octopusmon}
+\caption{Sistema de Monitoreo "Octopus Monitor"}
+\label{fig:octopusmon}
+\end{figure}
+
+En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicacion web, los tentáculos conformados por monitores Tentacle Probe Sorce y nodos Tentacle Probe Destination en sus extremos, representan los enlaces a monitorear, se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
+
+Los monitores de red remotos funcionan bajo una planificación dada, a la que llamaremos plan de monitoreo, es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos, toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene constantemente actualizado sobre los cambios realizados al plan de monitoreo y regularmente sube los datos que obtiene a partir de las pruebas, la frecuencia de actualización también puede estar sujeta a ciertas políticas y restricciones de ancho de banda.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/monitor-config}
+\caption{Planificación del monitoreo}
+\label{fig:monitor-config}
+\end{figure}
+
+Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, esto es especialmente útil ya que los monitores de red podrían potencialmente ser abandonados en sitios de difícil acceso, se hablará a fondo de los monitores de red en el Capítulo \ref{cap:monitor}.
+
+La aplicacion web es ademas la responsable de desplegar visualizaciones a partir de los datos obtenidos del monitoreo, para esto, los datos subidos por los monitores son recolectados regularmente y procesados en un formato que facilite el procesamiento de las visualizaciones, es necesario tener una arquitectura que permita manejar los recursos disponibles de forma eficiente y así poder tanto ofrecer un servicio web rápido como planificar y ejecutar tareas de largo tiempo de ejecución.
+
+
+\section{Diseño de la aplicacion web}
 
 Para el desarrollo de esta aplicación se usó el Framework de desarrollo web Django que implementa un patrón MVC, ya que nuestra aplicación web se encargará de manejar tareas computacionalmente intensas, o de largo tiempo de ejecución, Django se integró con el sistema de procesamiento de tareas distribuido Celery, esto no solo con la finalidad de que el servidor web pueda delegar estas tareas y responder rápidamente al usuario, sino también para permitir una mejor escalabilidad del sistema, que entonces podrá responder a un mayor número de peticiones por unidad de tiempo.
 
@@ -734,7 +757,6 @@ La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o cap
 \label{fig:webapp-arch}
 \end{figure}
 
-NOTA: Agregar "carriles" para que queden claras las "capas", actualizar la capa de servicio web para incluir el servidor estatico y el proxy, agregar el cache.
 
 \subsection{Capa 1: Presentación}
 
