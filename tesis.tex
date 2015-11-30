@@ -719,6 +719,8 @@ Para obtener una buena medición del rendimiento del enlace hay que ajustar los p
 
 El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos principales: (1) La aplicación web "Octopus Head" que funciona como cerebro y coordinador del monitoreo, (2) un conjunto de agentes monitores de red "Tentacle Probe Source" que realizan acciones de monitoreo a partir de las instrucciones de Octopus Head, (3) Nodos a monitorear "Tentacle Probe Destination" y (4) La nube, que ofrece funcionalidades de paso de mensajes y alojamiento de datos compartido entre los distintos entes.
 
+En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicacion web, los tentáculos están conformados por monitores de red Tentacle Probe Sorce, nodos Tentacle Probe Destination, y una cantidad variable de nodos intermedios entre ellos, en otras palabras, los tentáculos serán los enlaces de interesa a monitorear. Se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\linewidth]{img/octopusmon}
@@ -726,9 +728,9 @@ El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos 
 \label{fig:octopusmon}
 \end{figure}
 
-En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicacion web, los tentáculos conformados por monitores Tentacle Probe Sorce y nodos Tentacle Probe Destination en sus extremos, representan los enlaces a monitorear, se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
+Los monitores de red remotos funcionan bajo una planificación dada, a la que llamaremos plan de monitoreo, es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos, toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene constantemente actualizado sobre los cambios realizados al plan de monitoreo y regularmente sube los datos que obtiene a partir de las pruebas, la frecuencia de subida de los datos puede estar sujeta a ciertas políticas y restricciones de ancho de banda.
 
-Los monitores de red remotos funcionan bajo una planificación dada, a la que llamaremos plan de monitoreo, es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos, toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene constantemente actualizado sobre los cambios realizados al plan de monitoreo y regularmente sube los datos que obtiene a partir de las pruebas, la frecuencia de actualización también puede estar sujeta a ciertas políticas y restricciones de ancho de banda.
+Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, y simplifica el manejo de monitores de red remotos que podrían potencialmente ser abandonados en sitios de difícil acceso; la nube no solo sirve para almacenar datos a bajo costo y a largo plazo, sino que podemos aprovechar sus funcionalidades para mantener cualquier número de monitores actualizados a baja latencia sin necesidad de mantener un servicio de notificaciones propio. 
 
 \begin{figure}[h]
 \centering
@@ -737,9 +739,7 @@ Los monitores de red remotos funcionan bajo una planificación dada, a la que lla
 \label{fig:monitor-config}
 \end{figure}
 
-Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, esto es especialmente útil ya que los monitores de red podrían potencialmente ser abandonados en sitios de difícil acceso, se hablará a fondo de los monitores de red en el Capítulo \ref{cap:monitor}.
-
-La aplicacion web es ademas la responsable de desplegar visualizaciones a partir de los datos obtenidos del monitoreo, para esto, los datos subidos por los monitores son recolectados regularmente y procesados en un formato que facilite el procesamiento de las visualizaciones, es necesario tener una arquitectura que permita manejar los recursos disponibles de forma eficiente y así poder tanto ofrecer un servicio web rápido como planificar y ejecutar tareas de largo tiempo de ejecución.
+La aplicacion web es también la responsable de desplegar visualizaciones a partir de los datos obtenidos del monitoreo, para esto, los datos subidos por los monitores son recolectados regularmente y procesados en un formato que facilite el procesamiento de las visualizaciones, a este proceso lo llamamos \textbf{sincronización} y es otra de las tareas esenciales de la aplicacion web. Es necesario tener una arquitectura que permita manejar los recursos disponibles de forma eficiente y así poder tanto ofrecer un servicio web rápido como planificar y ejecutar tareas de largo tiempo de ejecución.
 
 
 \section{Diseño de la aplicacion web}
@@ -773,14 +773,14 @@ La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento a
 
 El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a cada usuario particular que visite el sistema y peticiones de archivos estáticos como css, javascript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar severamente el servidor web en entornos de producción.
 
-Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como proxy entre el front-end y la aplicacion web, para esto existe una gran variedad de servidores ligeros como ngnix o lighthttpd, está tendrá una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. la aplicacion web podrá correr entonces en un proceso separado sobre un servidor web y solo atenderá peticiones dinámicas y se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
+Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como proxy entre el front-end y la aplicacion web, hay una gran variedad de servidores web ligeros como ngnix o lighthttpd diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. la aplicacion web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
 
 \begin{table}[]
 	\centering
 
 	\label{table:routing}
 	\begin{tabular}{l|l}
-		& Acción            \\ \hline
+		Ruta & Acción            \\ \hline
 		/static/ & static serve      \\
 		/media/  & static serve      \\
 		/        & proxy to web  app
@@ -791,14 +791,14 @@ Para manejar eficientemente todo tipo de peticiones, debemos implementar un meca
 
 \subsection{Capa 3: Procesamiento asíncrono de tareas}
 
-Mantener el servidor web ocupado con tareas largas puede degradar su calidad de servicio y ocupar rápidamente sus recursos disponibles, mas aún muchas veces no es posible dejar al usuario esperando indefinidamente, por este motivo es menester tener un sistema de procesamiento asíncrono de tareas, de manera que las tareas se puedan mandar a ejecutar y ofrecer una respuesta inmediata al usuario.
+Mantener el servidor web ocupado con tareas largas puede degradar su calidad de servicio y ocupar rápidamente sus recursos disponibles, mas aún muchas veces no es posible dejar al usuario esperando indefinidamente mientras se procesa su petición, por este motivo es menester tener un sistema de procesamiento asíncrono de tareas, de manera que las tareas se puedan mandar a ejecutar en segundo plano y ofrecer una respuesta inmediata al usuario.
 
-Ya que es imposible conocer de antemano el número de tareas que se van a estar ejecutando concurrentemente necesitamos una manera de encolar las tareas para que puedan ser ejecutadas cuando alguno de los trabajadores se desocupe, de igual forma, para la implementación de de sincronización periódicas de los monitores, necesitamos tener un planificar que inicie las tareas según el horario definido.
+Ya que es imposible conocer de antemano el número de tareas que se van a estar ejecutando concurrentemente necesitamos una manera de encolar las tareas para que puedan ser ejecutadas cuando alguno de los trabajadores se desocupe, de igual forma, para la implementación de sincronizaciones periódicas de los monitores, necesitamos tener un planificador que inicie las tareas según el horario definido.
 
-La inmensa mayoría de las peticiones realizadas por los usuarios pueden ser manejadas directamente por el servidor web, las tareas delegadas a este capa son las siguientes:
+La inmensa mayoría de las peticiones realizadas por los usuarios serán manejadas directamente por el servidor web, las tareas delegadas a este capa son las siguientes:
 \begin{itemize}
 	\item{\textbf{Conexiones con la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse "de largo tiempo de ejecucion" ya que es necesario obtener recursos presentes en Internet.}
-	\item{\textbf{Computo de visualizaciones:} el tiempo y poder de computo necesario para generar visualizaciones depende altamente de la visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando largos periodos de tiempo.}
+	\item{\textbf{Computo de visualizaciones:} el tiempo y poder de computo necesario para generar visualizaciones depende altamente del tipo de visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando largos periodos de tiempo.}
 	\item{\textbf{Sincronizaciones:} las sincronizaciones combinan varias subtareas altamente costosas: la primera de ellas es descargar los archivos de la nube, esto depende altamente de la cantidad de archivos por descargar y el tamaño de los archivos, la segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos, la tercera es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
 \end{itemize}
 
@@ -808,19 +808,19 @@ El sistema de procesamiento asíncrono de tareas está construido usando Celery, C
 
 El planificador retrasa la ejecucion de tareas según un horario dado, Celery incluye un planificador llamado Celery Beat que se puede configurar fácilmente para usar la base de datos de la aplicacion web a modo de almacén para sus tareas a ejecutar. Celery Beat consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicacion web solo modifica esa tabla y deja que Celery Beat se encargue de inciar las tareas en el momento adecuado.
 
-El planificador Celery Beat no funciona muy distinto al planificador usado por el monitor, a diferencia de que Celery Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
+Celery Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
 
 \subsubsection{Broker de Mensajería}
 
-El broker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan usando una o mas colas de prioridad. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando ciertas tareas rápidamente al tope la cola. 
+El broker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando tareas urgentes rápidamente al tope la cola. 
 
-Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes a la carpeta del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, las sincronizaciones planificadas por otra parte pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable.
+Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes al buzón del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, las sincronizaciones planificadas por otra parte pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable.
 
 Existen distintos sistemas que pueden hacer el papel de broker de mensajería, algunas opciones populares incluyen RabbitMQ, un sistema de mensajería robusto y persistente, Redis del que se habló en la Sección \ref{sub:redis} o algún SMBD, la elección del message broker debe depender de volumen de tareas que se va a manejar, el uso de base de datos puede ser aceptable cuando se maneja una cantidad reducida de tareas, pero sistemas más rápidos como RabbitMQ y Redis son preferibles en entornos de producción.
 
 \subsubsection{Trabajadores} \label{sub:trabajadores}
 
-Los trabajadores son los encargados de ejecutar las tareas encoladas, estos se subscriben a una o mas colas y toman las tareas en el tope, determinar la cantidad necesaria de trabajadores para cada cola es esencial para evitar que las colas crezcan indefinidamente (y por lo tanto tambien, el tiempo de espera de las tareas).
+Los trabajadores son los encargados de ejecutar las tareas encoladas, estos se subscriben a una o mas colas y toman las tareas en el tope, determinar la cantidad necesaria de trabajadores para cada cola es esencial para evitar que las colas crezcan indefinidamente (y por lo tanto también, el tiempo de espera de las tareas).
 
 Tener múltiples trabajadores permite tener un gran control sobre los recursos computacionales usados por el sistema, es posible instanciar nuevos trabajadores ejecutándose en distintas maquinas físicas durante los momentos de alta carga del sistema, y liberar estos recursos cuando no se estén usando, esto hace posible manejar una escala variable y minimiza los costos de operación.
 
@@ -854,13 +854,13 @@ La capa de datos incluye todos los sistemas encargados de almacenar o alojar dat
 
 \subsubsection{Base de Datos}
 
-La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parametros de conexion a Dropbox, y sirve como backend del Framework de Integracion de Pruebas del que se hablará en el capitulo \ref{cap:framework}.
+La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parámetros de conexión a Dropbox, y sirve como backend del Framework de Integración de Pruebas del que se hablará en el Capitulo \ref{cap:framework}.
 
 El diseño de la base de datos es uno de los pilares fundamentales del diseño del sistema, el correcto diseño e indexación de las tablas de la base de datos tiene repercusiones importantes en la escalabilidad y tiempo de respuesta del sistema, el diseño de la base de datos se explica a fondo en la Sección \ref{sub:basededatos}
 
 \subsubsection{Caché de archivos}
 
-El caché de archivos es un almacén de archivos con el objetivo principal de almacenar visualizaciones pre-computadas y así evitar la repetición de procesamiento ya realizado.
+El caché de archivos es un almacén de archivos con el objetivo principal de almacenar visualizaciones pre-computadas y así evitar la repetición de procesamiento ya realizado y reducir los tiempos de espera del usuario.
 
 Los archivos se guardan en distintos directorios dependiendo del tipo de visualización, cada visualización tiene un código hash asociado que se genera a partir de sus parámetros, por lo tanto el acceso a los archivos en el caché es directo, la velocidad de búsqueda en el caché depende de la implementación del sistema de archivos (por ejemplo ext3, ext4, XFS), los sistemas de archivos modernos pueden manejar cientos de miles de archivos en el mismo directorio sin ningún problema de rendimiento. Usar un caché de archivos ciertamente es mas lento que usar un caché en memoria pero es capaz de almacenar una cantidad mucho mayor de datos a un menor costo. 
 
@@ -870,35 +870,35 @@ El alojamiento en la nube sirve como intermediario entre la aplicacion web OH y 
 
 \subsection{Diseño de la base de datos} \label{sub:basededatos}
 
-La base de datos de Octopus Head esencialmente modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), los resultados obtenidos para cada tentáculo (o monitor) de cada una de sus pruebas, las pruebas y sus parámetros, el historial de cambios en el plan de monitoreo, entre otros. Ya que Django usa un ORM para manejar la base de datos, desde el punto de vista de la aplicación cada entidad es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos, como herencia de clases, clases abstractas implementación de métodos específicos a un modelos y sobrecarga de métodos de los padres, a continuación se describen las entidades que se desa modelar:
+La base de datos de Octopus Head esencialmente modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), los resultados obtenidos para cada enlace (o monitor) de cada una de sus pruebas, las pruebas y sus parámetros, el historial de cambios en el plan de monitoreo, entre otros. Ya que Django usa un ORM para manejar la base de datos, desde el punto de vista de la aplicación cada entidad es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos, como herencia de clases, clases abstractas implementación de métodos específicos a un modelo y sobrecarga de métodos de los padres, a continuación se describen las entidades que se desea modelar:
 
-Cada usuario registrado del sistema está representado por el modelo "User" que viene incluido como parte del framework de Django, este guarda la información mínima necesaria para autenticar al usuario, así como sus grupos y permisos, un usuario autenticado puede estar en uno o mas grupos y puede tener uno o mas permisos, por defecto se tienen tres tipos de usuarios: el usuario normal, el usuario "staff" que puede ingresar la panel de administración del sistema y el superusuario, el superusuario tiene todos los privilegios del sistema, por lo tanto puede manejar otros usuarios (agregando grupos, permisos, cambiando el tipo de otros usuarios, etc) y hacer cambios a cualquier otro modelo del sistema.
+Cada usuario registrado del sistema está representado por el modelo "User" que viene incluido como parte del framework web, este guarda la información mínima necesaria para autenticar al usuario, así como sus grupos y permisos, un usuario autenticado puede estar en uno o mas grupos y puede tener uno o mas permisos, por defecto se tienen tres tipos de usuarios: el usuario normal, el usuario "staff" que puede ingresar la panel de administración del sistema y el superusuario, el superusuario tiene todos los privilegios de lectura y escritura de la base de datos, por lo tanto puede manejar otros usuarios (agregando grupos, permisos, cambiando el tipo de otros usuarios, etc) y hacer cambios a cualquier otra tabla del sistema.
 
-Los usuarios finales del sistema (es decir aquellos que no son staff o superuser) tienen un modelo adicional llamado "UserProfile" (perfil de usuario), para implementar esta funcionalidad podría parecer conveniente sencillamente extender el modelo "User" sin embargo esto interfiere con el mecanismo de autenticacion (que no espera que exista otra tabla de usuarios) de modo que implementar una relación uno-a-uno entre el modelo "UserProfile" y el modelo "User" es preferido. El perfil de usuario aloja los detalles adicionales del usuario monitor como credenciales de Dropbox y códigos de confirmación.
+Los usuarios finales del sistema (es decir aquellos que no son staff o superuser) tienen un modelo adicional llamado "UserProfile" (perfil de usuario), para implementar esta funcionalidad podría parecer conveniente sencillamente extender el modelo "User" sin embargo esto interfiere con el mecanismo de autenticación (que no espera que exista otra tabla de usuarios) de modo que implementar una relación uno-a-uno entre el modelo "UserProfile" y el modelo "User" es preferido. El perfil de usuario aloja los detalles adicionales del usuario monitor como credenciales de Dropbox y códigos de confirmación.
 
-El modelo central de la base de datos es el monitor, que representa un Tentacle Probe Source haciendo pruebas en la red remota. Cada usuario posee uno o mas monitores, el monitor está compuesto por un número de enlaces monitoreados y un plan de monitoreo asi como su horario de sincronizacion y sus detalles específicos como zona horaria, posición geográfica, dirección ip entre otros. 
+El modelo central de la base de datos es el monitor, que representa un Tentacle Probe Source haciendo pruebas en una red remota. Cada usuario posee uno o mas monitores, el monitor está compuesto por un número de enlaces monitoreados y un plan de monitoreo así como su horario de sincronización y sus detalles específicos como zona horaria, posición geográfica, dirección ip entre otros. 
 
-Los tentaculos son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada tentáculo (o enlace monitoreado) consiste de un Tentacle Probe Source (el monitor) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos (como enrutadores, proxys, etc), para representar esto usamos el modelo "Link" que guarda el ip del Tentacle Probe Source y otros detalles como posición geográfica, nombre y descripción.
+Los enlaces monitoreados son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada uno de ellos consiste de un Tentacle Probe Source (el monitor) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos (como enrutadores, proxys, etc), para representar esto usamos el modelo "Link" que guarda el ip del Tentacle Probe Source y otros detalles como posición geográfica, nombre y descripción.
 
-Las pruebas son procedimientos que el usuario puede planificar para que sus monitores ejecuten según una planificación, es a esto a lo que llamamos el 'plan de monitoreo', una prueba consiste en cualquier código python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada, desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables, estos son usados para construir un formulario que permite al usuario editar el plan de monitoreo.
+Las pruebas son procedimientos que el usuario puede planificar para que sus monitores ejecuten según una planificación dada, es a esto a lo que llamamos el 'plan de monitoreo', una prueba consiste en cualquier código python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada, desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables, estos son usados para construir un formulario que permite al usuario editar el plan de monitoreo.
 
-Los resultados de las pruebas también llamados trazas se guardan según las características especificas de cada prueba, no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas, sin embargo las pruebas implementadas hasta ahora tienen en común un timestamp (el tiempo de ejecucion de la prueba) y el tentáculo relacionado a la prueba, sin embargo sería posible guardar trazas que no estén relacionadas a ningún tentáculo (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS)
+Los resultados de las pruebas también llamados trazas se guardan según las características especificas de cada prueba, no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas, sin embargo las pruebas implementadas hasta ahora tienen en común un timestamp (el tiempo de ejecucion de la prueba) y el enlace relacionado a la prueba, sin embargo sería posible guardar trazas que no estén relacionadas a ningún enlace (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS)
 
-Un "MonitorTest" es una modelo intermedio que representa una prueba planificada para un monitor y sus parámetros, en otras palabras el conjunto de "MonitorTest" para un monitor conforman el plan de monitoreo, este modelo aloja el tiempo inicial de ejecucion de una prueba, el tiempo final, intervalo entre pruebas, y su estado (activa o inactiva). 
+"MonitorTest" es un modelo intermedio que representa una prueba planificada para un monitor y sus parámetros, en otras palabras el conjunto de "MonitorTest" para un monitor conforman el plan de monitoreo, este modelo aloja el tiempo inicial de ejecucion de una prueba, el tiempo final, intervalo entre pruebas, y su estado (activa o inactiva). 
 
 Ya que el usuario tiene la libertad de modificar el plan de ejecucion en cualquier momento dado, se guarda un historial de los cambios hechos a los "MonitorTest" en una tabla a modo de historial, de esta manera es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecucion en algún momento especifico. 
 
 A los distintos métodos de análisis y visualización los datos que permiten al usuario explorar y obtener información relevante a partir de ellos, las llamamos visualizaciones, computar visualizaciones consiste en retirar los datos seleccionados de la base de datos, pasar estos datos por algún algoritmo de análisis y prepararlos para ser desplegados en alguna forma elegida por el usuario, como mapas de calor, gráficas de barras, mapas, etc.
 
-Las sincronizaciones consisten en recoger los datos dejados por los monitores remotos en la nube y insertarlos a la base de datos, generalmente haciendo algún preprocesamiento o parsing, se guarda un historial de sincronizaciones no sólo como forma de informar al usuario de la cantidad de archivos recolectados y si ocurrieron errores, el mecanismo de sincronizacion depende un cursor que indica al sistema cuales son los archivos nuevos o modificados que deben ser insertados, el mecanismo de sincronizacion se explicará a fondo en la subsección \ref{sub:Recolector}. 
+Las sincronizaciones consisten en recoger los datos dejados por los monitores remotos en la nube y insertarlos a la base de datos, generalmente haciendo algún pre-procesamiento o parsing, se guarda un historial de sincronizaciones no sólo como forma de informar al usuario de la cantidad de archivos recolectados y si ocurrieron errores, el mecanismo de sincronización depende un cursor que indica al sistema cuales son los archivos nuevos o modificados que deben ser insertados, el mecanismo de sincronización se explicará a fondo en la Sección \ref{sub:Recolector}. 
 
 Como se vió en la figura \ref{fig:webapp-arch} el planificador depende de la base de datos para determinar el horario de sincronizaciones, por lo que es necesario un modelo para guardar el horario de sincronizaciones, ya sea este por intervalos o a una hora especifica del día. 
 
-Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos tentáculos, o incluso de distintos monitores y ademas compartirlas con usuarios no autenticados haciendo los resultados públicos.
+Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos enlaces, o incluso de distintos monitores y ademas compartirlas con usuarios no autenticados haciendo los resultados públicos.
 
 \subsubsection{Diagrama de entidad-relación}
 
-La figura \ref{fig:basicl} muestra las entidades primordiales de la base de datos: usuarios, monitores, tentáculos y resultados de las pruebas implementadas.
+La figura \ref{fig:basicl} muestra las entidades primordiales de la base de datos: usuarios, monitores, enlaces y resultados de las pruebas implementadas.
 
 \begin{figure}[H]
 \centering
@@ -961,7 +961,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
 			\hline
 			\textbf{\textit{Monitor}} &
-			 \multicolumn{2}{p{10cm}}{Almacena detalles del monitor (TPS) como dirección ip, posición geográfica y zona horaria.}\\
+			 \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Source como dirección ip, posición geográfica y zona horaria.}\\
 			\textbf{\textit{Link}} & \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Destination como dirección ip, posición geográfica y si está activo para el monitoreo.}\\
 			\textbf{\textit{TracePing}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de ping como marca de tiempo, rtt y TPD relacionado.}\\
 			\textbf{\textit{TraceHttping}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de httping como marca de tiempo, tiempo de respuesta, código de estado y TPD relacionado.}\\
@@ -1007,8 +1007,8 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 \begin{itemize}
 	\item{\textbf{users - userprofiles (1-1)}: Un usuario solo puede tener un perfil de usuario.}
 	\item{\textbf{users - monitors (n-1):} Un usuario puede ser dueño de cero o mas monitores, pero un monitor solo puede tener un dueño.}
-	\item{\textbf{monitors - tentacles (n-1):} Un monitor puede tener cero o mas tentacles, pero un tentacle solo puede estar en un monitor.}
-	\item{\textbf{tentacles - traces (n-1):} Un tentaculo puede tener cero o mas trazas relacionadas, pero una traza solo puede estar relacionada a un tentacle.}
+	\item{\textbf{monitors - links (n-1):} Un monitor puede tener cero o mas tentacles, pero un tentacle solo puede estar en un monitor.}
+	\item{\textbf{links - traces (n-1):} Un enlace puede tener cero o mas trazas relacionadas, pero una traza solo puede estar relacionada a un enlace.}
 	\item{\textbf{test - parameter (n-1):} Una prueba puede tener uno o mas parámetros, pero un parámetro solo puede ser parte de una prueba.}
 	\item{\textbf{test - monitor (n-n):} Una prueba puede ser planificada cero o mas veces en cero o mas monitores.}
 	\item{\textbf{monitortest - monitortesthistory (n-1):} Una instancia de monitortest puede tener una o mas entradas en el historial, pero una entrada en el historial solo se refiere a un monitortest.}
@@ -1025,14 +1025,22 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos css y la lógica en archivos javascript para desplegar una pagina web adaptada al dispositivo del usuario.
 
-Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama 'rendering'.
+Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama \textit{rendering}.
 
-En la Figura \ref{} se puede ver como todas las plantillas heredan de la plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite extender el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar los archivos de estilo \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento como modales \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las paginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
+En la Figura \ref{} se puede ver como todas las plantillas heredan de la plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite extender el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar los archivos de estilo \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento como modales \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las páginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
 
 A continuación se muestra el diseño de las principales pantallas de la interfaz de usuario del servicio web.
 
 \begin{itemize}
 	\item{\textbf{Pantalla Inicial del sistema,} esta es la pantalla principal del servicio web disponible en linea y sirve como punto de inicio donde los usuarios no-autenticados pueden registrarse, iniciar sesión y obtener información básica sobre el sistema.}
+	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/1-landing-page}
+\caption{Pantalla Inicial del sistema}
+\label{fig:1-landing-page}
+\end{figure}
+
 	
 	\item{\textbf{Pantalla de registro de usuario,} en esta pantalla un usuario que desee utilizar el sistema de monitoreo introduce su nombre de usuario, contraseña y correo electrónico para registrarse}
 	
@@ -1042,27 +1050,67 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\item{\textbf{Pantalla de selección de monitores,} esta pantalla muestra los monitores del usuario y le permite seleccionar alguno de ellos para dirigirlo a la pantalla del monitor, ademas incluye un botón para crear nuevos monitores.}
 	
-	\item{Pantalla de creación de monitores,} en esta pantalla se introducen del detalles del monitor a crear como nombre, descripción, dirección ip, sistema operativo del dispositivo host y zona horaria del monitor, todas las pantallas 
+	\item{\textbf{Pantalla de creación de monitores,} en esta pantalla se introducen del detalles del monitor a crear como nombre, descripción, dirección ip, sistema operativo del dispositivo host y zona horaria del monitor, todas las pantallas.}
 	
 	\item{\textbf{Pantalla del monitor,} esta es la pantalla principal del monitor donde se muestran los detalles del monitor, un mapa de la red mostrando la localizacion de los distintos dispositivos de red (TPS y TPS) generado a partir de la información suministrada por el usuario y una lista de verificación para ayudar al usuario a seguir los pasos para monitorear una red. Todas las vistas relacionadas a un monitor específico despliegan un submenú de navegación para visitar las distintas subsecciones de manejo del monitor como tentáculos, resultados y sincronizaciones.}
+	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/3-monitor}
+\caption{Pantalla del monitor}
+\label{fig:3-monitor}
+\end{figure}
+
 	
 	\item{\textbf{Pantalla de tentáculos,} esta pantalla muestra los detalles de los distintos tentáculos de un monitor, y incluye enlaces para registrar nuevos tentáculos y editar los detalles de los existentes.}
 	
 	\item{\textbf{Pantalla de Plan de monitoreo,} esta pantalla permite ver el plan de monitoreo por tipo de prueba, incluye enlaces para editar pruebas planificadas y para planificar nuevas pruebas ya sean periodicas o de una sola vez. En caso de que hayan muchas pruebas planificadas separa el contenido en páginas numeradas}
 	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/4-plan}
+\caption{Pantalla de Plan de monitoreo}
+\label{fig:4-plan}
+\end{figure}
+
+	
 	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecucion de la prueba}
 	
-	\item{\textbf{Pantalla de detalles de una prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario editable, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los periodos en que estuvo inactiva y sus distintos parámetros en periodos de inactividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
+	\item{\textbf{Pantalla de detalles de la prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario editable, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los periodos en que estuvo inactiva y sus distintos parámetros en periodos de inactividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
+	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/4-testview}
+\caption{Pantalla de detalles de la prueba}
+\label{fig:4-testview}
+\end{figure}
+
 	
 	\item{\textbf{Pantalla de resultados,} esta pantalla muestra todas las visualizaciones disponibles para un monitor (a partir de las pruebas activas o planificadas en algún momento) y una barra de búsqueda para filtrar los resultados.}
 	
 	\item{\textbf{Pantalla de visualización de resultados,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido}
 	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/4-result}
+\caption{Pantalla de visualización de resultados}
+\label{fig:4-result}
+\end{figure}
+
+	
 	\item{\textbf{Pantalla de sincronizaciones,} esta pantalla muestra el tiempo desde la última sincronizacion y el tiempo  para la próxima así como un botón para forzar una sincronizacion inmediata, también muestra un formulario para definir el horario de sincronizacion y en un panel lateral muestra el historial de sincronizaciones, este ofrece información sobre la cantidad de archivos recolectados y el numero de errores encontrados durante las últimas sincronizaciones}
 	
 	\item{\textbf{Pantalla de reportes,} esta pantalla muestra una tabla de los reportes del usuario con enlaces para ver cada uno de ellos y su última fecha de modificación así como un botón para ir al formulario de creación de reportes}
 	
-	\item{\textbf{Pantalla de visualización y edición reporte,} esta pantalla puede desplegarse de distintas maneras según el usuario que la observe, si se trata del usuario al que pertenece el reporte entonces este verá una barra de herramientas para agregar visualizaciones al reporte, cambiar la privacidad del reporte (publico o privado) o editar y borrar, del mismo modo podrá editar los comentarios de cada una de las visualizaciones o quitarlas del reporte. Un usuario que no sea dueño del reporte solo podrá leer su contenido y observar las visualizaciones}
+	\item{\textbf{Pantalla de visualización y edición de reporte,} esta pantalla puede desplegarse de distintas maneras según el usuario que la observe, si se trata del usuario al que pertenece el reporte entonces este verá una barra de herramientas para agregar visualizaciones al reporte, cambiar la privacidad del reporte (publico o privado) o editar y borrar, del mismo modo podrá editar los comentarios de cada una de las visualizaciones o quitarlas del reporte. Un usuario que no sea dueño del reporte solo podrá leer su contenido y observar las visualizaciones}
+	
+	\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\linewidth]{img/6-report}
+\caption{Pantalla de visualización y edición de reporte}
+\label{fig:6-report}
+\end{figure}
+
 	
 	\item{\textbf{Pantalla de cuenta del usuario,} esta pantalla muestra los detalles de la cuenta del usuario, así como enlaces para cambiar la contraseña y renovar el token de acceso a dropbox en caso de que en algún momento este haya sido revocado}
 	
@@ -1074,7 +1122,48 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 
 \subsection{Diseño de URLs}
 
-TODO
+Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseñar URLs que apunten a cada una de las vistas de forma ordenada y lógica, para esto, se ha usado una convención en la que la unidad principal de operación es una colección de objetos, como monitores, o reportes, a continuación se muestran ejemplos de las reglas usadas para diseñar los URLs:
+
+\begin{itemize}
+	\item{Operaciones sobre colecciones:
+
+\begin{itemize}
+	\item{\textbf{GET /monitors} retorna la lista de monitores}
+	\item{\textbf{GET /monitors/new} retorna un formulario para crear un nuevo monitor}
+	\item{\textbf{POST /monitors/new} somete los campos para crear un nuevo monitor}
+\end{itemize} 
+}
+
+	\item{Operaciones sobre un registro:
+
+\begin{itemize}
+			\item{\textbf{GET /monitor/1} retorna el primer monitor}
+			\item{\textbf{GET /monitor/1/edit} retorna un formulario para editar el primer monitor}
+			\item{\textbf{POST /monitor/1/edit} somete los campos para editar el monitor 1}
+			\item{\textbf{GET /monitor/1/delete} destruye el primer monitor y todos sus registros relacionados}
+\end{itemize} 
+}
+
+\item{Operaciones sobre relaciones de un registro:
+	
+	\begin{itemize}
+		\item{\textbf{GET /monitor/1/links} retorna la lista de enlaces del monitor}
+		\item{\textbf{GET /monitor/1/link/7/edit} retorna un formulario para editar el enlace con id \#7 del primer monitor.}
+		\item{\textbf{POST /monitor/1/link/7/edit} somete los campos para editar el enlace con id \#7 del primer monitor.}
+	\end{itemize} 
+}
+
+\item{Invocar operaciones especiales sobre un registro:
+	
+	\begin{itemize}
+		\item{\textbf{GET /monitor/1/sync/now} manda a sincronizar el primer monitor inmediatamente}
+		\item{\textbf{GET /monitor/1/test/12/toggle} activa o desactiva la prueba con id \#12 del primer monitor.}
+		\item{\textbf{POST /monitor/1/form/average-rtt-heatmap/} somete los campos del formulario del mapa de calor de rtt para el primer monitor.}
+	\end{itemize} 
+}
+		
+		
+\end{itemize}  
 
 \section{Componentes}
 
