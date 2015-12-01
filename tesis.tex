@@ -1255,7 +1255,7 @@ Los mensajes que se suben a la nube se escriben en formato json, este formato of
 Los mensajes deben contener la información necesaria para que el monitor pueda reconstruir el plan de monitoreo a partir de ellos, la estructura y posibles valores de los mensajes pueden ser vistos en la Tabla \ref{tab:testmessage} para los mensajes relacionados a las pruebas y en la Tabla \ref{tab:linkmessage}
 
 \begin{table}
-	\label{tab:testmessage}
+	
 	\begin{tabular}{p{2cm}|p{4cm}|p{8cm}}
 		Clave      & Valor                & Descripción                                                                        \\ \hline
 		disable    & true$|$false           & Si es \textit{false} indica que la prueba debe ser desactivada                     \\ 
@@ -1266,11 +1266,12 @@ Los mensajes deben contener la información necesaria para que el monitor pueda r
 		kwargs     & diccionario          & Conjunto de pares $<$nombre,valor$>$ que representa los parámetros de la prueba    \\
 	\end{tabular}
 	\caption{Contenido del mensaje de prueba planificada}
+	\label{tab:testmessage}
 \end{table}
 
 \begin{table}
 	\begin{tabular}{p{2cm}|p{4cm}|p{8cm}}
-	\label{tab:linkmessage}
+	
 		Clave  & Valor                & Descripción                                                    \\ \hline
 		status & true$|$false           & Si es \textit{false} indica que el enlace debe ser desactivado \\ 
 		ip     & cadena de caracteres & dirección ip del TPS del enlace.                               \\ 
@@ -1278,13 +1279,14 @@ Los mensajes deben contener la información necesaria para que el monitor pueda r
 		host   & cadena de caracteres & nombre de dominio del TPS del enlace.                          \\
 	\end{tabular}
 	\caption{Contenido del mensaje de enlace monitoreado}
+	\label{tab:linkmessage}
 \end{table}
 
-\subsection{Recolector de datos} \label{sub:Recolector}
+\subsection{Sincronización de datos} \label{sub:Recolector}
 
 El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicacion web a su vez recolectar estos archivos y introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de "sincronizacion".
 
-El algoritmo general de sincronizacion (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el token de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de parsing de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronizacion, los cursores (de los cuales se hablará próximamente) y actualiza el tiempo de ultima sincronizacion del monitor.
+El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el token de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de parsing de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronización, los cursores (de los cuales se hablará próximamente) y actualiza el tiempo de ultima sincronización del monitor.
 
 
 \begin{algorithm}
@@ -1328,80 +1330,81 @@ El algoritmo general de sincronizacion (Algoritmo \ref{alg:sync}), retira de la 
 	\end{algorithmic}
 \end{algorithm}
 
-Debemos recordar que los resultados de las pruebas se guardan en una carpeta por prueba, donde constantemente se están guardando nuevos archivos, por lo tanto, la subrutina de sincronizacion debe determinar cuales son los archivos nuevos desde la ultima sincronizacion, para esto, el API de Dropbox provee el método "delta", que determina los cambios realizados a una carpeta a partir de un momento específico, a continuación puede verse un ejemplo de la respuesta en formato json del obtenida tras llamar el método delta para una carpeta:
+Debemos recordar que los resultados de las pruebas se guardan en una carpeta por prueba, donde constantemente se están guardando nuevos archivos, por lo tanto, la subrutina de sincronización debe determinar cuales son los archivos nuevos y modificados desde la ultima sincronización, para esto, el API de Dropbox provee el método \textit{delta}, que determina los cambios realizados a una carpeta a partir de un momento específico, a continuación puede verse un ejemplo de la respuesta en formato json obtenida tras llamar el método delta para una carpeta:
 
 \begin{lstlisting}][h,frame=single]
 {
-	"reset":false,
-	"cursor":"AAHskXVmJSRVG_bgh4Oq2VPQqG79nWM26Tl8jSmRyiGM3M0EGL...",
-	"has_more":false,
-	"entries":[
-		[
-			"/monitor1/ping/link_2_2015_11_02_15.txt",
-			{
-				"revision":3,
-				"rev":"30ec9923d",
-				"thumb_exists":false,
-				"bytes":0,"modified":
-				"Wed, 20 Mar 2013 05:58:43 +0000",
-				"path":"/proj1",
-				"is_dir":true,
-				"icon":"folder_app",
-				"root":"app_folder",
-				"size":"0 bytes"
-			}
-		],
-	]
+   "reset":false,
+   "cursor":"AAHskXVmJSRVG_bgh4Oq2VPQqG79nWM26Tl8jSmR...",
+   "has_more":false,
+   "entries":[
+      [
+         "/monitor1/ping/link_2_2015_11_02_15.txt",
+         {
+            "revision":3,
+            "rev":"30ec9923d",
+            "thumb_exists":false,
+            "bytes":0,"modified":
+            "Wed, 20 Mar 2013 05:58:43 +0000",
+            "path":"/proj1",
+            "is_dir":true,
+            "icon":"folder_app",
+            "root":"app_folder",
+            "size":"0 bytes"
+         }
+      ],
+   ]
 }
 \end{lstlisting}
 
-Como puede observarse es un diccionario con cuatro entradas:
+Como se puede observar, se trata de un diccionario con cuatro entradas:
 \begin{itemize}
-	\item{reset: determina si se debe limpiar el estado local antes de procesar las entradas delta, es verdadero solo durante la primera llamada a delta o en raras ocasiones.}
-	\item{cursor: el cursor es una cadena de caracteres de longitud 64, y representa el estado de la carpeta en un momento dado, se puede usar en llamadas sucesivas de "delta" para obtener los cambios a partir de ese momento.}
-	\item{has\_more: determina si hay mas entradas delta en la carpeta, en tal caso es necesario volver a llamar el método delta inmediatamente de nuevo, esto solo es necesario cuando hay cantidades considerables de archivos en una carpeta}
+	\item{reset: determina si se debe "limpiar" el estado local antes de procesar las entradas delta, es verdadero solo durante la primera llamada a delta o en raras ocasiones.}
+	\item{cursor: el cursor es una cadena de caracteres de longitud 64, y representa el estado de la carpeta en un momento dado, se puede usar en llamadas sucesivas de "delta" para obtener los cambios a partir de ese momento específico.}
+	\item{has\_more: determina si hay mas entradas delta en la carpeta, en tal caso es necesario volver a llamar el método delta inmediatamente de nuevo, esto solo es necesario cuando hay grandes cantidades archivos modificados.}
 	\item{entries: es una lista de "entradas delta" cada entrada representa un archivo o carpeta que cambió desde la ultima llamada a delta, cada entrada es un par $<$path,metadata$>$ donde "path" es el nombre del archivo y "metadata" es un diccionario conteniendo algunos datos relevantes al archivo, si "metadata" es "null" indica que el archivo fue eliminado.}
 \end{itemize}
 
-El algoritmo de sincronización entonces depende del cursor para determinar los cambios desde la última sincronización, llamar al método delta y obtener la lista de "entradas delta" luego recorre aquellas entradas delta cuya metada no es nula (no fueron borrados) y le pasa el contenido el archivo a un algoritmo de parsing, que lo lee y inserta su contenido en el formato apropiado en la base de datos, debemos recordar que cada archivo de traza puede tener un formato distinto dependiendo de a que tipo de prueba pertenezca, por lo que también es trabajo de del algoritmo de sincronización elegir el método correcto al cual pasará el archivo.
+El algoritmo de sincronización depende del cursor para determinar los cambios desde la última sincronización, este llama al método delta y obtiene la lista de "entradas delta" luego recorre aquellas entradas delta cuya metadata no es nula (es decir, que no fueron borrados) y le pasa el contenido del archivo a un algoritmo de parsing, que lo lee, procesa e inserta su contenido en el formato apropiado en la base de datos, debemos recordar que cada archivo de traza puede tener un formato distinto dependiendo del tipo de prueba al que pertenezca, por lo que también es trabajo de del algoritmo de sincronización elegir el método correcto al cual pasará el archivo.
 
 \subsection{Computo de visualizaciones}
 
-El computo de las visualizaciones tiene tres partes que son comunes a todas las visualizaciones, primero, los datos necesarios son retirados de la base de datos, después los datos obtenidos son transformados de alguna manera, por ejemplo, los timestamps se transforman en horas localizadas según la zona horaria del monitor, o se retiran valores atípicos de la muestra y finalmente estos datos se combinan con una plantilla para generar una página HTML. 
+El computo de las visualizaciones consiste de tres fases comunes a todas las visualizaciones, primero, los datos necesarios son retirados de la base de datos, después estos datos son transformados o pre-procesados de alguna manera, por ejemplo, los timestamps se transforman en horas localizadas según la zona horaria del monitor, o se eliminan valores atípicos de la muestra y finalmente estos datos se combinan con una plantilla para generar una página HTML. 
 
-Muchas de las visualizaciones obtenidas en el sistema se pueden generar trivialmente pasando a Highcharts un arreglo de pares $<$x,y$>$ por ejemplo rtt vs tiempo, sin embargo otras visualizaciones requieren de algoritmos de análisis que hagan algún pre-procesamiento de los datos o saquen algún tipo de conclusión para mostrar al usuario, a continuación se explica el calculo de las visualizaciones no-triviales del sistema.
+Muchas de las visualizaciones obtenidas en el sistema se pueden generar trivialmente pasando a la biblioteca de rendering de gráficas un arreglo de pares $<$x,y$>$ por ejemplo rtt vs tiempo, sin embargo otras visualizaciones requieren de algoritmos de análisis que hagan algún pre-procesamiento de los datos y saquen algún tipo de conclusión para mostrar al usuario, a continuación se explica el calculo de las visualizaciones no-triviales del sistema.
 
 \subsubsection{Cálculo de Mapas de Calor}
 
-En este trabajo usamos mapas de calor para representar el valor del RTT tiempo de respuesta promedio en relación a la fecha y la hora del día, los valores "altos" están representados por colores cálidos y los valores "bajos" están representados por colores fríos; cabe destacar que un valor de "alto" para un red de fibra óptica puede ser "bajo" para una red satelital, de modo que estos valores dependen unicamente de los datos en la muestra. 
+En este trabajo usamos mapas de calor para representar el valor del tiempo de respuesta promedio en relación a la fecha y la hora del día, los valores "altos" están representados por colores cálidos y los valores "bajos" están representados por colores fríos; cabe destacar que un valor de "alto" para un red de fibra óptica puede ser "bajo" para una red satelital, de modo que el cálculo estos valores dependen unicamente de los datos en la muestra. 
 
 Los mapas de calor permiten evaluar rápidamente la fluctuación del RTT durante un día especifico o notar patrones a largo plazo, otra ventaja de los mapas de calor es que es posible observar periodos de inactividad de la red como "espacios en blanco" en la gráfica ya que para estos periodos no hay datos.
 
 Los parámetros de los mapas de calor son los siguientes:
 \begin{itemize}
-	\item{\textbf{Enlace:} el enlace o tentáculo seleccionado}
-	\item{\textbf{Intervalo de agrupación:} la granularidad del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo, el valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 240 puntos por día}
+	\item{\textbf{Enlace:} el enlace seleccionado para observar}
+	\item{\textbf{Intervalo de agrupación:} la "granularidad" del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo, el valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 144 puntos por día}
 	\item{\textbf{Rango de tiempo:} ajusta el periodo de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o "todo el tiempo".}
 \end{itemize}
 
-Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y periodo de tiempo, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación sin embargo cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, sumas, etc a la base de datos, si la tabla está apropiadamente indexada esta puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciendolos directamente en la aplicacion.
+Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y rango de tiempo seleccionado, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación sin embargo cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, sumas, etc. a la base de datos, si la tabla está apropiadamente indexada esta puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciéndolos directamente en la aplicacion.
 
-Como se vio previamente la tabla "TracePing" tiene los campos "time\_60", "time\_30", "time\_15", "time\_20" y "time\_10" estos campos tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra, estas columnas facilitan al SMBD a agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor; un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
+La tabla \textit{TracePing} tiene los campos "time\_60", "time\_30", "time\_15", "time\_20" y "time\_10" estos campos tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra, estas columnas facilitan al SMBD a agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor; un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
 
 \begin{table}[]
 	\centering
-	\label{tab:time}
+	
 	\begin{tabular}{l|l|l|l}
 		timezone & time                & time\_60            & time\_10            \\ \hline
 		-4:30    & 2015-11-17 22:29:42 & 2015-11-17 17:00:00 & 2015-11-17 17:50:00 \\
 		UTC      & 2015-11-17 22:29:42 & 2015-11-17 22:00:00 & 2015-11-17 22:20:00
 	\end{tabular}
 	\caption{Ejemplo de los valores de time\_60 y time\_10 para la misma traza en UTC(+0:00) y Caracas (-4:30)}
+	\label{tab:time}
 \end{table}
 
-Para acelerar aún mas el computo, evitamos usar el ORM para hacer consultas a la base de datos, esto se debe a que, a pesar de que el ORM en el fondo haga las mismas consultas, este desperdicia tiempo y recursos en convertir estos datos crudos en los objetos correspondientes según el modelo de la base de datos, por lo tanto, es preferible construir nuestras propias consultas SQL.
+Para acelerar aún mas el computo, evitamos usar el ORM para hacer consultas a la base de datos, esto se debe a que, a pesar de que el ORM en el fondo haga las mismas consultas, este desperdicia tiempo y recursos en convertir estos datos crudos en los objetos correspondientes según el modelo de la base de datos, por lo tanto, para este caso es preferible construir nuestras propias consultas SQL.
 
-La consulta realizada para retirar los valores de la base se puede ver a continuacion:
+La consulta realizada para retirar los valores de la base se puede ver a continuación:
 
 \begin{lstlisting}[language=SQL,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false]
 SELECT time_n,AVG(rtt)
@@ -1419,13 +1422,39 @@ Donde:
 	\item{f: es la fecha final}
 \end{itemize}
 
-Esta consulta retorna entonces el promedio del valor del RTT de las trazas agrupadas según su intervalo de agrupamiento, ya teniendo estos datos es trivial desplegar el mapa de calor usando highcharts, sencillamente se prepara un arreglo de tuplas de tipo $<$fecha,hora,rtt promedio$>$ donde fecha es el día mes y año del grupo, hora es un flotante entre 0 y 24 que resulta de sumar la hora (0-23) al minuto dividido entre 60.
+Esta consulta retorna entonces el promedio del valor del RTT de las trazas con RTT positivo agrupadas según su intervalo de agrupación, un RTT negativo indica que la prueba se realizó pero no obtuvo respuesta del host o el paquete se perdió, por lo tanto no se consideran para el cálculo de esta gráfica.
+
+Ya teniendo estos datos es trivial desplegar el mapa de calor usando highcharts, sencillamente se prepara un arreglo de tuplas de tipo $<$fecha,hora,rtt promedio$>$ donde fecha es el día mes y año del grupo y hora es un punto flotante entre 0 y 24 que resulta de sumar la hora (0-23) al minuto dividido entre 60.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{img/heatmap}
+\caption{Mapa de Calor de RTT con granularidad de 10 minutos para el mes de noviembre (REDISE)}
+\label{fig:heatmap}
+\end{figure}
+
 
 \subsubsection{Cálculo de horas activas}
 
-En el marco de este trabajo llamaremos a una hora "activa" cuando se pudieron recoger al menos el 50\% de las muestras durante esa hora, análogamente una hora "inactiva" es aquella donde no se pudieron recoger el 50\% de las muestras, este concepto es útil para determinar la disponibilidad y calidad de un servicio, si tenemos una prueba tal que se esté recogiendo una muestra cada 5 segundos, entonces la hora se consideraría activa si se obtienen al menos 720*0.5 muestras durante esa hora.
+En el marco de este trabajo llamaremos a una hora "activa" cuando se pudieron recoger al menos el 50\% de las muestras durante dicha hora, análogamente una hora "inactiva" es aquella donde no se pudieron recoger el 50\% de las muestras, para determinar si una hora es activa se usa la siguiente fórmula:
 
-Al igual que el algoritmo anterior, debemos agrupar las trazas y contar el número de trazas por hora, afortunadamente podemos aprovechar la columna "time\_60" para hacer este agrupamiento, luego debemos comparar con el número de trazas esperado para esa hora específica, determinar el número de trazas esperado puede hacerse de varias maneras, la primera de ellas es buscar en el plan de monitoreo los parámetros que estuvieron activos para esa hora, sin embargo la tabla TracePing tiene un campo 'interval' que podemos usar para este propósito.
+\begin{equation}
+	T_{min} = 3600/interval * 0.5 
+\end{equation}
+
+Donde \textit{interval} es el tiempo entre pruebas en segundos y $T_{min}$ es la cantidad mínima de muestras necesarias para considerar una hora activa.
+
+\begin{equation}
+  activo =\begin{cases}
+  Si, & T_{min} \leq T_{observadas}\\
+  No, & T_{min} > T_{observadas}
+  \end{cases}
+\end{equation}
+
+Y  $T_{observadas}$ es la cantidad de trazas capturadas exitosamente durante una hora.
+
+
+De forma similar al algoritmo de cálculo de mapas de calor, debemos agrupar las trazas por hora y contar el número de trazas por grupo, afortunadamente podemos aprovechar la columna "time\_60" para hacer este agrupamiento, luego debemos comparar con el umbral mínimo $T_{min}$ para esa hora. Para determinar el intervalo entre pruebas que estuvo activo durante la prueba, podemos buscar los parámetros activos en cualquier momento usando el historial del plan de monitoreo, sin embargo cada traza se guarda junto con el intervalo entre pruebas, de manera que podemos hacer una consulta mucho mas sencilla a la base de datos.
 
 Sabiendo esto, la consulta a la base de datos queda así:
 
@@ -1443,9 +1472,9 @@ Donde:
 	\item{f: es la fecha final}
 \end{itemize}
 
-La consulta anterior retorna: un timestamp que representa la hora de agrupación, el número de muestras recogidas esa hora, y el intervalo entre pruebas promedio; calculamos el promedio ya que el usuario puede cambiar cualquier parámetro en cualquier momento, de modo que una misma hora puede tener muestras tomadas con distinto tiempo entre pruebas, si calculamos el promedio obtendremos un valor que es al menos "suficientemente bueno" para determinar la cantidad de muestras esperada.
+La consulta anterior retorna: un timestamp que representa la hora de agrupación, el número de muestras observadas exitosamente, y el intervalo entre pruebas promedio. Calculamos el promedio ya que el usuario puede cambiar el intervalo entre pruebas en cualquier momento, de modo que una misma hora puede tener muestras tomadas con intervalo distinto, calculando el promedio, obtendremos el mismo valor de tiempo entre pruebas para una hora en que el usuario no hizo cambios y un valor promedio para horas en que hubo cambios.
 
-El algoritmo completo de cálculo de horas activas se puede ver a continuación: 
+El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es trivial calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
 
 \begin{algorithm}[H]
 	\caption{Calculo de horas activas}\label{alg:horasactivas}
@@ -1477,13 +1506,11 @@ El algoritmo completo de cálculo de horas activas se puede ver a continuación:
 	\end{algorithmic}
 \end{algorithm}
 
-El algoritmo totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es trivial calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
-
 \subsubsection{Cálculo de periodos de actividad continúa}
 
 Como se dijo en la Subsección \ref{sub:disponibilidad} llamaremos "actividad continua" a un evento durante el cual un servicio está continuamente disponible para un cliente, en este trabajo un servicio está disponible en un instante de tiempo cuando se ha capturado exitosamente una muestra durante ese instante, en caso contrario se guarda un valor de rtt de "-1" indicando que el servicio no estaba disponible, las pruebas que usamos para determinar periodos de actividad continua son las de ping y httping ya que ambas realizan un trabajo similar, pero usando protocolos distintos.
 
-El algoritmo de cálculo de periodos de actividad continúa recorre las trazas para el intervalo de tiempo seleccionado extendiendo periodos de actividad cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es positivo (hubo respuesta del TPS y por lo tanto el servicio está disponible) y de forma análoga extiende periodos de inactividad continua cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es -1 (no hubo respuesta). La consulta a la base de datos es muy sencilla ya que solo hace falta consultar el rtt y marca de tiempo de las trazas ordenadas por tiempo:
+El algoritmo de cálculo de periodos de actividad continúa recorre las trazas para el intervalo de tiempo seleccionado extendiendo periodos de actividad cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es positivo (hubo respuesta del TPD y por lo tanto el servicio está disponible) y de forma análoga extiende periodos de inactividad continua cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es -1 (no hubo respuesta). La consulta a la base de datos es muy sencilla ya que solo hace falta consultar el RTT y marca de tiempo de las trazas ordenadas por tiempo:
 
 \begin{lstlisting}[language=SQL,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 SELECT time,rtt
@@ -1499,7 +1526,7 @@ Donde:
 	\item{f: es la fecha final}
 \end{itemize}
 
-El algoritmo comienza ejecutando la consulta a la base y verifica que se tenga al menos una muestra, en caso de no tener muestras, a falta de información el periodo se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un periodo activo y se marca el inicio del periodo como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del periodo activo al tiempo de la traza negativa, este proceso se repite análogamente para el periodo inactivo así hasta llegar a la última traza, cada vez que se determina un periodo este se añade a una lista correspondiente. Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
+Tras ejecutar la consulta a la base se verificar que se tenga al menos una muestra, en caso contrario, a falta de información el periodo se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un periodo activo y se marca el inicio del periodo como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del periodo activo al tiempo de la traza negativa, este proceso se repite análogamente para el periodo inactivo y así hasta llegar a la última traza, cada vez que se determina el instante final de un periodo este se añade a la lista de periodos activos o inactivos según corresponda. Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
 
 \begin{algorithm}[h!]
 	\caption{Calculo de periodos de actividad continua}\label{alg:continuo}
@@ -1555,14 +1582,14 @@ El algoritmo comienza ejecutando la consulta a la base y verifica que se tenga a
 
 \subsubsection{Cálculo de días activos}
 
-A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), con la excepción de que este funciona separando las trazas por días, y luego ejecutando el algoritmo de termina cuando encuentra un periodo de al menos una hora de actividad continua para un día especifico.
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), con la excepción de que este funciona separando las trazas por días, y luego busca un periodo activo de al menos una hora.
 
 Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfico de barras indicando el porcentaje de días activos, también es necesario determinar la cantidad de días totales en el periodo seleccionado por el usuario, luego cuando se tenga el total de días activos por día de la semana se puede dividir entre los días totales, un ejemplo del resultado deseado como salida del algoritmo de días activos puede ser visto en la Tabla \ref{table:diasactivos}
 
 \begin{table}[h]
 	\centering
 	
-	\label{table:diasactivos}
+
 	\begin{tabular}{l|l|l|l|l|l|l|l}
 		& L   & M   & W    & J   & V   & S & D   \\ \hline
 		Activos  & 4   & 5   & 3    & 4   & 4   & 3 & 4   \\
@@ -1571,6 +1598,7 @@ Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfic
 	\end{tabular}
 	
 	\caption{Tabla de días activos para el mes de septiembre del servidor de  RESIDE}
+		\label{table:diasactivos}
 \end{table}
 
 Para facilitar la comprensión del algoritmo este se va a separar en tres subrutinas, el Algoritmo \ref{alg:diastotales} corresponde al cálculo de días totales en el periodo, el Algoritmo \ref{alg:separardias} corresponde a la separación de trazas por día y el Algoritmo \ref{alg:diasactivos} corresponde al computo de días activos.
@@ -2069,13 +2097,13 @@ En esta sección se explica el flujo de trabajo y casos de uso del sistema desde 
 \end{table}
 
 \begin{table}[h!]
-	\caption{Caso de uso – Planificar prueba periódica}
+	\caption{Caso de uso – Planificar prueba}
 	\begin{center}
 		\begin{tabular}{r|p{2cm}p{8cm}}
-			\textbf{\textit{UA-13}} & \multicolumn{2}{l}{\textit{ Planificar prueba de una sola vez}}\\
+			\textbf{\textit{UA-13}} & \multicolumn{2}{l}{\textit{ Planificar prueba}}\\
 			\hline
 			% Linea de descripción 
-			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba de tipo periódico.}\\
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba para un momento específico.}\\
 			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
@@ -2094,43 +2122,370 @@ En esta sección se explica el flujo de trabajo y casos de uso del sistema desde 
 	\end{center}
 \end{table}
 
+\begin{table}[h!]
+	\caption{Caso de uso – Editar prueba}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-14}} & \multicolumn{2}{l}{\textit{ Editar prueba}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea modificar los parámetros de una prueba planificada.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario edita los campos que desea cambiar o redefinir. \\
+			& 2 & El usuario hace click en el botón "Submit"\\
+			& 3 & El servidor guarda la prueba y sube un mensaje al buzón del monitor\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
 
+\begin{table}[h!]
+	\caption{Caso de uso – Habilitar/Deshabilitar prueba}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-15}} & \multicolumn{2}{l}{\textit{ Habilitar/Deshabilitar prueba}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea habilitar o deshabilitar una prueba.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace enable/disable test. \\
+			& 2 & El servidor cambia el estado de la prueba y sube un mensaje al buzón del monitor\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
 
+\begin{table}[h!]
+	\caption{Caso de uso – Seleccionar visualización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-16}} & \multicolumn{2}{l}{\textit{ Seleccionar visualización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver una visualización de datos para un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en "results" en el menú lateral de navegación. \\
+			& 2 & El servidor filtra las visualizaciones según las pruebas que se han activo para el monitor y envía la lista\\
+			& 3 & El usuario busca una visualización en la lista y hace click sobre el enlace correspondiente\\
+			
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Computar visualización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-17}} & \multicolumn{2}{l}{\textit{ Computar visualización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea computar una visualización.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario introduce los parámetros de configuración de la visualización en el formulario. \\
+			& 2 & El usuario hace click en el botón "PLOT"\\
+			& 3 & El servidor valida el formulario y envía un URL directo de cómputo de visualización\\
+			& 4 & El navegador solicita el URL en segundo plano\\
+			& 5 & El servidor busca en el caché o computa la visualización\\
+			& 6 & El servidor retorna la visualización\\
+			& 7 & El navegador enmarca la visualización en la interfaz\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
 
 \FloatBarrier
-ver pagina de ayuda
 
->enlaces
+\begin{table}[h!]
+	\caption{Caso de uso – Re-computar visualización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-18}} & \multicolumn{2}{l}{\textit{ Re-computar visualización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea computar una visualización para incluir nuevos datos sin pasar por el caché.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario introduce los parámetros de configuración de la visualización en el formulario. \\
+			& 2 & El usuario hace click en el botón "Re-compute"\\
+			& 3 & El servidor valida el formulario y envía un URL directo de re-cómputo de visualización\\
+			& 4 & El navegador solicita el URL en segundo plano\\
+			& 5 & El servidor computa la visualización\\
+			& 6 & El servidor retorna la visualización\\
+			& 7 & El navegador enmarca la visualización en la interfaz\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
 
->pruebas
-agregar pruebas
-configurar prueba
-ver historial de cambios de la prueba
-habilitar/deshabilitar pruebas
->visualizaciones
-ver lista de visualizaciones
-ver visualizacion
-generar visualizacion
-regenerar visualizacion
-obtener enlace directo
-ver en nueva pestaña
->sincronizaciones
-ver ultimas sincronizaciones
-solicitar sincronizacion
-configurar planificacion de sincronizaciones
->cuenta
-cambiar password
-dar acceso a dropbox
-renovar acceso a dropbox
-> reportes
-crear reporte
-editar reporte
-hacer reporte publico/privado
-agregar grafica a reporte
-editar grafico en reporte
-eliminar grafica de reporte
-eliminar reporte
------ admin ----------
+\begin{table}[h!]
+	\caption{Caso de uso – Ver enlace directo de una visualización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-19}} & \multicolumn{2}{l}{\textit{ Ver enlace directo de una visualización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el enlace directo de una visualización para compartir.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el botón "View direct link"\\
+			& 2 & El navegador muestra el enlace directo de la visualización\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver visualización en nueva pestaña}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-20}} & \multicolumn{2}{l}{\textit{ Ver visualización en nueva pestaña}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la visualización a tamaño completo en una nueva pestaña.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace "View in new tab"\\
+			& 2 & El navegador abre una nueva pestaña con el URL de la visualización\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización.}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Ver detalles de sincronización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-21}} & \multicolumn{2}{l}{\textit{ Ver detalles de sincronización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario ver el horario de sincronización y la información sobre las últimas sincronizaciones.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el enlace "Sync" en el sub-menú del monitor \\
+			& 2 & El servidor devuelve la Pantalla de sincronización\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Sincronizar monitor}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-22}} & \multicolumn{2}{l}{\textit{ Sincronizar monitor}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea sincronizar un monitor inmediatamente.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el boton "Sync now" \\
+			& 2 & El servidor encola la sincronizacion del monitor\\
+			& 3 & El servidor devuelve la pantalla de sincronización con un mensaje indicando al usuario que espere.\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Definir horario de sincronización}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-23}} & \multicolumn{2}{l}{\textit{  Definir horario de sincronización}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea definir el horario de sincronización de un monitor.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario selecciona un esquema de sincronización \\
+			& 2 & El navegador muestra el formulario para el esquema seleccionado\\
+			& 3 & El usuario introduce los datos.\\
+			& 4 & El usuario hace click en "Submit".\\
+			& 5 & El servidor actualiza la base de datos.\\
+			& 6 & El planificador detecta los cambios y ajusta el tiempo de la próxima sincronización del monitor\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Crear reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-24}} & \multicolumn{2}{l}{\textit{  Crear reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea crear  un nuevo reporte.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de reportes}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hace click en el botón "Crear Reporte" \\
+			& 2 & El servidor envía un formulario de crear reporte\\
+			& 3 & El usuario introduce el nombre del reporte.\\
+			& 4 & El usuario introduce el cuerpo del reporte\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Editar reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-25}} & \multicolumn{2}{l}{\textit{  Editar reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar un reporte existente.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en el botón "editar"\\
+			& 2 & El servidor envía el formulario de edición de reporte\\
+			& 3 & El usuario introduce los cambios al reporte\\
+			& 4 & El servidor guarda los cambios\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 2 & Si los datos no son válidos el servidor informa del error. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Cambiar privacidad del reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-26}} & \multicolumn{2}{l}{\textit{ Cambiar privacidad del reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea hacer un reporte público o privado.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en el botón "Public" o "Private"\\
+			& 2 & El navegador envía una petición asíncrona al servidor\\
+			& 3 & El servidor guarda los cambios y devuelve una respuesta exitosa\\
+			& 4 & El navegador actualiza la interfaz mostrando el nuevo estado de privacidad\\
+			& 5 & El servidor guarda los cambios\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 2 & Si el servidor no responde se alerta al usuario. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Agregar visualización a un reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-27}} & \multicolumn{2}{l}{\textit{Agregar visualización a un reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea agregar una visualización a un reporte.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en el botón "Add Result"\\
+			& 2 & El usuario computa una visualización (UA-17) \\
+			& 3 & El usuario hace click en el botón "Add to Report"\\
+			& 4 & El navegador muestra un formulario para agregar comentarios al reporte\\
+			& 5 & El usuario introduce comentarios sobre la visualización\\
+			& 6 & El usuario somete el formulario\\
+			& 7 & El servidor agrega la visualización al reporte\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 5 & Si los datos introducidos son inválidos el servidor alerta el problema. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Editar visualización de un reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-28}} & \multicolumn{2}{l}{\textit{ Editar visualización de un reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar los comentarios de una visualización en un reporte.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en los comentarios del reporte\\
+			& 2 & El navegador muestra un formulario para editar los comentarios \\
+			& 3 & El usuario hace los cambios al texto\\
+			& 4 & El hace click en el botón "aceptar"\\
+			& 5 & El servidor actualiza el reporte y devuelve una respuesta exitosa\\
+			& 6 & El navegador actualiza la interfaz\\
+			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 3 & Si los datos introducidos son inválidos el servidor alerta el problema. \\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Eliminar visualización de un reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-29}} & \multicolumn{2}{l}{\textit{Eliminar visualización de un reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar una visualización en un reporte.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en el enlace "remove" correspondiente a la visualización\\
+			& 2 & El servidor actualiza el reporte \\
+			& 3 & El servidor envía el reporte sin la visualización eliminada\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\caption{Caso de uso – Eliminar visualización de un reporte}
+	\begin{center}
+		\begin{tabular}{r|p{2cm}p{8cm}}
+			\textbf{\textit{UA-29}} & \multicolumn{2}{l}{\textit{Eliminar visualización de un reporte}}\\
+			\hline
+			% Linea de descripción 
+			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar una visualización en un reporte.}\\
+			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			% Linea de Secuencia normal
+			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
+			& 1 & El usuario hacer click en el enlace "remove" correspondiente a la visualización\\
+			& 2 & El servidor actualiza el reporte \\
+			& 3 & El servidor envía el reporte sin la visualización eliminada\\
+			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\FloatBarrier
+
 crear prueba
 editar prueba
 crear parametro de prueba
@@ -2617,7 +2972,7 @@ Todas las fechas se validan usando la zona horaria del monitor, para validar la 
 
 La pantalla de planificación genérica de pruebas puede ser vista en la figura \ref{}.
 
-\section{Sincronización genérica de datos}
+\section{Sincronización genérica de datos} \label{sec:syncgeneric}
 
 El mecanismo general de recolección de datos se ha explicado detalladamente en la Sección \ref{sub:Recolector}, se ha dicho que por cada prueba activa para el monitor se llama a una subrutina de sincronización que descarga los archivos de trazas e introduce los resultados en la base de datos, sin embargo no se ha entrado en detalle sobre el método de procesamiento de los archivos y la forma en que los datos de cada prueba se almacenan en la base de datos.
 
