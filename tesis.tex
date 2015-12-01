@@ -1171,7 +1171,7 @@ En esta sección se explican los distintos componentes de software que son parte 
 
 \subsection{Enlazador de cuentas de Dropbox}
 
-Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicacion web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. El proceso de autenticacion es un algoritmo a dos pasos que se puede observar a continuación:
+Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicación web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. El proceso de autenticación es un algoritmo a dos pasos que se puede observar a continuación:
 
 
 \begin{algorithm}
@@ -1205,17 +1205,29 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 	\end{algorithmic}
 \end{algorithm}
 
-La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo POST pasamos a validar el formulario si es la válida entonces hacemos alguna operación (casi siempre actualizar la base de datos) y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario el formulario es inválido y se dibuja la plantilla mostrando los mensajes de error correspondientes, si el método es GET entonces mostramos una formulario en blanco.
+La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo GET entonces devuelve el formulario se devuelve un formulario en blanco donde el usuario deberá introducir algunos datos. Si la petición es de tipo POST pasamos a validar el formulario si es válido, entonces hacemos alguna operación como actualizar la base de datos y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario el formulario es inválido y se dibuja el formulario mostrando los mensajes de error correspondientes.
 
-En este caso cuando el usuario visita la ruta '/dropbox/link-account/' con el método GET la aplicacion web crea un URL hacia el sitio de Dropbox y muestra al usuario un formulario con una caja para introducir un código y un enlace con el URL generado previamente, cuando el usuario hace click al URL este lo lleva al sitio de Dropbox que a su vez despliega un dialogo preguntando al usuario si dará permiso a la aplicacion de Octopus Monitor para hacer cambios en su carpeta personal, en caso positivo se genera un token que el usuario debe copiar en el formulario, cuando el usuario hace click en submit una peticion HTTP POST se envía al servidor, entonces este valida los datos introducidos y llama al método "finish" con el token, este método retorna el código de acceso al Dropbox del usuario para nuestra aplicacion y el identificador del usuario, guardamos los cambios en la base de datos y llevamos al usuario a una página indicando que el proceso de enlazamiento fue exitoso. 
+En este caso cuando el usuario visita la ruta \textit{'/dropbox/link-account/'} con el método GET la aplicacion web crea un URL hacia el sitio de Dropbox y muestra al usuario un formulario con una caja de texto para introducir un código y un enlace con el URL generado previamente, cuando el usuario hace click al enlace, este lo lleva al sitio de Dropbox que a su vez despliega un dialogo preguntando al usuario si dará permiso a la aplicacion de Octopus Monitor para hacer cambios en su carpeta personal, en caso positivo se genera un token que el usuario debe copiar en el formulario, cuando el usuario somete el formulario una petición HTTP POST se envía al servidor, entonces este llama al método "finish" con el token, este método retorna el código de acceso al Dropbox del usuario para nuestra aplicacion y el identificador del usuario, guardamos los cambios en la base de datos y llevamos al usuario a una página indicando que el proceso de enlazamiento fue exitoso. 
 
 A partir de este momento tenemos los dos elementos necesarios para hacer peticiones al API de Dropbox: los permisos sobre la carpeta en la nube del usuario y el token de acceso a su dropbox.
 
 \subsection{Subidor de mensajes}
 
-Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los tentáculos (nuevo tentáculo registrado o cambios a un tentáculo existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
+Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
 
-Los mensajes que se suben a la nube se escriben en formato json, este formato ofrece grandes ventajas para el desarrollo de aplicaciones distribuidas ya que es fácil de codificar del lado del servidor y fácil de decodificar del lado del monitor es mucho mas ligero que otros formatos como XML y al mismo tiempo es legible para seres humanos, todos las funciones que suben archivos a la nube funcionan de forma simular (1) retiran de la base de datos el token de acceso a Dropbox del usuario (2) determinan el nombre del archivo a subir (3) codifican el archivo json a enviar (4) crean un objetivo tipo archivo o buffer en memoria (5) suben el archivo a la nube, el procedimiento se puede ver a continuación: 
+Los mensajes que se suben a la nube se escriben en formato json, este formato ofrece grandes ventajas para el desarrollo de aplicaciones distribuidas ya que es fácil de codificar del lado del servidor y fácil de decodificar del lado del monitor es mucho mas ligero que otros formatos como XML y al mismo tiempo es legible para seres humanos, todos las funciones que suben archivos a la nube funcionan de forma simular:
+\begin{enumerate}
+	\item{Se retira de la base de datos el token de acceso a Dropbox del usuario.}
+	\item{Se determina el nombre del archivo a subir, concatenando el id del monitor, el nombre de la carpeta buzón y el tipo de archivo e identificador de la prueba o enlace, por ejemplo:
+	\begin{itemize}
+		\item{\textbf{/monitor1/mailbox/test\_12:} especifica los detalles de la prueba id \#12 del monitor id \#1.}
+		\item{\textbf{/monitor1/mailbox/link\_6:} especifica los detalles del enlace id \#6 del monitor id \#1.}
+	\end{itemize}
+		 }
+	\item{Se crea un objetivo tipo archivo o buffer en memoria.}
+	\item{Se codifica el contenido del archivo en formato json, y se inserta en el buffer; el contenido será un diccionario con los detalles relevantes a la prueba o enlace.}
+	\item{Se sube el archivo a la nube a través del API de Dropbox.}
+\end{enumerate}
 
 \begin{algorithm}
 	\caption{Subir prueba a Dropbox}\label{alg:upload}
@@ -1239,6 +1251,34 @@ Los mensajes que se suben a la nube se escriben en formato json, este formato of
 		\EndProcedure
 	\end{algorithmic}
 \end{algorithm}
+
+Los mensajes deben contener la información necesaria para que el monitor pueda reconstruir el plan de monitoreo a partir de ellos, la estructura y posibles valores de los mensajes pueden ser vistos en la Tabla \ref{tab:testmessage} para los mensajes relacionados a las pruebas y en la Tabla \ref{tab:linkmessage}
+
+\begin{table}
+	\label{tab:testmessage}
+	\begin{tabular}{p{2cm}|p{4cm}|p{8cm}}
+		Clave      & Valor                & Descripción                                                                        \\ \hline
+		disable    & true$|$false           & Si es \textit{false} indica que la prueba debe ser desactivada                     \\ 
+		name       & cadena de caracteres & nombre de módulo de la prueba                                                      \\ 
+		end\_date   & fecha$|$null           & fecha final de la prueba, si es \textit{null} la prueba se ejecuta indefinidamente \\ 
+		start\_date & fecha                & fecha inicial de la prueba                                                         \\ 
+		interval   & entero positivo$|$null & Indica el intervalo entre pruebas, si es nulo, la prueba se ejecuta una sola vez   \\ 
+		kwargs     & diccionario          & Conjunto de pares $<$nombre,valor$>$ que representa los parámetros de la prueba    \\
+	\end{tabular}
+	\caption{Contenido del mensaje de prueba planificada}
+\end{table}
+
+\begin{table}
+	\begin{tabular}{p{2cm}|p{4cm}|p{8cm}}
+	\label{tab:linkmessage}
+		Clave  & Valor                & Descripción                                                    \\ \hline
+		status & true$|$false           & Si es \textit{false} indica que el enlace debe ser desactivado \\ 
+		ip     & cadena de caracteres & dirección ip del TPS del enlace.                               \\ 
+		id     & entero positivo      & identificador único del enlace                                 \\ 
+		host   & cadena de caracteres & nombre de dominio del TPS del enlace.                          \\
+	\end{tabular}
+	\caption{Contenido del mensaje de enlace monitoreado}
+\end{table}
 
 \subsection{Recolector de datos} \label{sub:Recolector}
 
