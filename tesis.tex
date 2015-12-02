@@ -18,6 +18,11 @@
 \definecolor{light-gray}{gray}{0.95}
 \usepackage{listings}
 \usepackage{enumitem}
+
+\definecolor{LightRed}{rgb}{1,0.3,0.3}
+\definecolor{LightGreen}{rgb}{0,1.66,0.29}
+
+
 % ***************************************************************** %
 % En el siguiente comando se pueden modificar:
 % Titulo, Autor, Palabras clave
@@ -2721,6 +2726,146 @@ En esta sección se explica el flujo de trabajo y casos de uso del sistema desde 
 
 \section{Pruebas de Rendimiento}
 
+Ya que la aplicacion web está pensada para atender a una cantidad arbitraria de usuarios, deseamos conocer el número máximo de usuarios concurrentes a los que se les puede dar servicio con el hardware disponible, llevaremos a cabo pruebas de carga en las cuales se simulará un ráfaga de peticiones variable durante un intervalo de tiempo y así determinar la cantidad de peticiones para cual ocurre una degradación de servicio o el servidor es incapaz de responder a mas peticiones.
+
+Consideramos que ocurre una degradación de servicio cuando el tiempo de espera del usuario aumenta mas allá de un umbral máximo, según \cite{nielsen1994usability} existen tres umbrales importantes a la hora de evaluar el tiempo de respuesta de una aplicacion:
+
+\begin{enumerate}
+	\item{\textbf{0.1 segundo:} Límite en el cual un usuario siente que está manipulando los objetos desde la interfaz de usuario.}
+	\item{\textbf{1 segundo:} Límite en el cual un usuario siente que está navegando libremente.}
+	\item{\textbf{10 segundos:} Límite en el cual se pierde la atención del usuario, es buena idea proveer barras de cargas y medios para cancelar la operación cuando se trata de operaciones de larga duración.}
+\end{enumerate}
+
+Para las siguientes pruebas consideraremos las siguientes métricas de rendimiento de la aplicacion web:
+
+\begin{itemize}
+	\item{Tiempo de respuesta promedio}
+	\item{Tiempo de respuesta mediana}
+	\item{Tiempo de respuesta mínima}
+	\item{Tiempo de respuesta máximo}
+	\item{Porcentaje de error}
+	\item{Rendimiento en términos de peticiones por segundo durante la duración de la prueba}
+	\item{Rendimiento en términos de bytes por segundo durante la duracion de la prueba}
+\end{itemize}
+
+Consideraremos una prueba como exitosa cuando el porcentaje de error sea igual a 0 y el tiempo máximo de espera de una petición no supere los 10.000ms, tomando en cuenta los umbrales definidos por \cite{nielsen1994usability}. Se considerará optima aquella prueba que ademas de cumplir con ser exitosa, tenga el mayor rendimiento en términos de peticiones por segundo (Req/s) entre todas las pruebas realizadas.
+
+La herramienta elegida para ejecutar las pruebas fue JMeter \cite{JMeter}, esta herramienta permite simular casos de uso específicos de una aplicacion web como ráfagas de peticiones que pueden ser configuradas para seguir cualquier patrón dado. En nuestro caso, Jmeter se usará para generar una ráfaga de peticiones con un intervalo constante en cada petición durante un tiempo de un minito. Jmeter provee un componente llamado \textit{Summary Report} que totaliza y promedia los resultados obtenidos de todas las peticiones enviadas del que podemos extraer todas las métricas de interés.
+
+\subsection{Metodología de las pruebas}
+
+Para determinar la carga máxima que la aplicacion web es capaz de soportar en términos de peticiones por minuto, simularemos una ráfaga de peticiones en un intervalo de tiempo de un minuto, variando el número de peticiones hasta obtener un valor óptimo. La metodología a seguir es la siguiente:
+
+\begin{enumerate}
+	\item{Se comenzará ejecutando una primera prueba con un número  prudencial de peticiones durante 60 segundos, este número debe preferiblemente ser múltiplo de dos como 32 o 64.}
+	\item{Se varía el número de peticiones enviadas en la ráfaga multiplicando por dos cada vez que una prueba es exitosa, así si la primera prueba se hace con 16 peticiones, la siguiente tendrá 32, 64 y así sucesivamente.}
+	\item{Tras la primera prueba fallida, se calculará el número de peticiones de la siguiente prueba ($P_{sig}$) como el punto medio entre la cantidad de peticiones de la prueba previa ($P_{prev}$) y la prueba actual ($P_{act}$). 
+		
+		\[P_{sig} = \begin{cases}
+			P_{prev} + |P_{act} - P_{prev}|/2  & \text{Si la prueba fue exitosa}\\
+			P_{prev} - |P_{act} - P_{prev}|/2  & \text{Si la prueba fue fallida}\\
+		\end{cases}\]
+		
+		}
+	\item{El paso 3. se repite hasta que no se obtenga mayor precisión con pruebas sucesivas}
+
+\end{enumerate}
+
+
+
+\subsection{Condiciones de las pruebas}
+
+Todas las pruebas se ejecutaron sobre una red local, entre dos máquinas conectadas a un mismo enrutador: una de ellas ejecuta el servidor web y la otra ejecuta el plan de pruebas simulando las peticiones y totalizando los resultados observados; la latencia de la red se considera menor a 5ms.
+
+Las características del servidor web se pueden observar en la Tabla \ref{tab:hardware}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l|l|l}
+		Procesador                    & Memoria  & Sistema Operativo \\ \hline
+		4x Intel i5-2500 CPU @3.30GHz & 8 GB RAM & Ubuntu 15.04     
+	\end{tabular}
+	
+		\caption{Especificaciones del servidor web}
+		\label{tab:hardware}
+\end{table}
+
+\subsection{Resultados obtenidos}
+
+\begin{enumerate}
+	\item{\textbf{Archivos estáticos con Apache:} En esta prueba se configuró un servidor Apache para servir solo páginas web y archivos estáticos, como se puede observar en la Tabla \ref{tab:staticserve}, se ha elegido el valor de 640 peticiones/minuto como valor óptimo ya que tiene el mejor rendimiento en término de peticiones por segundo.}
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			\hline
+			\# Req & Avg (ms) & Med (ms) & Min (ms) & Max (ms) & Error \% & Req/s & kb/sec \\ \hline
+			128  & 42    & 37    & 28 & 135    & 0.0 \%   & 2.1  & 24.3  \\
+			256  & 44    & 38    & 26 & 273    & 0.0\%   & 4.3  & 48.4  \\ 
+			512  & 38    & 37    & 24 & 153    & 0.0\%   & 8.5  & 96.5  \\ 
+			1024 & 49468 & 57000 & 43 & \cellcolor{LightRed}  189852 & \cellcolor{LightRed}  30.37\% & 5.3  & 46.3  \\ 
+			768  & 29929 & 23248 & 45 & \cellcolor{LightRed}  172688 & \cellcolor{LightRed}  9.24\%  & 4.1  & 43.4  \\ 
+			\rowcolor{LightGreen} 640  & 73    & 55    & 27 & 289    & 0.00\%  & 10.6 & 120.6 \\ 
+			704  & 8339  & 458   & 28 & \cellcolor{LightRed}  64813  & 0.00\%  & 6.6  & 74.9  \\ 
+			672  & 1125  & 217   & 45 & \cellcolor{LightRed}  18280  & 0.00\%  & 9.6  & 108.9 \\ 
+			656  & 206   & 120   & 28 & 4194   & 0.00\%  & 10.4 & 117.6 \\
+			\hline
+		\end{tabular}
+		\caption{Peticiones de archivos estáticos con apache}
+		\label{tab:staticserve}
+	\end{table}
+	
+	\item{\textbf{Páginas dinámicas con Django sobre Apache:} En esta prueba se configuró Apache para ejecutar \textbf{solo} la aplicacion web Django a través del módulo \textit{mod\_wsgi}, no se solicitaron los archivos estáticos vinculados a las páginas visitadas. En la tabla \ref{tab:djangotest} se observa un valor óptimo de 768 peticiones por minuto, para el cual la media y la mediana se mantienen por debajo del umbral de los 0.1 segundos.}
+	
+	
+	\begin{table}[h]
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			\hline
+			\# Req & Avg (ms) & Med (ms) & Min (ms) & Max (ms) & Error \% & Req/s & kb/sec \\ \hline
+			128  & 37    & 33   & 23 & 140    & 0.00\% & 2.1  & 9.8   \\
+			256  & 35    & 33   & 24 & 237    & 0.00\% & 4.3  & 19.5  \\ 
+			512  & 47    & 33   & 23 & 1038   & 0.00\% & 8.5  & 38.9  \\ 
+			1024 & 13709 & 575  & 27 & \cellcolor{LightRed} 97869  & \cellcolor{LightRed} 3.61\% & 7.9  & 35.3  \\ 
+			\rowcolor{LightGreen} 768  & 39    & 33   & 23 & 1034   & 0.00\% & 12.8 & 58.2  \\ 
+			896  & 12483 & 2384 & 24 & \cellcolor{LightRed} 101648 & \cellcolor{LightRed} 1.56\% & 7.1  & 31.9  \\ 
+			832  & 390   & 35   & 24 & 9630   & 0.00\% & 12.7 & 57.7  \\ 
+			672  & 1125  & 217  & 45 & 18280  & 0.00\% & 9.6  & 108.9 \\ 
+			656  & 206   & 120  & 28 & 4194   & 0.00\% & 10.4 & 117.6 \\
+			\hline
+		\end{tabular}
+		\caption{Peticiones de páginas dinámicas con Django}
+		\label{tab:djangotest}
+	\end{table}
+	
+	\item{\textbf{Páginas dinámicas con Django y archivos estáticos sobre el mismo servidor Apache}: en esta prueba se configuró el servidor Apache tal como está descrito en la Sección \ref{sub:servidorweb}, es decir que Apache servirá directamente las peticiones de archivos estáticos y pasará a la aplicacion Django las peticiones dinámicas. En la tabla \ref{tab:djangostatic}} se observa un valor óptimo de 32 peticiones por minuto con una media y mediana por encima del umbral del segundo. 
+	
+	\begin{table}[h!]
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			\hline
+			\# Req & Avg (ms) & Med (ms) & Min (ms) & Max (ms) & Error \% & Req/s & kb/sec \\ \hline
+			64 & 77018 & 74557 & 2558 & \cellcolor{LightRed} 321297 & \cellcolor{LightRed} 9.38\% & 11.5 & 66    \\
+			\rowcolor{LightGreen} 32 & 3438  & 3177  & 2484 & 5432   & 0.00\% & 31.1 & 179.3 \\ 
+			48 & 41056 & 40148 & 8178 & \cellcolor{LightRed} 100190 & 0.00\% & 25.2 & 144.9 \\ 
+			40 & 12023 & 8176  & 2121 & \cellcolor{LightRed} 36000  & 0.00\% & 32.6 & 188   \\ 
+			36 & 10152 & 8335  & 2091 & \cellcolor{LightRed} 41631  & 0.00\% & 23.1 & 133   \\ 
+			34 & 17259 & 14613 & 4165 & \cellcolor{LightRed} 42601  & 0.00\% & 24.6 & 141.9 \\
+			\hline
+		\end{tabular}
+		\caption{Peticiones de páginas dinámicas con sus archivos estáticos.}
+		\label{tab:djangostatic}
+	\end{table}
+	
+\end{enumerate}
+
+\subsection{Análisis de los resultados}
+
+Como se pudo observar en las pruebas anteriores y corroborando lo dicho en la Sección \ref{sub:servidorweb}, de tenerse los recursos suficientes, Django debería ejecutarse preferiblemente en una máquina separada a la encarga de servir archivos estáticos. Se ha observado que un servidor de las características descritas puede manejar una carga de 768 peticiones dinámicas por minuto, y solo 640 peticiones estáticas, lo cual representa una diferencia de mas del 16\%. 
+
+Independiente de la cantidad de peticiones que el servidor pueda manejar en condiciones ideales, en la realidad cada visita \textbf{única}, es decir, cada usuario que visite por primera vez el sitio web deberá descargar todos los archivos estáticos junto con la página HTML generada dinámicamente, como se observó en la tabla \ref{tab:djangostatic}, el servidor es capaz de atender unas 32 peticiones de este tipo por minuto, lo cual representa una marcada diferencia del 95\% en comparación con la prueba sin archivos estáticos, por lo tanto, los archivos estáticos representan un cuello de botella importante para la aplicacion.
+
+A pesar de los anterior, en peticiones sucesivas el navegador web usará los archivos en el caché de modo que en la práctica sería posible atender muchas mas peticiones por minuto.
+
+Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como se ve en la tabla \ref{tab:djangotest} tanto la velocidad de respuesta promedio como la mediana se mantienen muy por debajo del umbral de los 0.1 segundos, e incluso el tiempo de respuesta máximo se mantiene cerca del umbral del segundo, sin tomar en cuenta la latencia de la red, esto conforma una experiencia de navegación bastante rápida.
 
 \chapter{Monitor de Red "Tentacle Monitor"} \label{cap:monitor}
 
