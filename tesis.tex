@@ -345,9 +345,9 @@ Mientras una red tiene ciertos elementos relativamente invariables como la posic
 
 Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas.
 
-\section{Principio Fin-a-Fin}
+\section{Principio de Extremo-a-Extremo}
 
-El principio de fin-a-fin (también llamado argumento de fin-a-fin) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
+El principio de extremo-a-extremo (también llamado argumento de extremo-a-extremo) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
 
 Este principio es valioso para el diseño de cualquier tipo de sistema distribuido sin embargo ha sido fundamental en la expansión y desarrollo de redes de computadoras de propósito general y se sustenta en que los nodos intermedios de una red deben proveer solo las funciones necesarias para permitir la comunicación entre los nodos finales, de esta manera es posible implementar nuevas funcionalides en los extremos de la red sin necesidad de hacer cambios a los nodos intermedios.
 
@@ -3792,6 +3792,7 @@ Although making analysis over the collected data it is out of the scope of this 
 
 Future Work
 
+building apis for new monitor types
 One of the key features that might make a network monitoring system attractive for potential users is having the ability to automatically detect when critical conditions are met and alert the user proactively, emitting push notifications through a mobile app or sending sms or email. Alerts could be attached to tests and conditions could be checked after every synchronization is performed. Examples of critical conditions that could trigger alerts are: a link goes down during a prolonged period of time, the latency is above a set threshold, a server is returning http status 500, etc. 
 
 Another obvious feature is the inclusion of other monitor types, currently we provide support only for one kind of monitor thought for low-cost devices that could be left unattended and are only able to perform tests periodically. New monitor types running in more powerful devices open up various possibilities where users are able to interact through the web app with their monitors, executing tests on-demand or even streaming data directly to the client, either by using the web app as a relay between the monitor and the client, or establishing a direct connection between the client and the monitor. 
