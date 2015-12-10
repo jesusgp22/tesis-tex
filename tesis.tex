@@ -345,6 +345,14 @@ Mientras una red tiene ciertos elementos relativamente invariables como la posic
 
 Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas.
 
+\section{Redes Comunitarias}
+
+Las redes comunitarias se caracterizan por ser despliegues de redes a gran escalada construidos y organizados de una manera descentralizada \cite{gaia-alternative2015}, el crecimiento de la red es orgánico y está abierto a la participación de cualquiera. Los usuarios interesados en formar parte de la red colaboran aportando su propia infraestructura de red, agregando nuevos nodos que permiten que otros usuarios a su vez puedan continuar extendiendo la red.
+
+A pesar de que el despliegue es distribuido y auto-gestionado se necesita una mínima infraestructura de gobernanza  para coordinar el direccionamiento IP y enrutamiento, las redes comunitarias tienden a estar compuestas por elementos de hardware y software muy diversos, y usualmente coexisten en ellas enlaces alambricos e inalambricos, distintos protocolos de enrutamiento o sistemas de manejo de la topología de red\cite{gaia-alternative2015}.
+
+Las redes comunitarias sirven como una forma de distribuir el acceso a Internet de forma libre y neutral, tanto en zonas urbanas como rurales, sin embargo, también pueden servir para distribuir servicios y aplicaciones comunitarias tanto completamente gratuitas como comerciales. Cada participante sigue siendo dueño de la infraestructura que presta a la red y se benefician mutuamente al tener acceso a los servicios y aplicaciones de la red comunitaria.
+
 \section{Principio de Extremo-a-Extremo}
 
 El principio de extremo-a-extremo (también llamado argumento de extremo-a-extremo) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
@@ -413,11 +421,7 @@ A diferencia de las métricas anteriores medir el throughput solo es posible con 
 
 \subsection{Uso del ancho de banda}
 
-Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red.
-
-Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red, por ejemplo una universidad podría desear saber que porcentaje del ancho de banda esta siendo utilizado por streams de audio o video, a una empresa le gustaría saber cuanto tiempo pasan sus empleados en redes sociales, un analista desea saber cuales son los sitios web mas visitados en una red, etc. 
-
-NOTA PARA EL PROFESOR: ayuda, no encontré ninguna cita que me ayudara a definir estos conceptos, sin embargo me parece que es importante incluir esto en el marco teórico.
+Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red. Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red.
 
 \subsection{Disponibilidad} \label{sub:disponibilidad}
 
@@ -546,13 +550,11 @@ Django ha demostrado ser escalable y flexible, se sabe de instancias de Django a
 Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios)\cite{CeleryWebsite}: 
 
 \begin{itemize}
-	\item{Bróker de mensajería: es el encargado almacenar las tareas que deben ser ejecutadas y pasarlas entre los distintos entes, este consiste de una o mas colas de prioridad, de esta manera es posible controlar finamente que tareas deben ser ejecutadas con mayor urgencia, y por que trabajadores.}
-	\item{Planificador: el planificador es el encargado de encolar tareas previamente planificadas para que sean ejecutadas en algún momento especifico.}
-	\item{Workers (Ejecutores): como su nombre lo indica, estos son los encargados de ejecutar las tareas; estos se subscriben a una o mas colas y consumen los mensajes según la prioridad establecida en la cola finalmente escriben el estado y resultados obtenidos en un backend de resultados}
-	\item{Backend de Resultados: sirve como un almacén donde se guarda el estado y los resultados de las tareas durante un periodo de tiempo dado, esto hace posible hacer seguimiento de las tareas y obtener sus valores de retorno.}
+	\item{Bróker de mensajería.}
+	\item{Planificador.}
+	\item{Workers (Trabajadores).}
+	\item{Backend de Resultados.}
 \end{itemize}
-
-Uno de los problemas comunes en el desarrollo de aplicaciones web es la ejecución de tareas largas o altamente bloqueantes que mantienen ocupado al servidor web durante periodos prolongados y peor aun mantienen al usuario final esperando, para evitar este escenario el servidor web debe tener una forma de delegar este tipo de tareas para ser ejecutadas después y responder inmediatamente.
 
 Celery es usado comúnmente junto a Django y permite a una aplicación web escalar a bajo costo ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas como sea necesario. 
 
@@ -586,23 +588,13 @@ El uso de un ORM simplifica enormemente el manejo de la estructura de datos suby
 
 Json (JavaScript Object Notation) o notación de objectos javascript es un formato textual de intercambio y almacenamiento de datos no estructurados, json posee un formato que es fácil de leer para humanos y fácil de interpretar para maquinas y mas ligero que XML por lo que se ha popularizado para el desarrollo de APIs. 
 
-Json soporta dos tipos de estructuras de datos:
+Json soporta dos tipos de estructuras de datos fundamentales:
 \begin{enumerate}
 	\item{Colecciones de pares $<$nombre,valor$>$ comparable a un diccionario o tablashash.}
 	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
 \end{enumerate}
 
-Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes descritas o cualquier permutación de dichas estructuras anidadas. 
-
-Los tipos de datos soportados por json son:
-\begin{itemize}
-	\item{Number: numeros flotantes de doble presicion en formato Javascript}
-	\item{String: cadenas de caracteres unicode encerradas en dobles comillas} 
-	\item{Boolean: true o false}
-	\item{Arreglo: secuencia de valores ordenados}
-	\item{Objeto: colección no ordenada de pares $<$nombre,valor$>$}
-	\item{Null: nulo o vacío}
-\end{itemize}
+Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes descritas o cualquier permutación de dichas estructuras anidadas.
 
 \subsection{Dropbox}
 
@@ -672,25 +664,7 @@ A pesar de que el nombre AJAX sugiera el uso XML como lenguaje para la transfere
 
 \subsection{APScheduler}
 
-APScheduler (Advanced Python Scheduler) es una biblioteca python para retrasar la ejecución de rutinas a un instante dado en el futuro ya sea como eventos de una sola vez o de forma recurrente\cite{APScheduler}, esta biblioteca provee las herramientas para construir cualquier esquema de planificación que se desee su arquitectura consta de componentes altamente desacoplados que pueden ser mezclados, combinados o incluso extendidos para ofrecer nuevas funcionalides.
-
-\subsubsection{Triggers (gatillos)}
-
-Los triggers (gatillos) son los encargados de determinar el momento de la próxima ejecución de una tarea, APScheduler incluye tres gatillos predefinidos: DateTrigger que ejecuta tareas dada una fecha y hora, IntervalTrigger que ejecuta tareas de forma recurrente dado un intervalo fijo y CronTrigger que ejecuta tareas de forma similar a crontab del sistema UNIX.
-
-\subsubsection{Job Stores (almacenes de tareas)}
-
-Job Stores o almacenes de tareas determinan la forma en que las tareas serán alojadas por el planificador, por defecto las tareas se guardan en memoria, sin embargo también es posible guardar las tareas en almacenes persistentes como bases de datos SQL o mongo.
-
-\subsubsection{Executors (ejecutores)}
-
-Los ejecutores son los encargados de ejecutar tareas y posteriormente informar al planificador del estado de la tarea. El ejecutor por defecto consta de un arreglo de hilos (thread pool) pre-instanciados listos para aceptar tareas, sin embargo si se tienen tareas de uso intensivo de CPU, esta disponible un ejecutor basado en procesos que puede aprovechar mejor las características de procesadores multinúcleos \cite{APScheduler}.
-
-\subsubsection{Shedulers (Planificadores)}
-
-Los planificadores son los que unen todos los elementos mencionados anteriores y son los encargados de gestionar las tareas, es decir que delegan a los ejecutores la ejecución de las tareas en el tiempo adecuado y duerme esperando la ocurrencia de eventos que requieran su atención.
-
-APScheduler incluye dos planificadores predefinidos: BackgroundScheduler que se ejecuta instanciando un hilo en segundo plano y permite que el flujo del programa continúe, útil cuando se desea realizar otras funciones o como agregar o modificar tareas después de que el planificador se ha inicializado y BlockingScheduler que se ejecuta en el mismo hilo de ejecución bloqueando el flujo del programa indefinidamente.
+APScheduler (Advanced Python Scheduler) es una biblioteca python para retrasar la ejecución de rutinas a un instante dado en el futuro ya sea como eventos de una sola vez o de forma recurrente\cite{APScheduler}, esta biblioteca provee las herramientas para construir cualquier esquema de planificación que se desee su arquitectura consta de los siguientes componentes: gatillos para determinar el momento de ejecucion de las tareas (por fecha, por intervalos de tiempo, o tipo crontab), almacenes de tareas para alojar los datos de las tareas, ejecutores para controlar la ejecucion de las tareas y planificadores que unen los componentes antes descritos y se encargan de 
 
 \subsection{Ping} \label{sub:ping}
 
@@ -719,6 +693,85 @@ Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferenci
 \end{itemize}
 
 Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
+
+\section{Estado del Arte}
+
+A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una variedad de soluciones innovadoras y aplicaciones web que proveen distintos enfoques para el monitoreo y evaluación de redes.
+
+En esta sección resumimos estos sistemas por los siguientes parámetros:
+
+\begin{enumerate}
+	\item{\textbf{Servicio ofrecido:} define el servicio proveído por el sistema, por ejemplo: monitoreo de actividad de servicios web, evaluación de calidad de servicio de WISP, etc.}
+	\item{\textbf{Dispositivos de monitoreo:} define el tipo de dispositivo que ejecuta las pruebas o actúa como el punto final "activo" del monitoreo; por ejemplo: dispositivos móviles, hardware especializado, enrutadores, etc.}
+	\item{\textbf{Localización de los dispositivos de monitoreo:} define la localización donde los dispositivos de monitoreo son desplegados.}
+	\item{\textbf{Referencia de monitoreo:} define el dispositivo que sirve como la referencia de monitoreo, en otras palabras, un dispositivo que espera por los mensajes del dispositivo de monitoreo y responde apropiadamente; estos no siempre son necesarios ya que muchos de los elementos presentes en la red implementan protocolos que pueden ser usados para propósitos de monitoreo. Ejemplos de estos dispositivos son: nodos en la red como enrutadores y computadores o servidores dedicados.}
+	\item{\textbf{Localización de las referencias de monitoreo:} define la localización donde las referencias de monitoreo son desplegadas. Esto es importante ya que la distancia entre los distintos dispositivos impacta los resultados de manera relevante.}
+	\item{\textbf{Tipo de red:} se consideraron dos configuraciones de monitoreo de redes: cliente-servidor donde un conjunto de clientes ejecutan pruebas en contra de uno o mas servidores dedicados y redes peer-to-peer, donde los entes de monitoreo puedes realizar pruebas entre sí (es decir, actuar como dispositivos monitores y referencias de monitoreo), esta configuración es muy útil ya que permite un gran arreglo de pruebas posibles.}
+	\item{\textbf{Tests:} detalles sobre las pruebas ejecutadas por el sistema, por ejemplo: pruebas de rendimiento con UDP, traza de rutas, ICMP ping, resolución de DNS, etc.}
+	\item{\textbf{Visualizaciones disponibles:} detalles sobre los métodos de visualización de datos disponibles como mapas, gráficas de barras, tablas, etc.}
+	\item{\textbf{Numero estimado de usuarios:} número estimado de usuarios en el orden de potencias de diez.} 
+	\item{\textbf{Referencias:} determina si el sistema tiene referencias en papers o otras publicaciones.}
+	
+\end{enumerate}
+
+
+\begin{table}[h!]
+	\scriptsize{
+	\begin{flushleft}
+
+	\begin{tabular}{|p{1.5cm}p{2.5cm}p{2cm}p{2cm}p{2cm}p{2cm}p{1.5cm}|}
+		\hline
+		~                              & Servicio                                       & Dispositivos Monitores                                     & Localización                                         & Referencias de monitoreo            & Localizacion                                         & Tipo de red                     \\ \hline
+		Atlas Ripe                     & Monitoreo de alcanzabilidad, latencia y DNS    & Probes y anchors (hardware especializado)                  & Distribuidos a nivel mundial                         & Servidores DNS y anchors            & Distribuidos a nivel mundial                         & Peer-to-peer y cliente-servidor \\ 
+		\hline
+		Netradar                       & Monitoreo de calidad de WISPs                  & Dispositivos móbiles                                       & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en Europa, Asia y EEUU                & cliente-servidor                \\ 
+		\hline
+		SpeedTest                      & Evaluacion de latencia y rendimiento           & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
+		\hline
+		Guifinet                       & Evaluacion de rendimiento y monitoreo de uso   & Nodos centrales de la red guifi.net                        & Desplegados en la red guifi.net en Barcelona, España & Nodos centrales de la red guifi.net & Desplegados en la red guifi.net en Barcelona, España & Peer-to-peer                    \\ 
+		\hline
+		Broadby DSL Report             & Evalauacion de latencia y rendimiento          & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en EEUU                               & cliente-servidor                \\ 
+		\hline
+		Project BISmark                & Monitoreo de calidad de banda ancha en hogares & Enrutadores OpenWRT, raspberry pi y android & Distribuidos a nivel mundial                         & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
+		\hline
+		Pingdom                        & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa y EEUU                      & Servidores web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
+		\hline
+		Monitis Visual Traceroute Tool & Evaluacion de alcanzabilidad                   & Servidores dedicados                                       & Localizaciones en Europa, Asia y EEUU                & Dispositivos web                    & Cualquier Lugar                                      & cliente-servidor                \\ 
+		\hline
+		Uptime Robot                   & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa, EEUU y Japón               & Servidores Web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
+		\hline
+		ICSI Netalyzr                  & Evaluacion de acceso a Internet                & Dispositivos web y android                                 & Cualquier Lugar                                      & Servidores dedicados, DNS y proxies & Desconocido                                          & cliente-servidor                \\
+		\hline
+	\end{tabular}
+	\end{flushleft}
+	}
+	\caption{Tabla del Estado del Arte parte I}
+\end{table}
+
+
+	
+\begin{table}[h!]
+	\scriptsize{
+	\begin{flushleft}
+	\begin{tabular}{|p{1.5cm}|p{4.5cm}|p{4.5cm}|p{1.5cm}|p{1.5cm}|}
+		\hline
+		~                              & Pruebas                                                                                        & Visualizaciones                                                                               & Usuarios    & Referencias    \\ \hline
+		Atlas Ripe                     & Ping, Traceroute y DNS.                                                                        & Mapas de Internet con Resultados en los anchors y probes                                      & 10.000      & si             \\ \hline
+		Netradar                       & Throughput TCP (mono-flujo), medicion de RTT pasivo con TCP, GPS geo-location.                 & Mapas de calor geográfico con detalles de calidad por area y proveedor de servicio            & 1.000.000   & si             \\ \hline
+		SpeedTest                      & Throughput TCP (multi-flujos) sobre HTTP                                                       & Gráfica de velocidad de subida/bajada vs tiempo.                                              & 100.000.000 & si             \\ \hline
+		Guifinet                       & Desconocido                                                                                    & Mapa de la red con detalles sobre el uso y rendimiento por enlace.                            & 100.000     & si             \\ \hline
+		Broadband DSL Report           & Throughput TCP (multi-stream)                                                                  & Gráfica de velocidad de subida/bajada vs tiempo, gráfica de telaraña de.                      & 1.000.000   & no encontradas \\ \hline
+		Project BISmark                & Throughput TCP (multi-flujos) y Ping                                                           & Latencia y throughput vs tiempo.                                                              & 100.000     & si             \\ \hline
+		Pingdom                        & Ping sobre HTTP                                                                                & Gráfica de latencia vs tiempo, lista de periodos de actividad e inactividad.                  & 1.000.000   & si             \\ \hline
+		Monitis Visual Traceroute Tool & Traceroute                                                                                     & Mapa de la posicion geográfica de los saltos                                                  & Desconocido & no encontradas \\ \hline
+		Uptime Robot                   & Ping sobre HTTP                                                                                & Gráfica de latencia vs tiempo, lista de periodos de actividad e inactividad.                  & Desconocido & si             \\ \hline
+		ICSI Netalyzr                  & Ping, resolución de DNS, throughput, detection de NATs, chequeo de correctitud de Proxys, etc. & Lista de los eventos relevantes durante el monitoreo y problemas encontrados marcados en rojo & 10.000      & si             \\
+		\hline
+	\end{tabular}
+	\end{flushleft}
+	}
+	\caption{Tabla del Estado del Arte parte II}
+\end{table}
 
 \chapter{Aplicación Web "Optopus Head"}
 

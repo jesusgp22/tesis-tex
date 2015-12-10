@@ -1,0 +1,11 @@
+|Pruebas||Visualizaciones|Usuarios|Referencias
+Atlas Ripe|Ping, Traceroute y DNS.|Mapas de Internet con Resultados en los anchors y probes|10.000|si
+Netradar|Throughput TCP (mono-flujo), medicion de RTT pasivo con TCP, GPS geo-location.|Mapas de calor geográfico con detalles de calidad por area y proveedor de servicio|1.000.000|si
+SpeedTest|Throughput TCP (multi-flujos) sobre HTTP|Gráfica de velocidad de subida/bajada vs tiempo.|100.000.000|si
+Guifinet|Desconocido|Mapa de la red con detalles sobre el uso y rendimiento por enlace.|100.000|si
+Broadband DSL Report|Throughput TCP (multi-stream)|Gráfica de velocidad de subida/bajada vs tiempo, gráfica de telaraña de.|1.000.000|no encontradas
+Project BISmark|Throughput TCP (multi-flujos) y Ping|Latencia y throughput vs tiempo.|100.000|si
+Pingdom|Ping sobre HTTP|Gráfica de latencia vs tiempo, lista de periodos de actividad e inactividad.|1.000.000|si
+Monitis Visual Traceroute Tool|Traceroute|Mapa de la posicion geográfica de los saltos|Desconocido|no encontradas
+Uptime Robot|Ping sobre HTTP|Gráfica de latencia vs tiempo, lista de periodos de actividad e inactividad.|Desconocido|si
+ICSI Netalyzr|Ping, resolución de DNS, throughput, detection de NATs, chequeo de correctitud de Proxys, etc.|Lista de los eventos relevantes durante el monitoreo y problemas encontrados marcados en rojo|10.000|si

@@ -1,0 +1,11 @@
+|Servicio|Dispositivos Monitores|Localización|Referencias de monitoreo|Localizacion|Tipo de red
+Atlas Ripe|Monitoreo de alcanzabilidad, latencia y DNS|Probes y anchors (hardware especializado)|Distribuidos a nivel mundial|Servidores DNS y anchors|Distribuidos a nivel mundial|Peer-to-peer y cliente-servidor
+Netradar|Monitoreo de calidad de WISPs|Dispositivos móbiles|Cualquier Lugar|Servidores dedicados|Localizaciones en Europa, Asia y EEUU|cliente-servidor
+SpeedTest|Evaluacion de latencia y rendimiento|Dispositivos web|Cualquier Lugar|Servidores dedicados|Distribuidos a nivel mundial|cliente-servidor
+Guifinet|Evaluacion de rendimiento y monitoreo de uso|Nodos centrales de la red guifi.net|Desplegados en la red guifi.net en Barcelona, España|Nodos centrales de la red guifi.net|Desplegados en la red guifi.net en Barcelona, España|Peer-to-peer
+Broadby DSL Report|Evalauacion de latencia y rendimiento|Dispositivos web|Cualquier Lugar|Servidores dedicados|Localizaciones en EEUU|cliente-servidor
+Project BISmark|Monitoreo de calidad de banda ancha en hogares|Enrutadores OpenWRT, raspberry pi y y dispositivos android|Distribuidos a nivel mundial|Servidores dedicados|Distribuidos a nivel mundial|cliente-servidor
+Pingdom|Monitoreo de servidores web|Servidores dedicados|Localizaciones en Europa y EEUU|Servidores web|Cualquier Lugar|cliente-servidor
+Monitis Visual Traceroute Tool|Evaluacion de alcanzabilidad|Servidores dedicados|Localizaciones en Europa, Asia y EEUU|Dispositivos web|Cualquier Lugar|cliente-servidor
+Uptime Robot|Monitoreo de servidores web|Servidores dedicados|Localizaciones en Europa, EEUU y Japón|Servidores Web|Cualquier Lugar|cliente-servidor
+ICSI Netalyzr|Evaluacion de acceso a Internet|Dispositivos web y android|Cualquier Lugar|Servidores dedicados, DNS y proxies|Desconocido|cliente-servidor
