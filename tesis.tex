@@ -408,8 +408,7 @@ El máximo throughput teórico entre un par de nodos esta determinado principalmen
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\linewidth]{img/throughput}
-\caption{Latencia y ancho de banda – Imagen tomada del
-	sitio: http://chimera.labs.oreilly.com/books/1230000000545/ch01.html}
+\caption{Latencia y ancho de banda}
 \label{fig:throughput}
 \end{figure}
 
@@ -451,19 +450,18 @@ El aprovechamiento de este flujo de datos generalmente inmanejable por los siste
 
 La visualización de datos se refiere al aprovechamiento de elementos gráficos para representar información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
 
-Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y columnas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
+Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y listas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
 
 Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc, cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados. Es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas que pueden expresar datos de la densidad de una variable al mismo tiempo que se da una idea de su posición geográfica.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.7\linewidth]{img/crimespotting}
-\caption{Visualizacion de datos sobre delincuencia en el distrito de Columbia – Imagen tomada del
-	sitio:: http://www.pervasif.com/index.php/news-a-event/capabilities/data-visualization}
+\includegraphics[width=0.7\linewidth]{img/datavisualization}
+\caption{Visualización de periodos de actividad e inactividad continua}
 \label{fig:crimespotting}
 \end{figure}
 
-En la figura \ref{fig:crimespotting} se puede observar como se usan distintos métodos para representar datos sobre crímenes como robo de vehículos, homicidios y asaltos con armas letales en un área del distrito de Columbia, un mapa es usado para mostrar la localización en que se ocurrieron los crímenes, en esta representación se puede observar rápidamente que zonas son mas propensas a cada tipo de crimen y obtener una idea de su frecuencia, a la izquierda se puede ver una gráfica de barras mostrando la cantidad de ocurrencias coloreadas por tipo de crimen y separados por día de la semana, de esta manera es posible no solo observar que crímenes son mas frecuentes sino que días y semanas son las mas propensas. También se ofrecen herramientas para filtrar los crímenes por fecha, tipo de crimen y distrito, este tipo de herramientas de visualización de datos interactivas son cada vez mas populares en todo tipo de organizaciones ya que facilitan el análisis efectivo de sus datos.
+En la figura \ref{fig:crimespotting} se observa una visualización de los periodos de actividad continua como segmentos de linea verde y los periodos de inactividad como segmentos de linea roja, es posible hacer zoom para observar los periodos a mayor detalle y revisar el tiempo exacto del inicio del periodo pasando el puntero sobre un punto, la concentración de puntos de distintos colores da una idea rápida de la estabilidad del enlace.
 
 \section{Computación en la nube}
 
@@ -495,18 +493,7 @@ A continuación se describen las herramientas usadas para el desarrollo del siste
 
 \subsection{Modelo Vista Controlador (MVC)}
 
-El Modelo Vista Controlador es un patrón de diseño que divide la lógica de los datos y la presentación de forma claramente identificable y bien definida \cite{pantoja2004patron}.
-
-Este patrón de diseño es especialmente popular en el marco de aplicaciones web ya que su abstracción permite escribir software altamente desacoplado y fácil de mantener y escalar.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{img/mvc}
-	\caption{Ejemplo de la relación entre los componentes de una aplicación MVC – Imagen tomada del
-		sitio: http://mind42.com}
-	\label{fig:mvc}
-\end{figure}
-
+El Modelo Vista Controlador es un patrón de diseño que divide la lógica de los datos y la presentación de forma claramente identificable y bien definida \cite{pantoja2004patron}. Este patrón de diseño es muy popular en el marco de aplicaciones web ya que su abstracción permite escribir software altamente desacoplado y fácil de mantener y escalar.
 
 \subsubsection{Modelo} 
 
@@ -532,14 +519,7 @@ Django es un framework de desarrollo de aplicaciones web construido en python, e
 
 Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que dichos datos son presentados. 
 
-Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (template) para generar la respuesta que será devuelta, en la figura \ref{fig:django-arch} puede verse el ciclo de petición-respuesta tal como se ha descrito.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\linewidth]{img/dj-req-resp}
-\caption{Ciclo de peticion-respuesta de Django}
-\label{fig:django-arch}
-\end{figure}
+Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (template) para generar la respuesta que será devuelta.
 
 Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Javascript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que compartan el mismo backend.
 
@@ -625,7 +605,7 @@ Otra heuristica en la creación de sitios web adaptables es escalar o esconder el
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\linewidth]{img/responsive}
+\includegraphics[width=0.9\linewidth]{img/responsive_final}
 \caption{Ejemplo de diseño adaptable, se puede ver como los elementos se reagrupan, escalan o esconden para ajustarse al tamaño de la pantalla.}
 \label{fig:responsive}
 \end{figure}
@@ -2703,10 +2683,17 @@ Reiniciar los trabajadores puede hacerse de distintas maneras dependiendo de la 
 
 A través del desarrollo de este trabajo, construimos un agente monitor de redes ligero y a la vez flexible, capaz de monitorear enlaces en despliegues arbitrarios de red tales como redes comunitarias; y una plataforma web para manejar, recolectar y analizar la data generada por los monitores remotos.
 
-The most relevant accomplishments made from a computational standpoint are listed below: 
-We built a monitor with the minimal amount of code to schedule periodic monitoring tasks according to a configuration file shared with the web app, the monitor, built in python is lightweight and perfect to deploy on embedded and low cost devices.
-We established a zero-cost file synchronization scheme between the web server and the remote monitors through the use of the free quotas that cloud storage services like Dropbox offer.
-A framework to easily integrate new tests and visualizations was designed and implemented, the framework was tested with three test types:
+Los logros mas relevantes desde un punto de vista computacional se nombran a continuación: 
+\begin{itemize}
+	\item{Construimos un monitor de red con la cantidad de código minimo para planificar tareas de monitoreo periódico de acuerdo a un plan definido en la aplicacion web. El monitor escrito en python es ligero e ideal para desplegar en dispositivos de bajo costo.}
+	\item{Establecimos un esquema de sincronización a costo cero entre la aplicacion web y el monitor a través del uso de las cuotas de almacenamiento en la nube y peticiones al API que Dropbox provee de forma gratuita.}
+	\item{Se desarrolló una aplicacion web con una interfaz moderna y fácil de usar que se ajusta de manera fluida a distintos dispositivos.}
+	\item{Un framework para integrar fácilmente nuevas pruebas y visualizaciones fue diseñado e implementado, el framework se usó para implementar cuatro pruebas:}
+	\begin{itemize}
+		\item{Una prueba de ping para determinar latencia y }
+	\end{itemize}
+\end{itemize}
+
 Ping test: uses the ping command to determine round trip time between the monitor and a certain node, with this test it is possible to infer network congestion as well as activity and inactivity periods.
 HTTP test: sends an HTTP head request to determine the response time as well as status code, useful to determine availability of web services, activity and inactivity periods and infer about server congestion based on response time.
 Traceroute test: uses the traceroute command to determine the route that a package follows through a network to reach a certain node, this test can be used to find routing inefficiencies, congestion related to certain hosts and of course reachability.
