@@ -322,11 +322,11 @@ Capítulo 3. Aplicacion Web, contiene el diseño general del sistema de monitoreo,
 
 Capitulo 4. Monitor de Red, explica el diseño del monitor de red remoto, su arquitectura, componentes y los módulos de prueba implementados.
 
-Capitulo 5. Framework de Integracion de Pruebas, describe los requisitos del marco de trabajo para la implementación de nuevas pruebas, así como todos sus componentes genéricos, finalmente explica como usar dichos componentes para integrar nuevas características a un sistema en producción.
+Capitulo 5. Framework de Integración de Pruebas, describe los requisitos del marco de trabajo para la implementación de nuevas pruebas, así como todos sus componentes genéricos, finalmente explica como usar dichos componentes para integrar nuevas características a un sistema en producción.
 
 Capitulo 6. Conclusiones y Recomendaciones, contiene las conclusiones obtenidas a partir del diseño e implementación del sistema, así como recomendaciones y posibles mejoras a incluir en trabajos futuros.
 
-Finalmente se presentan las referencias bibliogr aficas.
+Finalmente se presentan los apéndices y las referencias bibliográficas.
 %
 %******************************
 %FIN DE CAPITULO I
@@ -1078,7 +1078,7 @@ Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web 
 
 Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama \textit{rendering}.
 
-En la Figura \ref{} se puede ver como todas las plantillas heredan de la plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite extender el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar los archivos de estilo \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento como modales \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las páginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
+Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/javascript \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las páginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
 
 A continuación se muestra el diseño de las principales pantallas de la interfaz de usuario del servicio web.
 
@@ -2153,7 +2153,7 @@ Las parámetros de esta prueba son los siguientes:
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{lll}
+	\begin{tabular}{rp{2cm}p{9cm}}
 		\rowcolor[HTML]{C0C0C0} 
 		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
 		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
@@ -2169,7 +2169,7 @@ La prueba de throughput con iperf mide el ancho de banda entre un par de nodos u
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{lll}
+	\begin{tabular}{rp{2cm}p{9cm}}
 		\rowcolor[HTML]{C0C0C0} 
 		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
 		Probar este enlace & Booleano                      & Determina si se debe o no ejecutar la prueba para un enlace especifico.                      \\ \hline
@@ -2681,43 +2681,48 @@ Reiniciar los trabajadores puede hacerse de distintas maneras dependiendo de la 
 
 \chapter{Conclusiones y Recomendaciones}
 
-A través del desarrollo de este trabajo, construimos un agente monitor de redes ligero y a la vez flexible, capaz de monitorear enlaces en despliegues arbitrarios de red tales como redes comunitarias; y una plataforma web para manejar, recolectar y analizar la data generada por los monitores remotos.
+\section{Conclusiones}
+
+Durante el desarrollo de este trabajo, construimos un sistema de monitoreo de redes de propósito general, ligero y extensible, el sistema permite recolectar y almacenar datos sobre el estado de la red a partir de pruebas planificadas y observar los resultados obtenidos a largo plazo. Para el diseño e implementación del sistema se usó una metodología en espiral en que se agregaron nuevas características incrementalmente a cada uno de los componentes del sistema.
 
 Los logros mas relevantes desde un punto de vista computacional se nombran a continuación: 
+
 \begin{itemize}
-	\item{Construimos un monitor de red con la cantidad de código minimo para planificar tareas de monitoreo periódico de acuerdo a un plan definido en la aplicacion web. El monitor escrito en python es ligero e ideal para desplegar en dispositivos de bajo costo.}
-	\item{Establecimos un esquema de sincronización a costo cero entre la aplicacion web y el monitor a través del uso de las cuotas de almacenamiento en la nube y peticiones al API que Dropbox provee de forma gratuita.}
-	\item{Se desarrolló una aplicacion web con una interfaz moderna y fácil de usar que se ajusta de manera fluida a distintos dispositivos.}
-	\item{Un framework para integrar fácilmente nuevas pruebas y visualizaciones fue diseñado e implementado, el framework se usó para implementar cuatro pruebas:}
+	\item{Se desarrolló una aplicacion web que permite a usuarios autenticados manejar de forma remota sus monitores de red, recolectar los datos obtenidos y finalmente observar los datos obtenidos a partir del monitoreo.}
+	\item{Construimos un monitor de red con la cantidad de código mínimo para planificar tareas de monitoreo periódico de acuerdo al plan definido en la aplicacion web. El monitor escrito en python es ligero e ideal para desplegar en dispositivos de bajo costo (ver Capitulo \ref{cap:monitor}).}
+	\item{Establecimos un esquema de sincronización a costo cero entre la aplicacion web y el monitor a través del uso de cuotas de almacenamiento en la nube y peticiones gratuitas al API de Dropbox.}
+	\item{Para la aplicacion web se diseñó una arquitectura a cuatro capas capaz de manejar eficientemente las distintas tareas de la aplicacion web, esta arquitectura permite escalar cada uno de sus componentes tanto como sea necesario facilitando el manejo de mayores cargas de trabajo y usuarios.}
+	\item{Para la aplicacion web se se diseño e implementó una interfaz sencilla y fácil de usar que se ajusta de manera fluida a la resolución de pantalla de cualquier dispositivo.}
+	\item{Se desarrolló un framework para integrar fácilmente nuevas pruebas y visualizaciones al sistema, se encontraron los puntos comunes y las tareas repetitivas relacionadas con la implementación y despliegue de nuevas pruebas en un sistema en fase de producción (ver Capítulo \ref{cap:framework}).}
+	\item{Se desarrolló una batería de pruebas para que fueran parte del sistema, así como para determinar los requisitos y pormenores del framework de integración de pruebas:}
 	\begin{itemize}
-		\item{Una prueba de ping para determinar latencia y }
+		\item{\textbf{Prueba de ping:} fue la primera prueba implementada y se usa para determinar la latencia y disponibilidad de los enlaces, esta prueba se usó para inferir congestión en la red y periodos de actividad e inactividad.}
+		\item{\textbf{Prueba de Httping:} similar a la prueba anterior, se usa para determinar el tiempo de respuesta usando peticiones HTTP.}
+		\item{\textbf{Prueba de Traceroute:} se usó para determinar la alcanzabilidad de un nodo a través de un enlace y inferir detalles como congestión a nivel de nodos intermedios. Su implementación ayudó a inferir los requisitos de pruebas con resultados no estructurados.}
+		\item{\textbf{Prueba con Iperf:} se usó para determinar el rendimiento de los enlaces así como para determinar los requisitos del sistema cuando fuera necesaria la colaboración de los nodos monitoreados.}
+		
 	\end{itemize}
+	\item{Varios métodos de visualización de datos fueron conceptualizados e implementados y probaron ser una manera intuitiva de inferir hechos sobre el comportamiento y estado de la red, un ejemplo de esto fueron los mapas de calor de latencia que muestran al mismo tiempo patrones de congestión como áreas con colores calientes (rojos y amarillos) y ademas muestran periodos de inactividad como espacios en blanco.}
 \end{itemize}
 
-Ping test: uses the ping command to determine round trip time between the monitor and a certain node, with this test it is possible to infer network congestion as well as activity and inactivity periods.
-HTTP test: sends an HTTP head request to determine the response time as well as status code, useful to determine availability of web services, activity and inactivity periods and infer about server congestion based on response time.
-Traceroute test: uses the traceroute command to determine the route that a package follows through a network to reach a certain node, this test can be used to find routing inefficiencies, congestion related to certain hosts and of course reachability.
-Several data visualization methods were conceptualized and proved to be a great way to infer facts about the network behavior, a prime example of this are latency heatmaps which are useful not only to get an idea about the latency at certain moments but clearly display patterns and inactivity periods as white spaces.
-An architecture able to handle the data gathering and visualization generation tasks efficiently with the available resources was defined, with the appropriate delegation of long-running and I/O blocking tasks a single web server is able to quickly handle more requests, that would otherwise be queued (or worse, dropped) increasing response times.
-We found a multi-layered modular architecture that can be scaled indefinitely, each part of the stack can be scaled independently to avoid possible bottlenecks, the challenges and considerations to scale certain components were analyzed and possible solutions were proposed.
+Ademas del diseño y desarrollo del sistema, también se ejecutaron pruebas para determinar el rendimiento, estabilidad y escalabilidad tanto de la aplicacion web como del monitores en escenarios reales de producción incluidos casos de uso de la vida real.
 
-Through the development of this work we performed tests to determine the performance and stability of both the web server stack and the network monitor on real deployment environments, including real life use cases.
+Un monitor de pruebas fue desplegado para probar algunos servicios críticos de REDULA tales como ula.ve, saber.ula.ve y un servidor de RESIDE. Este monitor de pruebas se mantuvo conectado a la nube y recolectando datos constantemente durante periodos de semanas y meses y no mostró problemas de rendimiento o estabilidad.
 
-A test monitor was deployed to test critical services of ULA’s network like ula.ve home page and saber.ula.ve knowledge repository, this test monitor has been running uninterrumptly since august 6th 2015 to the current date. The monitor proved to be stable and showed no apparent memory leaks that would slow its execution even after prolonged periods of time.
-The web app was deployed at a test server machine, constant integration and testing of new features in a production enviroment was crucial in the development of the test integration workflow, the web app is available at the following URL: http://150.185.138.59/octopusmonitor.
-The shared datastore synchronization along with the Dropbox API integration at the web app showed to be a reliable way to transfer the data from the monitor to the web app, although there is a limit for the API requests that can be made for each authenticated user, this limit has proven to be high enough even with the highest synchronization frequency.
-At the moment of the writing of this paragraph more than 1161533 traces has been synchronized  though this mechanism.
-The web app task scheduler proved to be reliable at launching tasks at the proper time as well as quick to update its internal state after changes to the schedule on the database were made.
-The test integration workflow was successfully executed several times during the development, allowing downtimes of merely a few minutes during each update deployment.
-Stress tests were performance against different server setups
-Although making analysis over the collected data it is out of the scope of this work, we made useful discoveries about the latency, availability, uptime, and reachability of the monitored links, for example, we found a clear pattern of lower and stable latency between the first hour of the day and the early hours of the morning that matches the usual pattern of network congestion, we found constant downtimes for the ula.ve home page as well as higher response time compared to saber.ula.ve, we found that both saber.ula.ve and ula.ve rejected ICMP echo requets and could only be monitored through the use HTTP, just to name a few relevant results.
+La aplicacion web fue desplegada en un servidor de pruebas, la integracion y prueba constante de nuevas caracteristicas en este entorno de produccion fue crucial en el desarrollo del workflow de integracion de pruebas, la aplicacion web está disponible en el siguiente URL: http://www.octopusmon.it/octopusmonitor. 
 
-Future Work
+El esquema de sincronización de datos a través de la nube usando el API de Dropbox probó ser una manera confiable de transferir datos entre los monitores y la aplicacion web, a pesar de que existe un límite de peticiones diarias que puede hacerse al API por usuario, este nunca fue alcanzado incluso con las máximas frecuencias de sincronización; se observó un máximo de 3602 peticiones por día, cada monitor conectado a la nube usará unas 3000 peticiones diarias. Al momento de escribir este documento, se han sincronizado mas de 1161533 trazas usando este mecanismo, cada una de ellas representando el resultado de la ejecucion de una prueba.
 
-building apis for new monitor types
-One of the key features that might make a network monitoring system attractive for potential users is having the ability to automatically detect when critical conditions are met and alert the user proactively, emitting push notifications through a mobile app or sending sms or email. Alerts could be attached to tests and conditions could be checked after every synchronization is performed. Examples of critical conditions that could trigger alerts are: a link goes down during a prolonged period of time, the latency is above a set threshold, a server is returning http status 500, etc. 
+Se realizaron pruebas de rendimiento al sistema para aproximar la cantidad de usuarios concurrentes que este sería capaz de atender en el hardware disponible, descubrimos que la aplicacion web sería capaz de atender 768 peticiones \textbf{dinámicas} por minuto lo que equivale a 1105920 por día, sin embargo solo sería capaz de atender 32 peticiones con minuto dado que estas incluyan la descarga de archivos estáticos, por lo tanto concluimos que para asegurar la escalabilidad del sistema es conveniente delegar esta tarea a otro servidor o un servicio de entrega de contenidos.
 
-Another obvious feature is the inclusion of other monitor types, currently we provide support only for one kind of monitor thought for low-cost devices that could be left unattended and are only able to perform tests periodically. New monitor types running in more powerful devices open up various possibilities where users are able to interact through the web app with their monitors, executing tests on-demand or even streaming data directly to the client, either by using the web app as a relay between the monitor and the client, or establishing a direct connection between the client and the monitor. 
+A pesar de que hacer análisis sobre los datos recolectados esta fuera del alcance de este trabajo, se realizaron descubrimientos útiles sobre la latencia, disponibilidad y estabilidad de los enlaces monitoreados; por ejemplo, se encontró un patrón claro de menor latencia y mayor estabilidad en el periodo entre las 12am y las 8am, lo cual corresponde al patrón de uso esperado de la red, encontramos constantes periodos de inactividad para ula.ve al igual que tiempos de respuesta mas largo en comparación con saber.ula.ve, ademas encontramos que ambos sitios rechazan paquetes del protocolo ICMP, por lo que se monitorearon a través de HTTP, esto solo para nombrar algunos resultados relevantes.
+
+\section{Recomendaciones}
+
+Como trabajos futuros, proponemos la implementación de algoritmos de sincronización que ademas de introducir datos en la base de datos sean capaces de detectar condiciones criticas a partir de los datos recolectados y alertar proactivamente al usuario emitiendo notificaciones a través de la aplicacion web, email o sms. Las alertas podrían ser anexadas a las pruebas y podrían funcionar como parte del framework de integración de pruebas.
+
+También sería posible la implementación de nuevos esquemas de sincronizacion con los monitores que permitan el streaming de datos en tiempo real desde los monitores hasta el navegador del usuario, ya sea permitiendo que el servidor web sirva para negociar una conexion directa entre ellos, o que el servidor web sirva como relé a través del cual se pasen los datos.
+
 
 \appendix
 
