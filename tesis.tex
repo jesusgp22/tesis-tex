@@ -2032,7 +2032,7 @@ El almacén de tareas debe guardar toda la información necesaria para recrear las
 
 El almacenamiento compartido se encarga de alojar los resultados de las pruebas en archivos de trazas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos.
 
-Para mantener el numero de archivos en el almacenamiento compartido razonablemente pequeño se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese periodo se anexan al archivo correspondiente; el costo de alojar archivos en la nube no depende del numero de archivos sino del espacio total de disco en uso, ya que existe un limite de peticiones diarias por usuario debemos intentar minimizar la cantidad de peticiones que realizamos a Dropbox. Este tema se explicará a profundidad en la sección \ref{fig:sub:sincronizacion}.
+Para mantener el numero de archivos en el almacenamiento compartido razonablemente pequeño se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese periodo se anexan al archivo correspondiente; el costo de alojar archivos en la nube no depende del numero de archivos sino del espacio total de disco en uso, ya que existe un limite de peticiones diarias por usuario debemos intentar minimizar la cantidad de peticiones que realizamos a Dropbox.
 
 \section{Pruebas Implementadas}
 
@@ -2299,8 +2299,6 @@ La validación de este formulario es usada para asegurar las reglas de negocio de
 
 Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se verifica que la prueba a insertar en el plan de monitoreo no se intercepte con ninguna otra.
 
-La pantalla de planificación genérica de pruebas puede ser vista en la figura \ref{}.
-
 \section{Sincronización genérica de datos} \label{sec:syncgeneric}
 
 El mecanismo general de recolección de datos se ha explicado detalladamente en la Sección \ref{sub:Recolector}, se ha dicho que por cada prueba activa para el monitor se llama a una subrutina de sincronización que descarga los archivos de trazas e introduce los resultados en la base de datos, sin embargo no se ha entrado en detalle sobre el método de procesamiento de los archivos y la forma en que los datos de cada prueba se almacenan en la base de datos.
@@ -2415,9 +2413,7 @@ Para desplegar las visualizaciones se usa un elemento HTML llamado \textit{ifram
 
 Algunas veces las visualizaciones pueden tardar largos periodos de tiempo en computarse, para ofrecer al usuario retroalimentación es recomendable mostrar algún tipo de animación de carga o indicador de progreso de la operación. Para implementar esta funcionalidad, se muestra una animación de carga inmediatamente después de que el usuario hace click en el botón "PLOT" o "Re-compute", luego es posible aprovechar una señal emitida por el iframe cuando obtiene respuesta del servidor para ocultar esta animación.
 
-La característica de re-computar visualizaciones funciona de manera análoga al flujo normal de visualización, con la única diferencia de que se solicita al cargador genérico que ignore el caché y force el computo de la visualización, el proceso completo explicado en esta subsección puede verse en la Figura \ref{fig:visualizacion}
-
-TODO: insertar diagrama de actividades de la interfaz de visualizacion
+La característica de re-computar visualizaciones funciona de manera análoga al flujo normal de visualización, con la única diferencia de que se solicita al cargador genérico que ignore el caché y force el computo de la visualización.
 
 \subsection{Cargador genérico de visualizaciones}
 
