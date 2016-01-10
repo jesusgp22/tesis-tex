@@ -160,7 +160,7 @@ bookmarks=true, citecolor=blue}%, draft=true}
 % \opcion{Investigaciï¿½n de Operaciones}
 
 % Aquï¿½ se escribe el resumen de la monografía
-\resumen{En el presente proyecto se plantea el desarrollo de un sistema de monitoreo distribuido de enlaces críticos de redes a través de un servicio web centralizado. Este servicio además pretende hacer énfasis en la visualización de los datos recolectados a partir de pruebas periódicas. El sistema está planteado como una herramienta para facilitar el entendimiento del funcionamiento de la red y ofrecer una solución centralizada, de muy bajo costo y con componentes de hardware que puedan estar desatendidos.}
+\resumen{En el presente proyecto se plantea el desarrollo de un sistema de monitoreo distribuido de enlaces de redes a través de un servicio web centralizado. Este servicio además hace énfasis en la visualización de los datos recolectados a partir de pruebas periódicas. El sistema está planteado como una herramienta para facilitar el entendimiento del funcionamiento de la red y ofrecer una solucion de poco impacto computacional, de bajo costo y que pueda operar en componentes de hardware desatendidos.}
 
 % Aquï¿½ se escriben las palabras claves de la monografï¿½a
 \descriptores{Monitoreo de redes, Calidad de servicio, Big Data, Benchmarking, Cloud}
@@ -238,9 +238,9 @@ bookmarks=true, citecolor=blue}%, draft=true}
 
 Existen dos estrategias de monitoreo de redes: monitoreo activo o benchmarking que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red  y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El benchmarking tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red ejemplos de herramientas de benchmarking son ping, iperf y traceroute.
 
-El monitoreo pasivo tiene la ventaja de que nos puede dar una muy buena idea del uso de la red sin embargo para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso, ejemplos de herramientas de monitoreo pasivo son tcpdump y wireshark; en ambos casos hay que resaltar que es difícil tener una imagen completa de la realidad de la red.
+El monitoreo pasivo tiene la ventaja de que nos puede dar una idea del uso de la red sin embargo para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso, ejemplos de herramientas de monitoreo pasivo son tcpdump y wireshark; en ambos casos hay que resaltar que es difícil tener una imagen completa de la realidad de la red.
 
-Uno de los trabajos más importantes en el área de monitoreo de redes es el Protocolo Simple de Administración de Red o SNMP (del inglés Simple Network Management Protocol) este emergió como una de las primeras soluciones al problema de manejo de redes y se ha convertido en la solución más ampliamente aceptada  debido a su diseño modular e independiente de productos o redes específicas. SNMP consiste de (1) un administrador de red, (2) una serie de dispositivos remotos monitoreados (3) bases de información de administración (MIBs) en estos dispositivos, (4) agentes remotos que reportan la información de las MIBs al administrador de red y toman acciones si les indica y (5) un protocolo de comunicación entre los dispositivos \cite{Kurose:13}.
+Uno de los trabajos más importantes en el área de monitoreo de redes es el Protocolo Simple de Administración de Red o SNMP (del inglés \textit{Simple Network Management Protocol}) este emergió como una de las primeras soluciones al problema de manejo de redes y se ha convertido en la solución más ampliamente aceptada  debido a su diseño modular e independiente de productos o redes específicas. SNMP consiste de (1) un administrador de red, (2) una serie de dispositivos remotos monitoreados, (3) bases de información de administración (MIBs) en estos dispositivos, (4) agentes remotos que reportan la información de las MIBs al administrador de red y toman acciones si les indica y (5) un protocolo de comunicación entre los dispositivos \cite{Kurose:13}.
 
 SNMP no solo ofrece al administrador de red reportes sobre cada uno de los dispositivos administrados sino que también permite tomar acción sobre ellos proactivamente antes de que ocurran problemas o de forma reactiva para solucionar problemas cuando ocurren de forma inesperada.
 
@@ -353,13 +353,14 @@ A pesar de que el despliegue es distribuido y auto-gestionado se necesita una mí
 
 Las redes comunitarias sirven como una forma de distribuir el acceso a Internet de forma libre y neutral, tanto en zonas urbanas como rurales, sin embargo, también pueden servir para distribuir servicios y aplicaciones comunitarias tanto completamente gratuitas como comerciales. Cada participante sigue siendo dueño de la infraestructura que presta a la red y se benefician mutuamente al tener acceso a los servicios y aplicaciones de la red comunitaria.
 
-\section{Principio de Extremo-a-Extremo}
 
-El principio de extremo-a-extremo (también llamado argumento de extremo-a-extremo) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
+%\section{Principio de Extremo-a-Extremo}
 
-Este principio es valioso para el diseño de cualquier tipo de sistema distribuido sin embargo ha sido fundamental en la expansión y desarrollo de redes de computadoras de propósito general y se sustenta en que los nodos intermedios de una red deben proveer solo las funciones necesarias para permitir la comunicación entre los nodos finales, de esta manera es posible implementar nuevas funcionalides en los extremos de la red sin necesidad de hacer cambios a los nodos intermedios.
+%El principio de extremo-a-extremo (también llamado argumento de extremo-a-extremo) sugiere que las funciones en los niveles bajos de un sistema pueden ser redundantes o de poco valor comparadas con el costo de proveerlas a bajo nivel\cite{saltzer1984end}, en otras palabras este argumento recomienda que la complejidad de un sistema de computación distribuido debe estar en los nodos mas externos o de "mayor nivel".
 
-En el contexto de monitoreo de redes, se denomina tomografía de redes al proceso de inferir aspectos internos de una red a partir de mediciones realizadas en sus nodos externos.
+%Este principio es valioso para el diseño de cualquier tipo de sistema distribuido sin embargo ha sido fundamental en la expansión y desarrollo de redes de computadoras de propósito general y se sustenta en que los nodos intermedios de una red deben proveer solo las funciones necesarias para permitir la comunicación entre los nodos finales, de esta manera es posible implementar nuevas funcionalides en los extremos de la red sin necesidad de hacer cambios a los nodos intermedios.
+
+%En el contexto de monitoreo de redes, se denomina tomografía de redes al proceso de inferir aspectos internos de una red a partir de mediciones realizadas en sus nodos externos.
 
 \section{Métricas de calidad de un enlace} \label{sec:metricas}
 
@@ -418,9 +419,9 @@ No es posible medir el throughput de un enlace de forma pasiva, por lo que las p
 
 A diferencia de las métricas anteriores medir el throughput solo es posible con la colaboración de los nodos extremos del enlace, por lo que es necesario tener algún tipo de software preparado para aceptar la prueba e informar del resultado obtenido.
 
-\subsection{Uso del ancho de banda}
+%\subsection{Uso del ancho de banda}
 
-Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red. Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red.
+%Se le llama uso del ancho de banda a la medida de los datos que fluyen a través de un enlace, generalmente se busca optimizar el uso del ancho de banda para aprovechar al máximo los recursos de red. Mas allá de solo determinar la cantidad de datos o la velocidad del flujo a través de un enlace, también es útil hacer análisis detallados del uso del ancho de banda para descubrir patrones de uso de la red.
 
 \subsection{Disponibilidad} \label{sub:disponibilidad}
 
