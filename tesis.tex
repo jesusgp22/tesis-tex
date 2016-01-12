@@ -15,6 +15,7 @@
 \usepackage{colortbl}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\input{spanishAlgorithmic}
 \definecolor{light-gray}{gray}{0.95}
 \usepackage{listings}
 \usepackage{enumitem}
@@ -734,7 +735,7 @@ En esta sección resumimos las características de estos sistemas a través de los 
 		\hline
 		Pingdom \cite{PINGDOM}                       & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa y EEUU                      & Servidores web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
-		Monitis Visual Traceroute Tool & Evaluacion de alcanzabilidad                   & Servidores dedicados                                       & Localizaciones en Europa, Asia y EEUU                & Dispositivos web                    & Cualquier Lugar                                      & cliente-servidor                \\ 
+		Monitis Visual Traceroute Tool \cite{monitistraceroute} & Evaluacion de alcanzabilidad                   & Servidores dedicados                                       & Localizaciones en Europa, Asia y EEUU                & Dispositivos web                    & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
 		Uptime Robot \cite{UPTIMEROBOT}                  & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa, EEUU y Japón               & Servidores Web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
@@ -1374,7 +1375,7 @@ El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la 
 		\State $\textit{errors} \gets 0$
 		
 		
-		\For{\textit{test} \textbf{in} \textit{tests}}
+		\For{\textit{test} \textbf{en} \textit{tests}}
 		\State $\textit{cursor,\_files,\_errors} \gets \Call{\_Syncronize}{test,monitor,client}$
 		\State $\text{Insert cursor on} \textit{ cursors } \text{using} \textit{ test } \text{as key}$
 		\State $\textit{files} \gets \textit{files} + \textit{\_files}$
@@ -1384,7 +1385,7 @@ El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la 
 		\State $\textit{sync} \gets \Call{Syncronization}{monitor,files,errores}$
 		\State $\textit{sync.}\Call{Save}{}$
 		
-		\For{\textit{key,value} \textbf{in} \textit{cursors}}
+		\For{\textit{key,value} \textbf{en} \textit{cursors}}
 		\State $\textit{cursor} \gets \Call{DropboxCursor}{value,sync,monitor\_test}$
 		\State $\textit{cursor.}\Call{Save}{}$
 		
@@ -1559,7 +1560,7 @@ El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora
 			\State $\textit{hours} \gets \text{array[24]}$\Comment{Arreglo tamaño 24 inicializado en 0}
 			\If{\textit{array} lenght $>$ 0}
 				\State $\textit{j} \gets 0$
-				\For{\textit{i} \textbf{in} \Call{Range}{0,total\_hours}}
+				\For{\textit{i} \textbf{en} \Call{Range}{0,total\_hours}}
 					\State $\textit{current\_hour} \gets \textit{start\_date}+i$ \Comment{Suma a la hora inicial i horas}
 					\If{\textit{array[j][0]} = \textit{current\_hour}}
 						\If{\textit{j}= length of \textit{ array}} \Call{break}{} \EndIf
@@ -1626,7 +1627,7 @@ Tras ejecutar la consulta a la base se verificar que se tenga al menos una muest
 			\State $\textit{period\_active} \gets \textbf{False}$
 		\EndIf
 		
-		\For{\textit{i} \textbf{in} \Call{Range}{1,\textit{num\_traces-1}}}
+		\For{\textit{i} \textbf{en} \Call{Range}{1,\textit{num\_traces-1}}}
 			\If{\textit{period\_active} \textbf{and} \textit{traces[i][1] $<$0}}
 				\State $\text{append to } \textit{active\_periods } (duration,period\_start,traces[i][0])$
 				\State $\textit{period\_active} \gets \textbf{False}$
@@ -1679,7 +1680,7 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 		\State $\textit{number\_of\_days} \gets (\textit{end\_date} - \textit{start\_date}).\Call{Days}{}$
 		
 		\State $\textit{total\_days} \gets \text{array[7]}$ \Comment{Arreglo de tamaño 7 inicializado en 0}
-		\For{\textit{i} \textbf{in} \Call{Range}{0,number\_of\_days}}
+		\For{\textit{i} \textbf{en} \Call{Range}{0,number\_of\_days}}
 			\State $\textit{current\_day} \gets \textit{start\_date} + 1$ \Comment{Suma a la fecha inicial un día}
 			\State $\textit{weekday} \gets \textit{current\_day}.\Call{Weekday}{}$\Comment{Toma el día de la semana de la fecha}
 			\State $\textit{total\_days[weekday]} \gets \textit{total\_days[weekday]} +1 $
@@ -1695,9 +1696,9 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 		\Procedure{split\_traces}{traces}
 		\State $\textit{days} \gets \text{empty dictionary}$
 		
-		\For{\textit{trace} \textbf{in} \textit{traces}}
+		\For{\textit{trace} \textbf{en} \textit{traces}}
 		\State $\textit{ordinal} \gets \textit{trace[0].\Call{toordinal}{}}$ \Comment{Obtiene el ordinal proléptico gregoriano de la fecha}
-		\If{\textit{ordinal} \textbf{in} \textit{days}}
+		\If{\textit{ordinal} \textbf{en} \textit{days}}
 			\State $\text{append} \textit{ trace } \text{to} \textit{days[ordinal]}$
 		\Else
 			\State $\textit{days[ordinal]} \gets \text{empty list}$
@@ -1729,11 +1730,11 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 		
 		\State $\textit{days} \gets \Call{Split\_traces}{traces}$
 		
-		\For{\textit{key} \textbf{in} \textit{days}.\Call{keys}{}} \Comment{itera el diccionario por claves}
+		\For{\textit{key} \textbf{en} \textit{days}.\Call{keys}{}} \Comment{itera el diccionario por claves}
 			\State $\textit{active\_period} \gets 0$
 			\State $\textit{traces} \gets \textit{days[key]} $
 			\State $\textit{length} \gets \text{length of} \textit{ traces}$
-			\For{\textit{i} \textbf{in} \Call{Range}{1,length}}
+			\For{\textit{i} \textbf{en} \Call{Range}{1,length}}
 				\If{traces[i][1]>0}
 					\State $delta\_seconds \gets traces[i][0] - traces[i-1][0]$
 					\State $active\_period \gets active\_period + delta\_seconds$
@@ -2268,13 +2269,13 @@ Es posible crear clases de forma dinámica en tiempo de ejecucion usando las cara
 		\State $\textit{form\_fields} \gets \text{empty ordered dictionary}$
 		
 		
-		\For{\textit{field}  \textbf{in} \textit{parameters}}
+		\For{\textit{field}  \textbf{en} \textit{parameters}}
 		
 		\If{field is global}
 			 \State $\textit{form\_fields[field.name]} \gets \Call{get\_field}{field.type}$
 		\Else
 			\State $\textit{links} \gets \text{all \textit{monitor} links}$
-			\For{\textit{link}  \textbf{in} \textit{links}}
+			\For{\textit{link}  \textbf{en} \textit{links}}
 				\State $\textit{key} \gets \text{concatenate \textit{field.name} '\_' \textit{link.id}}$
 				\State $\textit{form\_fields[key]} \gets \Call{get\_field}{field.type}$
 			\EndFor
@@ -2294,7 +2295,7 @@ Es posible crear clases de forma dinámica en tiempo de ejecucion usando las cara
 			\ElsIf{type is string}
 			\Return \text{char field}		
 			\Else
-			\State $\textbf{throw exception } \text{"The type is unsuported"}$
+			\State $\textbf{arrojar excepcion } \text{''Tipo de dato no soportado''}$
 			\EndIf
 		\EndProcedure
 	\end{algorithmic}
