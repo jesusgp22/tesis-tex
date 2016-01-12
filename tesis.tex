@@ -234,7 +234,7 @@ bookmarks=true, citecolor=blue}%, draft=true}
 
 \chapter{Introducción}
 
-Con el objetivo de proveer alternativas para el acceso a Internet a bajo costo se han popularizado despliegues de redes alternativos tales como las Redes Comunitarias\cite{gaia-alternative2015}. Estas redes consisten en arreglos interconectados de nodos mantenidos por la comunidad y para la comunidad, los interesados en formar parte de la red ofrecen su hardware y extienden la red, de manera que la red crece de forma orgánica y descentralizada. A pesar de que estos despliegues sean de bajo costo, descentralizadas, e incluso caóticos, los usuarios esperan una mínima calidad de servicio y velocidad de respuesta que les permita aprovechar tanto los servicios tradiciones de Internet así como servicios locales disponibles solo para los usuarios de la red comunitaria\cite{Octopus2015}. Tener un sistema de monitoreo de redes de bajo impacto sobre los recursos de red y de hardware disponibles y que ofrezca información sobre la red en tiempo real es crucial para ayudar a los interesados a detectar problemas y asegurar la calidad de servicio que los usuarios esperan.
+Con el objetivo de proveer alternativas para el acceso a Internet a bajo costo se han popularizado despliegues de redes alternativos tales como las Redes Comunitarias\cite{gaia-alternative2015}. Estas redes consisten en arreglos interconectados de nodos mantenidos por la comunidad y para la comunidad, los interesados en formar parte de la red ofrecen su hardware y extienden la red, la cual crece de forma orgánica y descentralizada. A pesar de que estos despliegues sean de bajo costo, descentralizadas, e incluso caóticos, los usuarios esperan una mínima calidad de servicio y velocidad de respuesta que les permita aprovechar tanto los servicios tradiciones de Internet así como servicios locales disponibles solo para los usuarios de la red comunitaria\cite{Octopus2015}. Tener un sistema de monitoreo de redes de bajo impacto sobre los recursos de red y de hardware disponibles y que ofrezca información sobre la red en tiempo real es crucial para ayudar a los interesados a detectar problemas y asegurar la calidad de servicio que los usuarios esperan.
 
 Existen dos estrategias de monitoreo de redes: monitoreo activo o \textit{benchmarking} que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red, y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El benchmarking tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red. Ejemplos de herramientas de benchmarking son \textit{ping}, \textit{iperf} y \textit{traceroute}.
 
@@ -250,6 +250,8 @@ SNMP no solo ofrece al administrador de red reportes sobre cada uno de los dispo
 Las redes en zonas rurales como en el caso de la red de Malawi\cite{Malawi:13}, deben dejarse desatendidas durante largos periodos de tiempo ya que sus nodos son de difícil acceso o es muy costoso tener personal dedicado que se encargue del mantenimiento. Este escenario hace evidente la necesidad de una solución de monitoreo de redes a distancia y de dispositivos de mínimo mantenimiento. Además es atractivo para el centro de monitoreo de la red poder añadir, modificar o eliminar nodos de interés de manera sencilla a la interfaz de monitoreo.
 
 Para intentar solucionar este problema y recolectar información sobre este tipo de redes, se propone un sistema en dos partes: un monitor de red instalado en la estación base (BS) y una aplicación web remota, el monitor en la estación base se conecta a cada uno de los nodos de la red y determina el tiempo de ida y vuelta (RTT por sus siglas en ingles) de forma automatizada en ciertos intervalos de tiempo, guarda los resultados en archivos y los coloca en una carpeta que se sincroniza a través de un servicio en la nube  de tipo PaaS (Plataforma como servicio) con el servidor web, que a su vez escanea la carpeta compartida y actualiza su base de datos que puede usarse para generar gráficas de RTT promedio y determinar tiempos de actividad continuos y porcentaje de disponibilidad de servicio \cite{MalawiNetMonitor:15}.
+
+
 
 %A pesar de que este sistema recolecta información útil y presenta gráficas muy sencillas de entender, su programación no permite agregar nuevos nodos, esto trae como consecuencia que debe ser modificado manualmente cuando la red se expande, dando lugar a la necesidad de que el servicio web se pueda expandir para dar servicio a múltiples monitores remotos simultáneamente.
 
@@ -350,13 +352,11 @@ Finalmente se presentan los apéndices y las referencias bibliográficas.
 
 \chapter{Marco Teórico}
 
-En este capitulo se presentan los conceptos necesarios para la comprensión de este documento y se describen las herramientas de software, métodos y formatos que se emplearán para el desarrollo del sistema propuesto.
+En este capitulo se presentan los conceptos necesarios para la comprensión de este trabajo y se describen las herramientas de software, métodos y formatos que se emplearán para el desarrollo del sistema propuesto.
 
 \section{Monitoreo de Redes}
 
-El monitoreo de redes se refiere al uso de sistemas computacionales para determinar el estado de redes de computadoras, el estado de la red puede ser visto como el conjunto de factores o métricas que describen la red en un momento dado, se hablará a detalle de algunas de estas métricas en la sección \ref{sec:metricas}.
-
-Mientras una red tiene ciertos elementos relativamente invariables como la posición de sus nodos, la longitud de los enlaces, el tipo de enlace (fibra óptica, cable, satelital, etc), el ancho de banda de los enlaces, la velocidad de procesamiento de los enrutadores, entre otros, el estado de la red viene determinado por elementos generalmente impredecibles, como condiciones climatológicas, problemas de configuración, equipos en mal estado y congestión, determinar todo este tipo de problemas para generar alertas, aplicar acciones correctivas o al menos tener conocimiento de ellas es el objetivo de un sistema de monitoreo de redes.
+El monitoreo de redes se refiere al uso de sistemas computacionales para determinar el estado de redes de computadoras. El estado de la red puede ser visto como el conjunto de factores o métricas que la describen en un momento dado. Mientras una red tiene ciertos elementos relativamente invariables como la posición de sus nodos, la longitud de los enlaces, el tipo de enlace (fibra óptica, cable, satelital, etc), el ancho de banda de los enlaces, la velocidad de procesamiento de los enrutadores, entre otros, el estado de la red viene determinado por elementos generalmente impredecibles, como condiciones climatológicas, problemas de configuración, equipos en mal estado y congestión. Determinar todo este tipo de problemas para generar alertas, aplicar acciones correctivas o al menos tener conocimiento de ellas, es el objetivo de un sistema de monitoreo de redes.
 
 Existen dos paradigmas fundamentales en el monitoreo de redes, el monitoreo activo que consiste en generar tráfico y observar la respuesta de la red y el monitoreo pasivo, que consiste en observar el tráfico que atraviesa un cierto enlace o nodo. Para tener una imagen completa de la red es conveniente usar ambos paradigmas ya que ambos pueden ofrecer distintas perspectivas.
 
@@ -367,6 +367,8 @@ Las redes comunitarias se caracterizan por ser despliegues de redes a gran escal
 A pesar de que el despliegue es distribuido y auto-gestionado se necesita una mínima infraestructura de gobernanza  para coordinar el direccionamiento IP y enrutamiento, las redes comunitarias tienden a estar compuestas por elementos de hardware y software muy diversos, y usualmente coexisten en ellas enlaces alambricos e inalambricos, distintos protocolos de enrutamiento o sistemas de manejo de la topología de red\cite{gaia-alternative2015}.
 
 Las redes comunitarias sirven como una forma de distribuir el acceso a Internet de forma libre y neutral, tanto en zonas urbanas como rurales, sin embargo, también pueden servir para distribuir servicios y aplicaciones comunitarias tanto completamente gratuitas como comerciales. Cada participante sigue siendo dueño de la infraestructura que presta a la red y se benefician mutuamente al tener acceso a los servicios y aplicaciones de la red comunitaria.
+
+\section{Do it yourself}
 
 
 %\section{Principio de Extremo-a-Extremo}
@@ -379,21 +381,29 @@ Las redes comunitarias sirven como una forma de distribuir el acceso a Internet 
 
 \section{Métricas de calidad de un enlace} \label{sec:metricas}
 
-A continuación se explican las métricas mas comúnmente utilizadas para determinar la calidad de un enlace.
+En esta sección, se explican las métricas mas comúnmente utilizadas para determinar la calidad de un enlace. En este trabajo hemos implementado perfiles de monitoreo utilizando una o mas de ellas. 
 
 \subsection{Latencia} \label{sub:lat}
 
-La latencia es el tiempo que le toma a un paquete o mensaje viajar desde su origen hasta el punto destino \cite{Grigorik:13}. Teóricamente la latencia está relacionada directamente con la distancia entre los puntos finales de una comunicación, en la practica los paquetes viajan a través de una red de enrutadores que retransmiten el mensaje hasta su destino, la latencia total será la suma de cada uno de los siguientes factores para cada uno de los enrutadores que atraviese el paquete\cite{Grigorik:13}:
+La latencia es el tiempo que le toma a un paquete o mensaje viajar desde su origen hasta el punto destino. Teóricamente la latencia está relacionada directamente con la distancia entre los puntos finales de una comunicación, en la practica los paquetes viajan a través de una red de enrutadores que retransmiten el mensaje hasta su destino. Segun Grigorik\cite{Grigorik:13} la latencia total será la suma de cada uno de los siguientes factores para cada uno de los enrutadores que atraviese el paquete:
 \begin{itemize}
-\item{\textbf{Retraso de Propagación:} es el tiempo que tarda un mensaje en viajar del emisor al receptor y es función de la distancia por la velocidad a la que la señal se propaga.}
-\item{\textbf{Retraso de Transmisión:} es el tiempo que tarda el emisor en poner todos los bits de un mensaje en el medio de transmisión y es función de la longitud del paquete y el ancho de banda del enlace.}
-\item{\textbf{Retraso de Procesamiento:} tiempo requerido para revisar la cabecera del paquete, buscar errores y determinar el destino del paquete.}
-\item{\textbf{Retraso de Colas:} Cantidad de tiempo que un paquete pasa en la cola de una interfaz esperando su turno por ser procesado.}
+	\item{\textbf{Retraso de Propagación:} es el tiempo que tarda un mensaje en viajar del emisor al receptor y es función de la distancia por la velocidad a la que la señal se propaga.}
+	\item{\textbf{Retraso de Transmisión:} es el tiempo que tarda el emisor en poner todos los bits de un mensaje en el medio de transmisión y es función de la longitud del paquete y el ancho de banda del enlace.}
+	\item{\textbf{Retraso de Procesamiento:} tiempo requerido para revisar la cabecera del paquete, buscar errores y determinar el destino del paquete.}
+	\item{\textbf{Retraso de Colas:} Cantidad de tiempo que un paquete pasa en la cola de una interfaz esperando su turno por ser procesado.}
 \end{itemize}
+
+\subsubsection{Bufferbloat}
+
+Bufferbloat es la existencia de buffers excesivamente grandes y generalmente llenos presentes en Internet \cite{gettys2011bufferbloat}; puede parecer contra-intuitivo ya que buffers mas grandes implican que menos paquetes serán desechados al llegar a un enrutador congestionado, pero mientras la cola en la interfaz del enrutador crece también lo hace el tiempo de espera del paquete y a la vez interfiere (o invalida) los algoritmos de control de congestión de los protocolos mas comunes en la capa de transporte \cite{gettys2011bufferbloat}.
+
+El bufferbloat puede ser mitigado configurando apropiadamente el hardware disponible, sin embargo, es difícil de diagnosticar y es confundido frecuentemente con congestión en la red.
+
+Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional que toma enviar paquetes a través de un enlace congestionado, algunas pruebas disponibles en linea \cite{DSLReports}\cite{ThinkBroadband} intentan determinar este retraso haciendo mediciones constantes de latencia al mismo tiempo que inundan el enlace para determinar la forma en que esta varía durante la prueba.
 
 \subsection{Tiempo de ida y vuelta}
 
-El tiempo de ida y vuelta (RTT por sus siglas es ingles) es el tiempo que le toma a un paquete viajar desde el origen a su destino y de vuelta, podría pensarse que el RTT es aproximadamente el resultado de multiplicar la latencia por dos, sin embargo existen factores como el retraso por procesamiento en el equipo destino o diferencias en el enrutamiento del paquete en su camino de vuelta que hace que sea arriesgado establecer esa proposición. 
+El tiempo de ida y vuelta (RTT por sus siglas es ingles) es el tiempo que le toma a un paquete viajar desde el origen a su destino y de vuelta, podría pensarse que el RTT es aproximadamente el resultado de multiplicar la latencia por dos, sin embargo existen factores como el retraso por procesamiento en el equipo destino o diferencias en el enrutamiento del paquete en su camino de vuelta. 
 
 Uno de los métodos mas populares para medir el RTT es enviar un paquete ICMP Echo Request y esperar el correspondiente ICMP Echo Reply sin embargo también es posible medir el RTT pasivamente durante la transmisión de un flujo TCP usando marcas de tiempo en la cabecera de los mensajes TCP\cite{strowes2013passively}.
 
@@ -401,25 +411,25 @@ Es importante notar que no es lo mismo medir el RTT desde la capa de red con el 
 
 \subsection{Perdida de paquetes}
 
-La pérdida de paquetes ocurre cuando los paquetes en una transmisión fallan en llegar a su destino, ya sea por interferencias en el medio de transmisión (por ejemplo obstáculos físicos en un enlace WiFi), o cuando son desechados por un nodo de la red, los paquetes pueden ser desechados si se determina que están corruptos o mas comúnmente debido a escenarios de congestión en los que un enrutador está recibiendo paquetes a una tasa mayor de la que puede retransmitirlos y no tiene mas opción que desechar los paquetes que desborden la cola.
+La pérdida de paquetes ocurre cuando los paquetes en una transmisión fallan en llegar a su destino, ya sea por interferencias en el medio de transmisión (por ejemplo obstáculos físicos en un enlace Wi-Fi), o cuando son desechados por un nodo de la red. Los paquetes pueden ser desechados si se determina que están corrompidos o mas comúnmente debido a escenarios de congestión en los que un enrutador está recibiendo paquetes a una tasa mayor de la que puede retransmitirlos y no tiene mas opción que desechar los paquetes que desborden la cola.
 
 La perdida de paquetes afecta dramáticamente la latencia percibida en la capa de aplicación, según \cite{strowes2013passively} una perdida de paquetes del 5\% puede introducir un retraso de medio segundo en la aplicación. 
  
-Mientras puede parecer que la perdida de paquetes es siempre producto de un problema, esta juega un papel vital en el algoritmo de prevención de congestión (congestion avoidance) del protocolo TCP, ayudándolo a detectar congestión en la red el cual responderá limitando su tasa de envío de datos, esto ha sido esencial para evitar el colapso de las redes ip NOTA: Nosotros alguna vez hablamos de esto, valdría la pena nombrar el RFC que lo explica. 
+Mientras puede parecer que la perdida de paquetes es siempre producto de un problema, esta juega un papel vital en el algoritmo de prevención de congestión (\textit{congestion avoidance}) del protocolo TCP, ayudándolo a detectar congestión en la red el cual responderá limitando su tasa de envío de datos, esto ha sido esencial para evitar el colapso de las redes IP.
 
 \subsection{Jitter} 
 
-Se llama jitter a la fluctuación de la latencia durante la transmisión de un conjunto de paquetes, estas fluctuaciones vienen dadas principalmente por la variación del retraso que los paquetes experimentan en las colas en los enrutadores\cite{Kurose:13}, sin embargo todos los factores mencionados en la sección \ref{sub:lat} pueden contribuir en menor medida.
+Se llama \textit{jitter} a la fluctuación de la latencia durante la transmisión de un conjunto de paquetes, estas fluctuaciones vienen dadas principalmente por la variación del retraso que los paquetes experimentan en las colas en los enrutadores\cite{Kurose:13}, sin embargo todos los factores mencionados en la sección \ref{sub:lat} pueden contribuir en menor medida.
 
-El término jitter puede tener distintas connotaciones sin embargo es usado frecuentemente por científicos en el área de la computación como la variación de una métrica (comúnmente latencia) con respecto a otra métrica de referencia (como latencia mínima o promedio), a esto también se le llama variación en el retraso de los paquetes (PDV por sus siglas en ingles), este termino es a veces preferido por ser mas preciso \cite{rfc3393}.
+El término \textit{jitter} puede tener distintas connotaciones sin embargo es usado frecuentemente por científicos en el área de la computación como la variación de una métrica (comúnmente latencia) con respecto a otra métrica de referencia (como latencia mínima o promedio), a esto también se le llama variación en el retraso de los paquetes (PDV por sus siglas en ingles), este término es a veces preferido por ser mas preciso \cite{rfc3393}.
 
-El jitter puede afectar considerablemente transmisiones en tiempo real como VoIP o streaming sin embargo la correcta implementación de políticas de buffering del lado del receptor puede minimizar e incluso mitigar este efecto\cite{Kurose:13}.
+El \textit{jitter} puede afectar considerablemente transmisiones en tiempo real como VoIP o \textit{streaming}, sin embargo la correcta implementación de políticas de buffering del lado del receptor puede minimizar e incluso mitigar este efecto\cite{Kurose:13}.
 
 \subsection{Throughput}
 
-En términos de redes de computadoras, el throughput es la tasa en bits por segundo a la que fluyen los datos a través de un enlace \cite{Kurose:13}, el throughput puede compararse al caudal de un rio, donde mientras mas ancho sea el rio mas agua puede fluir a través de el.
+En términos de redes de computadoras, el \textit{throughput} es la tasa en bits por segundo a la que fluyen los datos a través de un enlace \cite{Kurose:13}, el throughput puede compararse al caudal de un rio, donde mientras mas ancho sea el rio mas agua puede fluir a través de él, así mismo mientras mayor sea el ancho de banda de un enlace mayor será throughput.
 
-El máximo throughput teórico entre un par de nodos esta determinado principalmente por el segmento de la red con menor ancho de banda, este comportamiento se ilustra en la figura \ref{fig:throughput}, donde el cable entre el punto de acceso wifi y el ISP resulta ser el cuello de botella en la comunicación. En la practica el throughput también viene determinado por varios factores como otros flujos de datos con los que se comparte la red o la velocidad a la que el receptor es capaz de procesar el flujo de datos entrante.
+El máximo \textit{throughput} teórico entre un par de nodos esta determinado principalmente por el segmento de la red con menor ancho de banda, este comportamiento se ilustra en la figura \ref{fig:throughput}, donde el cable entre el punto de acceso Wi-Fi y el proveedor de servicio de Internet resulta ser el cuello de botella en la comunicación. En la practica el throughput también viene determinado por varios factores como otros flujos de datos con los que se comparte la red o la velocidad a la que el receptor es capaz de procesar el flujo de datos entrante.
 
 \begin{figure}[h]
 \centering
@@ -440,68 +450,80 @@ A diferencia de las métricas anteriores medir el throughput solo es posible con 
 
 \subsection{Disponibilidad} \label{sub:disponibilidad}
 
-Un servicio esta disponible para un cliente cuando dicho cliente puede comunicarse con el, análogamente un servicio no esta disponible para un cliente cuando no puede comunicarse con el, ya sea por un problema en el nodo final o en la red \cite{dahlin2003end}. 
+Un servicio esta disponible para un cliente cuando dicho cliente puede comunicarse con él, análogamente un servicio no esta disponible para un cliente cuando no puede comunicarse con él, ya sea por un problema en el nodo final o en la red \cite{dahlin2003end}. 
 
-Generalmente la disponibilidad se mide a través de la disponibilidad promedio, que es la fracción del tiempo  durante el cual un servicio esta disponible para un cliente promedio \cite{dahlin2003end}, sin embargo también se puede usar la disponibilidad continua, en este trabajo llamaremos actividad continua a un evento durante el cual un servicio está continuamente disponible para un cliente, y un inactividad continua a un evento durante el cual un servicio esta continuamente no disponible para un cliente.
+Generalmente la disponibilidad se mide a través de la disponibilidad promedio, que es la fracción del tiempo  durante el cual un servicio esta disponible para un cliente promedio, sin embargo también se puede usar la disponibilidad continua. En este trabajo llamaremos actividad continua a un evento durante el cual un servicio está continuamente disponible para un cliente, e inactividad continua a un evento durante el cual un servicio esta continuamente no disponible para un cliente.
 
-Hemos definido la disponibilidad como un concepto meramente binario, en el que si un servicio es alcanzable entonces está disponible \cite{dahlin2003end} sin embargo hay ciertos escenarios en los que se puede considerar que un nodo alcanzable está fallando en ofrecer un servicio adecuadamente, por ejemplo cuando un servidor web está respondiendo a las peticiones con un código de estado 500, o cuando la latencia es tal que hace que una comunicación en tiempo real no sea posible. 
+Hemos definido la disponibilidad como un concepto meramente binario, en el que si un servicio es alcanzable entonces está disponible. Sin embargo, hay ciertos escenarios en los que se puede considerar que un nodo alcanzable está fallando en ofrecer un servicio adecuadamente. Por ejemplo, cuando un servidor web está respondiendo a las peticiones con un código de estado 500\footnote{Error HTTP 500 \textit{Internal server error} (Error interno del servidor) El servidor encontró una condición inesperada que evitó que completara la petición.}, o cuando la latencia es tal que hace que una comunicación en tiempo real no sea posible.
 
-\subsection{Bufferbloat}
+\subsection{Ping} \label{sub:ping}
 
-Bufferbloat es la existencia de buffers excesivamente grandes y generalmente llenos presentes en Internet \cite{gettys2011bufferbloat}; puede parecer contra-intuitivo ya que buffers mas grandes implican que menos paquetes serán desechados al llegar a un enrutador congestionado, pero mientras la cola en la interfaz del enrutador crece también lo hace el tiempo de espera del paquete y a la vez interfiere (o invalida) los algoritmos de control de congestión de los protocolos mas comunes en la capa de transporte \cite{gettys2011bufferbloat}.
+Ping es un programa utilitario incluido en todos los sistemas basados en UNIX y Windows que comprueba la presencia y tiempo de respuesta de un host en una red IP. Ping utiliza el Protocolo de Mensajes de Control de Internet (ICMP) para enviar un paquete de solicitud ICMP (ICMP Echo Request) y espera el mensaje de respuesta del host remoto (ICMP Echo Reply); calculando la diferencia de tiempo entre el envío y la recepción se puede calcular la latencia de la red, ping también incluye funciones para enviar paquetes en ráfaga útil cuando se desea medir la perdida de paquetes.
 
-El bufferbloat puede ser mitigado configurando apropiadamente el hardware disponible, sin embargo es difícil de diagnosticar y es confundido frecuentemente con congestión en la red.
+%Ya que históricamente ping se ha usado por atacantes para determinar la presencia de equipos en una red o realizar ataques de denegación de servicio (ping flood) muchos enrutadores y firewalls bloquean estos mensajes como medida de seguridad, aunado a esto ya que ping utiliza ICMP que es un protocolo de capa de red, este no es capaz de alcanzar equipos detrás de un NAT; a pesar de esto, ping ha demostrado ser una herramienta vital en el diagnostico y monitoreo de redes IP.
 
-Recientemente se ha comenzado a medir el blufferbloat como el tiempo adicional que toma enviar paquetes a través de un enlace congestionado, algunas pruebas disponibles en linea \cite{DSLReports}\cite{ThinkBroadband} intentan determinar este retraso haciendo mediciones constantes de latencia al mismo tiempo que inundan el enlace para determinar la forma en que esta varía durante la prueba.
+\subsection{Traceroute}
 
-\section{Big Data}
+Traceroute (tambien llamado Tracert en sistemas Windows) es un programa utilitario de diagnostico que permite conocer los \textit{hosts} que visita un paquete durante su transito por una red.
 
-Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información y hacer descubrimientos que habrían sido imposibles anteriormente. 
+Al igual que Ping, Traceroute utiliza el protocolo ICMP pero envía paquetes con un valor de \textit{Time to Live} (TTL) incremental, cada vez que un nodo de la red recibe un paquete decrementa su valor de TTL y si éste llega a cero lo descarta y envía de vuelta al \textit{host} emisor un mensaje de control indicando que el TTL llegó a 0, de esta manera Traceroute puede generar una lista de los nodos visitados y el valor de RTT para cada uno de ellos.
 
-Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, Big Data es un termino relativamente impreciso ya que no existe un convenio sobre la cantidad de datos a la que se refiere, pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}. 
+Un análisis cuidadoso de la salida de Traceroute puede ayudar a diagnosticar numerosos problemas en una red como ineficiencias en el enrutamiento, presencia de enrutadores congestionados, cuellos de botella, comportamientos inesperados, etc. 
 
-El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito médico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
+\subsection{Iperf}
+
+Iperf es una herramienta que permite medir el rendimiento (\textit{throughput}) entre un par de nodos en un red. Al igual que muchas otras pruebas para medir velocidad de transferencia, Iperf funciona con una arquitectura cliente-servidor, donde el cliente genera un flujo de datos hacia el servidor y mide la velocidad obtenida, también es posible ejecutar una prueba "en reversa" donde el servidor es el que genera el flujo de datos.
+
+Iperf puede ejecutar pruebas utilizando los protocolos TCP o UDP para la transferencia de los datos, sin embargo existen diferencias entre ellos:
+
+\begin{itemize}
+	\item{Ya que UDP a diferencia de TCP no implementa ningún algoritmo de control de congestión se podría obtener un rendimiento ligeramente superior con este protocolo.}
+	\item{Con UDP se puede obtener una estadística de la perdida de datagramas durante la prueba.}
+	\item{Con UDP es el servidor el que totaliza los resultados, ya que el cliente no tiene manera de saber que datagramas se han recibido.}
+\end{itemize}
+
+Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente. Es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad. También hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
+
+%\section{Big Data}
+
+%Debido a la rápida evolución en la capacidad de almacenamiento y procesamiento de los sistemas computaciones y la adopción de los mismos por parte de miles de millones de usuarios en Internet, así como la creciente de popularidad de objetos inteligentes (Internet de las Cosas), sensores, cámaras, micrófonos, lectores biométricos, lectores de radiofrecuencia, entre muchos otros, día a día se están produciendo datos de forma rápida y masiva, esta tendencia creciente en la generación de datos ha hecho evidente la necesidad de tener sistemas capaces de manipular estos datos para obtener información y hacer descubrimientos que habrían sido imposibles anteriormente. 
+
+%Big Data se refiere la tendencia reciente de recolectar, almacenar y hacer análisis sobre cantidades masivas de datos, Big Data es un termino relativamente impreciso ya que no existe un convenio sobre la cantidad de datos a la que se refiere, pero usualmente el termino se relaciona con datos en el orden de los petabytes (10\textsuperscript{15} bytes) y exabytes (10\textsuperscript{18} bytes) \cite{barranco2012}. 
+
+%El aprovechamiento de este flujo de datos generalmente inmanejable por los sistemas previamente concebidos ha sido adoptado por muchos tipos de organizaciones, por ejemplo las redes sociales rutinariamente analizan a sus usuarios para descubrir sus gustos y preferencias y ajustar cuidadosamente la publicidad que estos ven, juegos en linea analizan a sus jugadores para entender que factores determinan su comportamiento y de esta manera optimizar finamente las experiencias que les ofrecen, un ejemplo conocido de uso de big data en el ámbito médico ha sido la exitosa predicción de transmisión de enfermedades como el dengue a partir de patrones de búsqueda en google\cite{GoogleFlu}, también existe preocupación sobre el uso del big data para violar la privacidad de usuarios de Internet por parte de organizaciones gubernamentales de seguridad y vigilancia que son capaces de conocer todo tipo de detalles personales como transacciones y compras, sitios web visitados, búsquedas realizadas, publicaciones en redes sociales, posición geográfica con el uso de GPS, etc.
 
 \section{Visualización de datos} \label{sec:visualizacion}
 
 La visualización de datos se refiere al aprovechamiento de elementos gráficos para representar información cuantitativa; cualquier conjunto de datos no tienen significado sin alguna manera de organizar y  presentar los descubrimientos relevantes que se encuentran potencialmente ocultos dentro de estos.
 
-Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y listas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo en el marco de un sistema de monitoreo de redes preguntas como "¿donde están apareciendo los cuellos de botella?" "¿que factores afectan el rendimiento de un enlace?" o "¿cuales son los patrones de uso de los usuarios de la red?"
+Los humanos podemos comprender los datos de mejor manera cuando son presentados a través de imágenes y elementos gráficos que leyendo números en tablas y listas\cite{Pervasif}, una visualización apropiada de los datos permite de forma efectiva preguntar y responder las preguntas relevantes a una organización, por ejemplo, en el marco de un sistema de monitoreo de redes preguntas como "¿Dónde están apareciendo los cuellos de botella?" "¿Qué factores afectan el rendimiento de un enlace?" o "¿Cuales son los patrones de uso de los usuarios de la red?"
 
-Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc, cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados. Es posible combinar distintos conceptos para lograr visualizaciones aun mas poderosas como mapas de calor superpuestos en mapas que pueden expresar datos de la densidad de una variable al mismo tiempo que se da una idea de su posición geográfica.
+Hay una variedad de métodos apropiados para visualizar distintos conjuntos de datos, por ejemplo, los datos discretos se pueden observar a través de gráficas de barras, los gráficos de redes pueden comunicar la relación entre distintos entes, los mapas son efectivos para desplegar información geográfica, los mapas de calor permiten comparar el rendimiento de una variable a través del tiempo, etc. Cada una de estas visualizaciones puede ser enriquecida a través del uso creativo de colores y formas para agregar nuevas dimensiones a los datos representados. Es posible combinar distintos conceptos para lograr visualizaciones aún más poderosas como mapas de calor superpuestos en mapas que pueden expresar datos de la densidad de una variable al mismo tiempo que se da una idea de su posición geográfica.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
-\includegraphics[width=0.7\linewidth]{img/datavisualization}
+\includegraphics[width=1\linewidth]{img/datavisualization}
 \caption{Visualización de periodos de actividad e inactividad continua}
 \label{fig:crimespotting}
 \end{figure}
 
-En la figura \ref{fig:crimespotting} se observa una visualización de los periodos de actividad continua como segmentos de linea verde y los periodos de inactividad como segmentos de linea roja, es posible hacer zoom para observar los periodos a mayor detalle y revisar el tiempo exacto del inicio del periodo pasando el puntero sobre un punto, la concentración de puntos de distintos colores da una idea rápida de la estabilidad del enlace.
+En la figura \ref{fig:crimespotting} se observa una visualización de los periodos de actividad continua como segmentos de linea verde y los periodos de inactividad como segmentos de linea roja, es posible hacer \textit{zoom} para observar los periodos a mayor detalle y revisar el tiempo exacto del inicio del periodo pasando el puntero sobre un punto, la concentración de puntos de distintos colores da una idea rápida de la estabilidad del enlace.
 
 \section{Computación en la nube}
 
-La computación en la nube se refiere tanto a las aplicaciones desplegadas como servicios en Internet y el hardware y los sistemas computaciones en los centros de datos que proveen dichos servicios \cite{armbrust2010view}, a los servicios en si mismos se les ha dado el nombre de Software como Servicio (SaaS) y al hardware y software en los centros de datos es a lo que llamamos una nube. Cuando una nube se hace disponible para el publico en general a través de alguna forma de pago, se le llama una nube publica y el servicio que se esta vendiendo es Computación como Utilidad (Utility Computing), se le llama nube privada a los centros de datos internos de negocios u otras organizaciones pero que no pueden ser usados por el publico general, por lo tanto llamamos computación en la nube a la suma de SaaS y Computación como Utilidad sin incluir nubes privadas\cite{armbrust2010view}
+La computación en la nube se refiere tanto a las aplicaciones desplegadas como servicios en Internet y el hardware y los sistemas computaciones en los centros de datos que proveen dichos servicios \cite{armbrust2010view}, a los servicios en si mismos se les ha dado el nombre de Software como Servicio (SaaS) y al hardware y software en los centros de datos es a lo que llamamos una nube. Cuando una nube se hace disponible para el público en general a través de alguna forma de pago, se le llama una nube pública y el servicio que se esta vendiendo es Computación como Utilidad (Utility Computing), se le llama nube privada a los centros de datos internos de negocios u otras organizaciones pero que no pueden ser usados por el publico general, por lo tanto llamamos computación en la nube a la suma de SaaS y Computación como Utilidad sin incluir nubes privadas.
 
-La computación en la nube se caracteriza por ofrecer métodos de pago flexibles que permiten pagar solo por los recursos que se están utilizando (pay-as-you-go) y con una fina granularidad de modo que es lo mismo pagar mil procesadores una hora que un procesador por mil horas, esto permite a aplicaciones manejar cargas y escalas fluctuantes o patrones de uso específicos sin necesidad de tener hardware que esté ocioso durante largos periodos de tiempo. La nube ofrece a desarrolladores la ilusión de recursos computaciones ilimitados y disponibles a petición, eliminando la necesidad de planificar y aprovisionar equipos de hardware, y minimizar los riesgos relacionados con subestimar una aplicación que explota en popularidad o sobrestimar una aplicación que no llena las expectativas, en otras palabras no es necesario tener un gran capital de inversión inicial independientemente de la escala que resulte necesario manejar a corto o mediano plazo.
+La computación en la nube se caracteriza por ofrecer métodos de pago flexibles que permiten pagar solo por los recursos que se están utilizando (pay-as-you-go) y con una fina granularidad de modo que es lo mismo pagar mil procesadores una hora que un procesador por mil horas, esto permite a aplicaciones manejar cargas y escalas fluctuantes o patrones de uso específicos sin necesidad de tener hardware que esté ocioso durante largos periodos de tiempo. La nube ofrece a desarrolladores la ilusión de recursos computaciones ilimitados y disponibles a petición, eliminando la necesidad de planificar y aprovisionar equipos de hardware, y minimizar los riesgos relacionados con subestimar una aplicación que explota en popularidad o sobrestimar una aplicación que no llena las expectativas. En otras palabras no es necesario tener un gran capital de inversión inicial independientemente de la escala que resulte necesario manejar a corto o mediano plazo.
 
-\subsection{Modelos de servicio en la nube}
+\subsection{Almacenamiento como Servicio (STaaS)}
 
-Existen tres modelos de servicios en la nube que forman una "arquitectura orientada a servicios", estos son:
+Almacenamiento como servicio permite tanto a aplicaciones como a usuarios almacenar sus datos en discos remotos y acceder a ellos en cualquier momento y lugar\cite{wu2010cloud}. El Almacenamiento como servicio permite a aplicaciones escalar mas allá de las limitaciones de su infraestructura, y abarata los costos de desarrollo y mantenimiento de la infraestructura necesaria.
 
-\subsubsection{Infraestructura como Servicio (IaaS)}
+Los sistemas de almacenamiento de datos en la nube deben cumplir ciertos requisitos de disponibilidad, rendimiento, seguridad, replicación, y consistencia de los datos que hacen de estos sistemas una opción atractiva el mantenimiento de los datos de una aplicacion a largo plazo.
 
-Infraestructura como Servicio a veces llamado Hardware como Servicio (HaaS) ofrece funciones básicas de almacenamiento y capacidad de computo como servicio ya sea a través de equipos de hardware físicos o de forma mas común como maquinas virtuales y una larga gama de imágenes de software disponible.
-
-Esta capa abstrae al usuario de los detalles de infraestructura de los recursos de computo físico, localización, configuración, escala, seguridad, respaldo, mantenimiento, etc.
-
-\subsubsection{Plataforma como Servicio (PaaS)}
+\subsection{Plataforma como Servicio (PaaS)}
 
 Plataforma como servicio ofrece como servicio una plataforma para el desarrollo, ejecución y manejo de aplicaciones web, los recursos computacionales demandados por la aplicación son manejados automáticamente, de modo que la complejidad de manejar la infraestructura subyacente queda eliminada, esto permite reducir enormemente la complejidad necesaria para desplegar aplicaciones, que pueden pasar de la etapa de desarrollo y pruebas rápidamente a un entorno de producción con un esfuerzo mínimo. 
-
-\subsubsection{Software como Servicio (SaaS)}
-
-En el modelo de Software como servicio, los usuarios ganan acceso y hacen uso de aplicaciones de software, generalmente este tipo de software se paga bajo una subscripcion o por uso, este tipo de aplicaciones en la nube es conveniente y atractiva para los usuarios ya que estos no necesitan instalar software adicional en sus dispositivos sino que puede acceder a la aplicación desde navegadores web, esto permite que los usuarios puedan tener la misma experiencia en cualquier plataforma y reduce los costos operacionales.
 
 \section{Herramientas usadas para el desarrollo del sistema}
 
@@ -513,21 +535,21 @@ El Modelo Vista Controlador es un patrón de diseño que divide la lógica de los d
 
 \subsubsection{Modelo} 
 
-Según \cite{pantoja2004patron} \textit{''El modelo es un conjunto de clases que representan la información del mundo real que el sistema debe procesar, así por ejemplo un sistema de administración de datos climatologías tendrá un modelo que representará la temperatura, humedad ambiental, estado del tiempo esperado etc''}
+Según Bascón\cite{pantoja2004patron}: \textit{''El modelo es un conjunto de clases que representan la información del mundo real que el sistema debe procesar, así por ejemplo un sistema de administración de datos climatologías tendrá un modelo que representará la temperatura, humedad ambiental, estado del tiempo esperado, etc...''}
 
-Según la implementación de MVC el modelo puede dividirse en el modelo del dominio que es el modelo propiamente dicho, es decir una colección de clases que modelan la realidad relevante a la aplicación, y opcionalmente el modelo de la aplicación; este modelo tiene conocimiento de las vistas y es capaz de enviar notificaciones cuando ocurren cambios en el modelo. El modelo de la aplicación también es llamado coordinador de la aplicación \cite{pantoja2004patron} .
+Según la implementación de MVC el modelo puede dividirse en el modelo del dominio que es el modelo propiamente dicho, es decir, una colección de clases que modelan la realidad relevante a la aplicación, y opcionalmente el modelo de la aplicación; este modelo tiene conocimiento de las vistas y es capaz de enviar notificaciones cuando ocurren cambios en el modelo. El modelo de la aplicación también es llamado coordinador de la aplicación \cite{pantoja2004patron} .
 
 \subsubsection{Vista} 
 
-La vista es la encargada de determinar que información contenida en el modelo mostrar al usuario y la presentación, por ejemplo si se está modelando una caldera es posible tener una vista que dibuje gráficamente el nivel de la caldera y un termómetro con su temperatura y otra vista que sencillamente muestre estas propiedades en una tabla. 
+La vista es la encargada de determinar que información contenida en el modelo mostrar al usuario y la presentación, por ejemplo si se está modelando una red es posible tener una vista que dibuje gráficamente el nivel de congestión de cada enlace y otra vista que sencillamente muestre estas propiedades en una tabla. 
 
-La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de notificaciones emitidas por el modelo de la aplicación, siguiendo con el ejemplo anterior de esta forma sería posible monitorear en tiempo real el estado de la caldera a partir de sensores que mantengan actualizado el modelo. 
+La vista pudiera cambiar cuando se actualiza el modelo del dominio a partir de notificaciones emitidas por el modelo de la aplicación. Siguiendo con el ejemplo anterior de esta forma sería posible monitorear en tiempo real el estado de la red a partir de agentes que detecten las condiciones de cada enlace y mantengan actualizado el modelo.
 
 \subsubsection{Controlador} 
 
 El controlador es el encargado de dirigir el flujo de control de la aplicación a partir de mensajes externos, como datos introducidos por el usuario en el caso de una aplicación de escritorio o peticiones HTTP en el caso de aplicaciones web. A partir de estos estímulos, el controlador se encargará de invocar las vistas apropiadas, actualizar el modelo y hacer todas las acciones necesarias.
 
-Distintas implementaciones del patrón MVC se toman la libertad de establecer la linea que separa el controlador y la vista de forma distinta, por ejemplo en algunas implementaciones el controlador se encarga tanto de actualizar el modelo y las vistas como de responder a los mensajes externos, es decir que el controlador es el encargado de ejecutar toda la lógica, y la vista meramente contiene la presentación de los datos, en otras implementaciones, la vista es la encargada tanto de seleccionar los datos que van a mostrarse así como de desplegar la presentación, esta ultima es una variación de MVC a veces llamado MTV (Modelo-Template-Vista)
+Distintas implementaciones del patrón MVC se toman la libertad de establecer la linea que separa el controlador y la vista de forma distinta, en algunas implementaciones, la vista es la encargada tanto de seleccionar los datos que van a mostrarse así como de desplegar la presentación, esta ultima es una variación de MVC a veces llamado MTV (Modelo-Plantilla-Vista).
 
 \subsection{Django}
 
@@ -535,28 +557,28 @@ Django es un framework de desarrollo de aplicaciones web construido en python, e
 
 Django esta diseñado con una arquitectura MVC es decir que separa claramente la lógica, de los datos y la forma en que dichos datos son presentados al usuario, en el caso de Django la "vista" describe que datos son presentados al usuario y el "template" representa la forma en que dichos datos son presentados. 
 
-Cuando Django recibe una petición esta pasa por un despachador de URLs (URL Dispatcher), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante, generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (template) para generar la respuesta que será devuelta.
+Cuando Django recibe una petición ésta pasa por un despachador de URLs (\textit{URL Dispatcher}), cuya tarea es emparejar el URL con una vista y delegar a la vista el manejo de la petición. La vista contiene la lógica necesaria para atender la petición entrante. Generalmente esto consiste en retirar o actualizar algunos datos del modelo, que a su vez se comunica con el manejador de base de datos, finalmente la vista combina los datos retirados de la base de datos, la petición y la sesión activa con una plantilla (\textit{template}) para generar la respuesta que será devuelta.
 
-Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Javascript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que compartan el mismo backend.
+Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y JavaScript pensadas para la interacción con el usuario así como respuestas en formato json o xml para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android o iOS que compartan el mismo \textit{backend}.
 
-Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una enorme comunidad de colaboradores y amplia documentación. 
+Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una extensa comunidad de colaboradores y amplia documentación. 
 
 \subsection{Celery}
 
 Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios)\cite{CeleryWebsite}: 
 
 \begin{itemize}
-	\item{Bróker de mensajería.}
+	\item{\textit{Bróker} de mensajería.}
 	\item{Planificador.}
-	\item{Workers (Trabajadores).}
-	\item{Backend de Resultados.}
+	\item{\textit{Workers} (Trabajadores).}
+	\item{\textit{Backend} de Resultados.}
 \end{itemize}
 
-Celery es usado comúnmente junto a Django y permite a una aplicación web escalar a bajo costo ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas maquinas como sea necesario. 
+Celery es usado comúnmente junto a Django y permite a una aplicación web escalar a bajo costo ya que solo hace falta aumentar el número de trabajadores disponibles que se pueden distribuir en tantas máquinas como sea necesario. 
 
 \subsection{Redis} \label{sub:redis}
 
-Redis es un almacén de estructuras de datos en memoria que soporta una amplia gama de tipos como cadenas de caracteres, hashes, listas, conjuntos, conjuntos ordenados, mapas de bits, indices geo-espaciales, etc \cite{RedisWebsite}. 
+Redis es un almacén de estructuras de datos en memoria que soporta una amplia gama de tipos como cadenas de caracteres, hashes, listas, conjuntos, conjuntos ordenados, mapas de bits e indices geo-espaciales \cite{RedisWebsite}.
 
 Redis es comúnmente usado como base de datos, cache o bróker de mensajería; y se caracteriza por su velocidad de respuesta ya que todos sus datos se mantienen en memoria principal y solo invierte recursos en asegurar ciertos niveles de persistencia, sin embargo, por omisión, los datos almacenados se pierden en caso de que ocurra cualquier falla inesperada.
 
@@ -576,18 +598,18 @@ Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus sigl
 
 El Mapeo Objeto-Relacional (ORM por sus siglas en ingles) es un método para interactuar con bases de datos relaciones desde el paradigma de la programación orientada a objetos, de esta manera es posible aprovechar conceptos como herencia y polimorfismo.
 
-Según \cite{ScottORM} la mayoría de las aplicaciones modernas usan lenguajes orientados a objetos como Java o C\# para construir aplicaciones y bases de datos estructuradas para almacenar datos, por lo tanto, es util tener una interfaz que transforme los datos entre estos tipos de incompatibles. 
+Según Ambler\cite{ScottORM} la mayoría de las aplicaciones modernas usan lenguajes orientados a objetos como Java o C\# para construir aplicaciones y bases de datos estructuradas para almacenar datos, por lo tanto, es útil tener una interfaz que transforme los datos entre estos tipos de incompatibles. 
 
-El uso de un ORM simplifica enormemente el manejo de la estructura de datos subyacente ya que permite al programador manejar los datos a un mayor nivel de abstracción como si fueran objetos, sin necesidad de generar manualmente las consultas SQL, ademas esta capa de abstracción permite desacoplar el código de la aplicación de los detalles específicos de cada RDBMS.
+El uso de un ORM simplifica enormemente el manejo de la estructura de datos subyacente ya que permite al programador manejar los datos a un mayor nivel de abstracción como si fueran objetos, sin necesidad de generar manualmente las consultas SQL, además ésta capa de abstracción permite desacoplar el código de la aplicación de los detalles específicos de cada RDBMS.
 
 \subsection{Json (JavaScript Object Notation)}
 
-Json (JavaScript Object Notation) o notación de objectos javascript es un formato textual de intercambio y almacenamiento de datos no estructurados, json posee un formato que es fácil de leer para humanos y fácil de interpretar para maquinas y mas ligero que XML por lo que se ha popularizado para el desarrollo de APIs. 
+Json (JavaScript Object Notation) o notación de objectos JavaScript es un formato textual de intercambio y almacenamiento de datos no estructurados, json posee un formato que es fácil de leer para humanos y fácil de interpretar para maquinas y mas ligero que XML por lo que se ha popularizado para el desarrollo de APIs. 
 
 Json soporta dos tipos de estructuras de datos fundamentales:
 \begin{enumerate}
 	\item{Colecciones de pares $<$nombre,valor$>$ comparable a un diccionario o tablashash.}
-	\item{Listas ordenadas de valores, similar a las listas o vectores que existen en virtualmente cualquier lenguaje de programación }
+	\item{Listas ordenadas de valores, similar a las listas o vectores que existen, virtualmente en cualquier lenguaje de programación }
 \end{enumerate}
 
 Un archivo en formato json puede estar formado de cualquiera de las estructuras de datos antes descritas o cualquier permutación de dichas estructuras anidadas.
@@ -607,30 +629,30 @@ Un API (Aplication Programming Interface) o interfaz de programación de aplicaci
 
 El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento del usuario.
 
-El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones en un periodo corto de tiempo, sin embargo el limite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
+El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones en un periodo corto de tiempo, sin embargo el límite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
 
 \subsection{Diseño web adaptable}
 
-Debido a la inmensa diversidad de dispositivos desplegados en el mercado y sus distintos tamaños y formas es imposible realizar manualmente diseños que puedan ajustarse a cada uno de ellos, anteriormente una solución popular a este problema era tener varias versiones con distintas resoluciones y elegir que versión mostrar a cada cliente, sin embargo esto ya no es necesario gracias a las nuevas herramientas disponibles en HTML5 CSS y Javascript que están ampliamente implementadas en navegadores modernos.
+Debido a la inmensa diversidad de dispositivos desplegados en el mercado y sus distintos tamaños y formas es imposible realizar manualmente diseños que puedan ajustarse a cada uno de ellos, anteriormente una solución popular a este problema era tener varias versiones con distintas resoluciones y elegir que versión mostrar a cada cliente, sin embargo esto ya no es necesario gracias a las nuevas herramientas disponibles en HTML5 CSS y JavaScript que están ampliamente implementadas en navegadores modernos.
 
 El diseño web adaptable o "Responsive Web Design" es la tendencia en el diseño de paginas web que se ajusten elásticamente a cualquier resolución, adaptando la forma en que se presentan sus elementos de forma "inteligente".
 
-Las técnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal se reduce estos pasan a ocupar el espacio verticalmente; siempre ocupando el máximo del ancho disponible, evitando crear barras de desplazamiento horizontal que desorientan e incomodan a los usuarios. 
+Las técnicas mas comunes para lograr esto es tener elementos que ocupen el mayor espacio horizontal posible en pantallas grandes y mientras el tamaño horizontal se reduce, estos pasan a ocupar el espacio verticalmente. Siempre se ocupa el máximo del ancho disponible, evitando crear barras de desplazamiento horizontal que desorientan e incomodan a los usuarios. 
 
 Otra heuristica en la creación de sitios web adaptables es escalar o esconder elementos gráficos decorativos o menús de navegación laterales, reducir el tamaño de margenes o incluso cambiar tipos de letras para que sean mas legibles en dispositivos móviles, mientras el tamaño del dispositivo es menor, cada pixel se vuelve mas precioso.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\linewidth]{img/responsive_final}
-\caption{Ejemplo de diseño adaptable, se puede ver como los elementos se reagrupan, escalan o esconden para ajustarse al tamaño de la pantalla.}
+\caption{Ejemplo de diseño adaptable, de (1) a (3) se observa la adaptación vertical de la composición de la página.}
 \label{fig:responsive}
 \end{figure}
 
-El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas el sitio web ofrece una experiencia similar independientemente del dispositivo con el que se esté visitando.
+El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas se ofrece una experiencia similar independientemente del dispositivo con el que se esté visitando.
 
 \subsection{Highcharts}
 
-Highcharts es una biblioteca Javascript para dibujar gráficas en entornos HTML es gratis para proyectos no comerciales y de código abierto. Las gráficas generadas por highcharts aprovechan las características de HTML5 por lo que pueden soportar enormes conjuntos de datos sin afectar el rendimiento incluso en dispositivos móviles, son totalmente interactivas de manera que el usuario puede inspeccionar detalladamente el conjunto de datos y son dinámicas permitiendo actualizar la gráfica en tiempo real cuando se reciben nuevos datos.
+Highcharts es una biblioteca JavaScript para dibujar gráficas en entornos HTML es gratis para proyectos no comerciales y de código abierto\cite{highcharts}. Las gráficas generadas por Highcharts aprovechan las características de HTML5 por lo que pueden soportar enormes conjuntos de datos sin afectar el rendimiento incluso en dispositivos móviles, son interactivas de manera que el usuario puede inspeccionar detalladamente el conjunto de datos y son dinámicas permitiendo actualizar la gráfica en tiempo real cuando se reciben nuevos datos.
 
 Highcharts incluye una amplia gama de gráficas predefinidas que la hace ideal para todo tipo de visualización de datos como mapas de calor, splines, gráficas de área, barras, pie, mapas, entre muchos otros; cada una de ellas ofrece un gran control sobre la forma en que son presentadas de modo que es posible lograr casi cualquier resultado deseado.
 
@@ -640,73 +662,53 @@ Desde el punto de vista del programador es muy fácil de usar ya que solo requier
 
 Google Maps es el servicio de mapas web de Google, ofrece distintos tipos de mapas, como mapas viales, mapas de relieve e incluso imágenes satelitales e imágenes de calles en tercera dimensión (llamado Google Street View)
 
-Los mapas de Google Maps son totalmente dinámicos, permitiendo al usuario desplazarse, hacer zoom y cambiar el tipo de mapa a voluntad, Google Maps funciona dividendo el espacio mostrado en sectores que son descargados individualmente, de manera que cuando el usuario desplaza el mapa solo es necesario descargar los nuevos sectores desde los servidores de Google.
+Los mapas de Google Maps son dinámicos, permitiendo al usuario desplazarse, hacer zoom y cambiar el tipo de mapa a voluntad, Google Maps funciona dividendo el espacio mostrado en sectores que son descargados individualmente, de manera que cuando el usuario desplaza el mapa solo es necesario descargar los nuevos sectores desde los servidores de Google.
 
 Google Maps es una de las herramientas mas populares para dibujar mapas web ya que ofrece un API gratuito y fácil de usar que permite enmarcar mapas en cualquier sitio web con solo algunas lineas, ademas los mapas de Google son de altisima calidad y se mantienen constantemente actualizados. 
 
-\subsection{Geo-localizacion IP}
+\subsection{Geo-localización IP}
 
-La geo-localizacion IP consiste en asignar a un IP la localizacion geográfica de la maquina anfitriona correspondiente\cite{poese2011ip}. 
+La geo-localización IP consiste en asignar a un IP la localización geográfica de la máquina anfitriona correspondiente\cite{poese2011ip}. 
 
-Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos\cite{poese2011ip}, el paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones ips a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica, sin embargo su precisión puede estar sujeta a errores substanciales. En ambos casos es imposible conocer la localización exacta asociada a una dirección IP sin la colaboración activa de los anfitriones finales, sin embargo es posible hacer buenas aproximaciones en algunos a nivel de ciudades o países.
+Existen dos paradigmas principales para aproximar la localización geográfica de una dirección IP: activo y pasivo; las técnicas activas de localización se basan en mediciones de retraso y en muchos casos proveen resultados precisos. El paradigma pasivo consiste del uso de bases de datos que contienen rangos de direcciones IP a los que se les llaman bloques o prefijos relacionados a una localización geográfica especifica, sin embargo su precisión puede estar sujeta a errores substanciales. En ambos casos es imposible conocer la localización exacta asociada a una dirección IP sin la colaboración activa de los anfitriones finales. Sin embargo, es posible hacer buenas aproximaciones en algunos a nivel de ciudades o países.
 
-Ya que conocer la localización de sus clientes a partir de su dirección ip es útil para muchos servicios (por ejemplo, para conducir anuncios localizados) existe una gran variedad de soluciones de geolocalizacion tanto gratuitas como de pago.
+Ya que conocer la localización de sus clientes a partir de su dirección IP es útil para muchos servicios (por ejemplo, para conducir anuncios localizados) existe una gran variedad de soluciones de geolocalización tanto gratuitas como de pago. En este trabajo aprovechamos servicios gratuitos para dibujar mapas que muestran visualmente la ruta de un paquete a través de un enlace.
 
 \subsection{Ajax}
 
 AJAX (Asynchronous JavaScript And XML) es una técnica para construir sitios web interactivos a través de peticiones asíncronas con Javascript que mantienen comunicación con el servidor web para mantener el estado del cliente actualizado sin necesidad de que el usuario tenga que refrescar la pagina o realizar consultas adicionales, de esta manera el usuario tiene una experiencia similar a la que tendría con aplicaciones de escritorio. 
 
-A pesar de que el nombre AJAX sugiera el uso XML como lenguaje para la transferencia de datos entre el cliente y el servidor, se puede usar cualquier formato como texto plano, HTML y JSON
+A pesar de que el nombre AJAX sugiera el uso XML como lenguaje para la transferencia de datos entre el cliente y el servidor, se puede usar cualquier formato como texto plano, HTML y JSON. En este trabajo, AJAX es usado para permitir la carga de gráficas con distintos datos del lado del cliente, lo cual provee una experiencia dinámica y rápida para la observación de resultados del monitoreo.
 
 \subsection{APScheduler}
 
-APScheduler (Advanced Python Scheduler) es una biblioteca python para retrasar la ejecución de rutinas a un instante dado en el futuro ya sea como eventos de una sola vez o de forma recurrente\cite{APScheduler}, esta biblioteca provee las herramientas para construir cualquier esquema de planificación que se desee su arquitectura consta de los siguientes componentes: gatillos para determinar el momento de ejecucion de las tareas (por fecha, por intervalos de tiempo, o tipo crontab), almacenes de tareas para alojar los datos de las tareas, ejecutores para controlar la ejecucion de las tareas y planificadores que unen los componentes antes descritos y se encargan de 
+APScheduler (Advanced Python Scheduler) es una biblioteca python para retrasar la ejecución de rutinas a un instante dado en el futuro ya sea como eventos de una sola vez o de forma recurrente\cite{APScheduler}. Esta biblioteca provee las herramientas para construir cualquier esquema de planificación que se desee implementar.
 
-\subsection{Ping} \label{sub:ping}
-
-Ping es un programa utilitario incluido en todos los sistemas basados en UNIX y Windows que comprueba la presencia y tiempo de respuesta de un host en una red IP. Ping utiliza el Protocolo de Mensajes de Control de Internet (ICMP) para enviar un paquete de solicitud ICMP (ICMP Echo Request) y espera el mensaje de respuesta del host remoto (ICMP Echo Reply); calculando la diferencia de tiempo entre el envío y la recepción se puede calcular la latencia de la red, ping también incluye funciones para enviar paquetes en ráfaga útil cuando se desea medir la perdida de paquetes.
-
-Ya que históricamente ping se ha usado por atacantes para determinar la presencia de equipos en una red o realizar ataques de denegación de servicio (ping flood) muchos enrutadores y firewalls bloquean estos mensajes como medida de seguridad, aunado a esto ya que ping utiliza ICMP que es un protocolo de capa de red, este no es capaz de alcanzar equipos detrás de un NAT; a pesar de esto, ping ha demostrado ser una herramienta vital en el diagnostico y monitoreo de redes IP.
-
-\subsection{Traceroute}
-
-Traceroute (tambien llamado Tracert en sistemas Windows) es un programa utilitario de diagnostico que permite conocer los hosts que visita un paquete durante su transito por una red.
-
-Al igual que Ping, Traceroute utiliza el protocolo ICMP pero envía paquetes con un valor de "Time to Live" (TTL) incremental, cada vez que un nodo de la red recibe un paquete decrementa su valor de TTL y si este llega a cero lo descarta y envía de vuelta al host emisor un mensaje de control indicando que el TTL llegó a 0, de esta manera Traceroute puede generar una lista de los nodos visitados y el valor de RTT para cada uno de ellos.
-
-Un análisis cuidadoso de la salida de Traceroute puede ayudar a diagnosticar numerosos problemas en una red como ineficiencias en el enrutamiento, presencia de enrutadores congestionados, cuellos de botella, comportamientos inesperados, etc. 
-
-\subsection{Iperf}
-
-Iperf es una herramienta que permite medir el rendimiento (throughput) entre un par de nodos en un red. Al igual que muchas otras pruebas para medir velocidad de transferencia, Iperf funciona con una arquitectura cliente-servidor, donde el cliente genera un flujo de datos hacia el servidor y mide la velocidad obtenida, también es posible ejecutar una prueba "en reversa" donde es el servidor el que genera el flujo de datos.
-
-Iperf puede ejecutar pruebas utilizando TCP o UDP, sin embargo existen diferencias entre ellos:
-
+Su arquitectura consta de los siguientes componentes:
 \begin{itemize}
-		\item{Ya que UDP a diferencia de TCP no implementa ningún algoritmo de control de congestión se podría obtener un rendimiento ligeramente superior con este protocolo.}
-		\item{Con UDP se puede obtener una estadística de la perdida de datagramas durante la prueba.}
-		\item{Con UDP es el servidor el que totaliza los resultados, ya que el cliente no tiene manera de saber que datagramas se han recibido.}
+	\item Gatillos para determinar el momento de ejecucion de las tareas (por fecha, por intervalos de tiempo, o tipo \textit{crontab}).
+	\item Almacenes de tareas para alojar los datos de las tareas.
+	\item Ejecutores para controlar la ejecucion de las tareas.
+	\item Planificadores que unen los componentes antes descritos y se encargan de ejecutar la lógica e iniciar las tareas en el momento planificado. 
 \end{itemize}
-
-Para obtener una buena medición del rendimiento del enlace hay que ajustar los parámetros de la prueba cuidadosamente, por ejemplo, es posible ajustar la cantidad de datos que se van a transferir durante la prueba, elegir una cantidad muy pequeña podría resultar en que no sea suficiente para saturar el enlace, mientras tanto elegir una cantidad demasiado grande podría resultar en una prueba innecesariamente larga, en ambos casos el valor del rendimiento obtenido no reflejará la realidad, también hay que tomar en cuenta que es difícil obtener una lectura exacta del rendimiento del enlace ya que podrían existir otros flujos en la red que afecten el resultado de la prueba. 
 
 \section{Estado del Arte}
 
 A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una variedad de soluciones innovadoras y aplicaciones web que proveen distintos enfoques para el monitoreo y evaluación de redes.
 
-En esta sección resumimos estos sistemas por los siguientes parámetros:
+En esta sección resumimos las características de estos sistemas a través de los siguientes parámetros:
 
 \begin{enumerate}
-	\item{\textbf{Servicio ofrecido:} define el servicio proveído por el sistema, por ejemplo: monitoreo de actividad de servicios web, evaluación de calidad de servicio de WISP, etc.}
-	\item{\textbf{Dispositivos de monitoreo:} define el tipo de dispositivo que ejecuta las pruebas o actúa como el punto final "activo" del monitoreo; por ejemplo: dispositivos móviles, hardware especializado, enrutadores, etc.}
-	\item{\textbf{Localización de los dispositivos de monitoreo:} define la localización donde los dispositivos de monitoreo son desplegados.}
-	\item{\textbf{Referencia de monitoreo:} define el dispositivo que sirve como la referencia de monitoreo, en otras palabras, un dispositivo que espera por los mensajes del dispositivo de monitoreo y responde apropiadamente; estos no siempre son necesarios ya que muchos de los elementos presentes en la red implementan protocolos que pueden ser usados para propósitos de monitoreo. Ejemplos de estos dispositivos son: nodos en la red como enrutadores y computadores o servidores dedicados.}
-	\item{\textbf{Localización de las referencias de monitoreo:} define la localización donde las referencias de monitoreo son desplegadas. Esto es importante ya que la distancia entre los distintos dispositivos impacta los resultados de manera relevante.}
-	\item{\textbf{Tipo de red:} se consideraron dos configuraciones de monitoreo de redes: cliente-servidor donde un conjunto de clientes ejecutan pruebas en contra de uno o mas servidores dedicados y redes peer-to-peer, donde los entes de monitoreo puedes realizar pruebas entre sí (es decir, actuar como dispositivos monitores y referencias de monitoreo), esta configuración es muy útil ya que permite un gran arreglo de pruebas posibles.}
-	\item{\textbf{Tests:} detalles sobre las pruebas ejecutadas por el sistema, por ejemplo: pruebas de rendimiento con UDP, traza de rutas, ICMP ping, resolución de DNS, etc.}
+	\item{\textbf{Servicio ofrecido:} Define el servicio proveído por el sistema. Por ejemplo: monitoreo de actividad de servicios web, evaluación de calidad de servicio de WISP, etc.}
+	\item{\textbf{Dispositivos de monitoreo:} Define el tipo de dispositivo que ejecuta las pruebas o actúa como el punto final "activo" del monitoreo. Por ejemplo: dispositivos móviles, hardware especializado, enrutadores, etc.}
+	\item{\textbf{Localización de los dispositivos de monitoreo:} Define la localización donde los dispositivos de monitoreo son desplegados.}
+	\item{\textbf{Referencia de monitoreo:} Define el dispositivo que sirve como la referencia de monitoreo, en otras palabras, un dispositivo que espera por los mensajes del dispositivo de monitoreo y responde apropiadamente; estos no siempre son necesarios ya que muchos de los elementos presentes en la red implementan protocolos que pueden ser usados para propósitos de monitoreo. Ejemplos de estos dispositivos son: nodos en la red como enrutadores y computadores o servidores dedicados.}
+	\item{\textbf{Localización de las referencias de monitoreo:} Define la localización donde las referencias de monitoreo son desplegadas. Esto es importante ya que la distancia entre los distintos dispositivos impacta los resultados de manera relevante.}
+	\item{\textbf{Tipo de red:} Se consideraron dos configuraciones de monitoreo de redes: cliente-servidor donde un conjunto de clientes ejecutan pruebas en contra de uno o mas servidores dedicados y redes \textit{peer-to-peer}, donde los entes de monitoreo puedes realizar pruebas entre sí (es decir, actuar como dispositivos monitores y referencias de monitoreo).}
+	\item{\textbf{Pruebas:} Detalles sobre las pruebas ejecutadas por el sistema. Por ejemplo: pruebas de rendimiento con UDP, trazado de rutas, ICMP ping, resolución de DNS, etc.}
 	\item{\textbf{Visualizaciones disponibles:} detalles sobre los métodos de visualización de datos disponibles como mapas, gráficas de barras, tablas, etc.}
-	\item{\textbf{Numero estimado de usuarios:} número estimado de usuarios en el orden de potencias de diez.} 
-	\item{\textbf{Referencias:} determina si el sistema tiene referencias en papers o otras publicaciones.}
+	\item{\textbf{Número estimado de usuarios:} Número estimado de usuarios en el orden de potencias de diez.} 
+	\item{\textbf{Referencias:} Determina si el sistema tiene referencias en \textit{papers} u otras publicaciones.}
 	
 \end{enumerate}
 
@@ -715,28 +717,28 @@ En esta sección resumimos estos sistemas por los siguientes parámetros:
 	\scriptsize{
 	\begin{flushleft}
 
-	\begin{tabular}{|p{1.5cm}p{2.5cm}p{2cm}p{2cm}p{2cm}p{2cm}p{1.5cm}|}
+	\begin{tabular}{|p{1.5cm}|p{2.5cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{1.5cm}|}
 		\hline
 		~                              & Servicio                                       & Dispositivos Monitores                                     & Localización                                         & Referencias de monitoreo            & Localizacion                                         & Tipo de red                     \\ \hline
-		Atlas Ripe                     & Monitoreo de alcanzabilidad, latencia y DNS    & Probes y anchors (hardware especializado)                  & Distribuidos a nivel mundial                         & Servidores DNS y anchors            & Distribuidos a nivel mundial                         & Peer-to-peer y cliente-servidor \\ 
+		Atlas Ripe \cite{ripe2010ripe}                     & Monitoreo de alcanzabilidad, latencia y DNS    & Probes y anchors (hardware especializado)                  & Distribuidos a nivel mundial                         & Servidores DNS y anchors            & Distribuidos a nivel mundial                         & Peer-to-peer y cliente-servidor \\ 
 		\hline
-		Netradar                       & Monitoreo de calidad de WISPs                  & Dispositivos móbiles                                       & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en Europa, Asia y EEUU                & cliente-servidor                \\ 
+		Netradar \cite{sonntag2013netradar}                       & Monitoreo de calidad de WISPs                  & Dispositivos móbiles                                       & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en Europa, Asia y EEUU                & cliente-servidor                \\ 
 		\hline
-		SpeedTest                      & Evaluacion de latencia y rendimiento           & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
+		SpeedTest \cite{SPEEDTEST}                      & Evaluacion de latencia y rendimiento           & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
 		\hline
-		Guifinet                       & Evaluacion de rendimiento y monitoreo de uso   & Nodos centrales de la red guifi.net                        & Desplegados en la red guifi.net en Barcelona, España & Nodos centrales de la red guifi.net & Desplegados en la red guifi.net en Barcelona, España & Peer-to-peer                    \\ 
+		Guifinet \cite{vega2012topology}                      & Evaluacion de rendimiento y monitoreo de uso   & Nodos centrales de la red guifi.net                        & Desplegados en la red guifi.net en Barcelona, España & Nodos centrales de la red guifi.net & Desplegados en la red guifi.net en Barcelona, España & Peer-to-peer                    \\ 
 		\hline
-		Broadby DSL Report             & Evalauacion de latencia y rendimiento          & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en EEUU                               & cliente-servidor                \\ 
+		Broadby DSL Report \cite{DSLReports}            & Evalauacion de latencia y rendimiento          & Dispositivos web                                           & Cualquier Lugar                                      & Servidores dedicados                & Localizaciones en EEUU                               & cliente-servidor                \\ 
 		\hline
-		Project BISmark                & Monitoreo de calidad de banda ancha en hogares & Enrutadores OpenWRT, raspberry pi y android & Distribuidos a nivel mundial                         & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
+		Project BISmark \cite{sundaresan2014bismark}               & Monitoreo de calidad de banda ancha en hogares & Enrutadores OpenWRT, raspberry pi y android & Distribuidos a nivel mundial                         & Servidores dedicados                & Distribuidos a nivel mundial                         & cliente-servidor                \\ 
 		\hline
-		Pingdom                        & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa y EEUU                      & Servidores web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
+		Pingdom \cite{PINGDOM}                       & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa y EEUU                      & Servidores web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
 		Monitis Visual Traceroute Tool & Evaluacion de alcanzabilidad                   & Servidores dedicados                                       & Localizaciones en Europa, Asia y EEUU                & Dispositivos web                    & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
-		Uptime Robot                   & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa, EEUU y Japón               & Servidores Web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
+		Uptime Robot \cite{UPTIMEROBOT}                  & Monitoreo de servidores web                    & Servidores dedicados                                       & Localizaciones en Europa, EEUU y Japón               & Servidores Web                      & Cualquier Lugar                                      & cliente-servidor                \\ 
 		\hline
-		ICSI Netalyzr                  & Evaluacion de acceso a Internet                & Dispositivos web y android                                 & Cualquier Lugar                                      & Servidores dedicados, DNS y proxies & Desconocido                                          & cliente-servidor                \\
+		ICSI Netalyzr \cite{kreibich2010netalyzr}                 & Evaluacion de acceso a Internet                & Dispositivos web y android                                 & Cualquier Lugar                                      & Servidores dedicados, DNS y proxies & Desconocido                                          & cliente-servidor                \\
 		\hline
 	\end{tabular}
 	\end{flushleft}
@@ -838,7 +840,7 @@ El servidor web es el punto de entrada a la aplicacion, este responde a las peti
 
 La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas, de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice; esto hace posible manejar un mayor numero de usuarios que visiten concurrentemente el sitio, igualmente el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
 
-El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a cada usuario particular que visite el sistema y peticiones de archivos estáticos como css, javascript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar severamente el servidor web en entornos de producción.
+El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a cada usuario particular que visite el sistema y peticiones de archivos estáticos como CSS, JavaScript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar severamente el servidor web en entornos de producción.
 
 Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como proxy entre el front-end y la aplicacion web, hay una gran variedad de servidores web ligeros como ngnix o lighthttpd diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. la aplicacion web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
 
@@ -1090,11 +1092,11 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 \subsection{Diseño de Pantallas}
 
-Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos css y la lógica en archivos javascript para desplegar una pagina web adaptada al dispositivo del usuario.
+Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos CSS y la lógica en archivos JavaScript para desplegar una pagina web adaptada al dispositivo del usuario.
 
 Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama \textit{rendering}.
 
-Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/javascript \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de javascript} bloque para incluir archivos y métodos javascript, los archivos javascript se cargan al final para acelerar la carga de las páginas. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
+Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/JavaScript \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de JavaScript} bloque para incluir archivos y métodos JavaScript. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
 
 A continuación se muestra el diseño de las principales pantallas de la interfaz de usuario del servicio web.
 
@@ -2416,16 +2418,16 @@ Ya que los formularios de las visualizaciones generalmente incluyen los mismos c
 	\caption{Formularios predefinidos}
 \end{table}
 
-Una característica muy poderosa de los formularios es que se les puede "adjuntar" archivos javascript y hojas de estilo, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario, por ejemplo, el formulario de los mapas de calor de RTT permite seleccionar entre periodos de "todo el tiempo", "por año" y "por mes"; si se selecciona "año" se muestra un campo para introducir el año y si se selecciona "mes" se muestra un dropdown para seleccionar el mes. Los archivos css y javascript van dentro del paquete "management" en la carpeta "static/css" y "static/js" respectivamente.
+Una característica muy poderosa de los formularios es que se les puede "adjuntar" archivos JavaScript y hojas de estilo, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario. Por ejemplo, el formulario de los mapas de calor de RTT permite seleccionar entre periodos de "todo el tiempo", "por año" y "por mes"; si se selecciona "año" se muestra un campo para introducir el año y si se selecciona "mes" se muestra un dropdown para seleccionar el mes. Los archivos CSS y JavaScript van dentro del paquete "management" en la carpeta "static/css" y "static/js" respectivamente.
 
-Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina javascript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta json:
+Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina JavaScript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta json:
 \begin{itemize}
 	\item{Si el formulario es válido, el servidor codifica un url de la visualización con los parámetros en formato GET y un "url directo".}
 	\item{Si el formulario es inválido el archivo json contiene un código HTML que luego se incrusta en el tope del formulario e indica los errores de validación.}
-	\item{Si no se recibe respuesta del servidor o el código de estado de la respuesta es distinto de "200 OK", entonces la rutina javascript muestra un mensaje indicando al usuario que ocurrió un problema.}
+	\item{Si no se recibe respuesta del servidor o el código de estado de la respuesta es distinto de "200 OK", entonces la rutina JavaScript muestra un mensaje indicando al usuario que ocurrió un problema.}
 \end{itemize}
 
-Para desplegar las visualizaciones se usa un elemento HTML llamado \textit{iframe}, este elemento se usa para incrustar páginas html dentro de otras a partir de un URL dado, la rutina javascript le pasa al iframe el URL retornado en el archivo json y el iframe a su vez lo solicita al servidor, del lado del servidor el cargador genérico devuelve una visualización en formato HTML.
+Para desplegar las visualizaciones se usa un elemento HTML llamado \textit{iframe}, este elemento se usa para incrustar páginas html dentro de otras a partir de un URL dado, la rutina JavaScript le pasa al iframe el URL retornado en el archivo json y el iframe a su vez lo solicita al servidor, del lado del servidor el cargador genérico devuelve una visualización en formato HTML.
 
 Algunas veces las visualizaciones pueden tardar largos periodos de tiempo en computarse, para ofrecer al usuario retroalimentación es recomendable mostrar algún tipo de animación de carga o indicador de progreso de la operación. Para implementar esta funcionalidad, se muestra una animación de carga inmediatamente después de que el usuario hace click en el botón "PLOT" o "Re-compute", luego es posible aprovechar una señal emitida por el iframe cuando obtiene respuesta del servidor para ocultar esta animación.
 
@@ -2447,7 +2449,7 @@ Se recomienda manejar apropiadamente las excepciones dentro de esta función, en 
 
 \subsubsection{Plantillas genéricas}
 
-Las plantillas son archivos que se usan para introducir el contenido variable de una página web dinámica a través del uso de un micro-lenguaje, el desarrollador tiene la libertad que escribir cualquier código HTML que desee, así como vincular cualquier dependencia como hojas de estilo, imágenes o archivos javascript. Para este trabajo se ha usado principalmente HighCharts y Google Maps, para dibujar la mayoría de las visualizaciones.
+Las plantillas son archivos que se usan para introducir el contenido variable de una página web dinámica a través del uso de un micro-lenguaje, el desarrollador tiene la libertad que escribir cualquier código HTML que desee, así como vincular cualquier dependencia como hojas de estilo, imágenes o archivos JavaScript. Para este trabajo se ha usado principalmente HighCharts y Google Maps, para dibujar la mayoría de las visualizaciones.
 
 El desarrollador debe seguir una serie de pautas al escribir plantillas para visualizaciones, ninguna de ellas es obligatoria pero son recomendables para asegurar que el usuario tenga una experiencia consistente:
 \begin{itemize}
@@ -3865,7 +3867,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 % Para agregar toda la bibliografia del archivo .bib
 % solo descomente el siguiente comando
 % ***************************************************************** %
-\nocite{*}
+%\nocite{*}
 % ***************************************************************** %
 % Nombre del archivo con extensiï¿½n .bib en donde se almacena la bibliografï¿½a
 \bibliography{bib-tesis}
