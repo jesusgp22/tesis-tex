@@ -564,7 +564,7 @@ Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y Java
 
 Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una extensa comunidad de colaboradores y amplia documentación. 
 
-\subsection{Celery}
+\subsection{Celery}\label{sub:celery}
 
 Celery es un sistema de procesamiento de tareas asíncrono, que permite tanto el encolamiento de tareas en tiempo real así como la planificación de tareas para ser ejecutadas mas tarde. Celery en realidad no implementa la mayoría de sus componentes, sino que define un protocolo de comunicación entre una serie de componentes (tambien llamados micro-servicios)\cite{CeleryWebsite}: 
 
@@ -695,8 +695,23 @@ Su arquitectura consta de los siguientes componentes:
 
 \section{Estado del Arte}
 
-A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una variedad de soluciones innovadoras y aplicaciones web que proveen distintos enfoques para el monitoreo y evaluación de redes.
+A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una variedad de soluciones innovadoras y aplicaciones que proveen distintos enfoques para el monitoreo y evaluación de redes. 
 
+La mayoría de los sistemas disponibles a través de aplicaciones web o para dispositivos móviles tales como DSL Reports\cite{DSLReports}, ThinkBroadband\cite{ThinkBroadband}, y SpeedTest\cite{SPEEDTEST}, permiten a usuarios determinar el RTT y rendimiento de su servicio de Internet al hacer pruebas contra uno o mas servidores de medición. Estos servicios ofrecen la ventaja de ser gratuitos, sencillos de usar y no requieren la instalación de software o hardware adicional; sin embargo, solo dan al usuario una idea limitada del estado de su red, ya que los resultados obtenidos dependerán sustancialmente del servidor elegido para realizar la prueba. 
+
+Otras aplicaciones similares ademas de hacer mediciones de latencia y rendimiento, ofrecen algún valor agregado al usuario, por ejemplo, NetRadar\cite{sonntag2013netradar}, está orientado al análisis de calidad de servicio de proveedores de servicio de telefonía e Internet inalámbrico y Netalyzer\cite{Netalyzr} se especializa en la identificación de problemas en la conexión a Internet como presencia de \textit{proxies}, protocolos bloqueados, errores en los DNS, etc.
+
+El enfoque de los sistemas de \textit{benchmarking} nombrados hasta ahora ofrece información útil y es suficiente para la mayoría de los usuarios, sin embargo, se necesita tener una infraestructura costosa, con la capacidad suficiente para atender las pruebas realizadas por todos los usuarios sin que la carga del sistema afecte los resultados de las pruebas negativamente. Los costos de mantener esta infraestructura se justifican por el aprovechamiento de los datos recolectados, ya sea haciéndolos públicos, por motivos de investigaciones o para vender a terceros.
+
+Uno de los proyectos mas ambiciosos en el área del monitoreo de redes es Ripe Atlas\cite{ripe2010ripe}, este intenta obtener un entendimiento profundo del estado de Internet en tiempo real. Para esto, Ripe Atlas hace uso de dispositivos medidores distribuidos en todo el mundo, que conforman una red de mediciones; estos dispositivos realizan mediciones y pruebas regulares entre sí y hacia servidores DNS. Este proyecto depende de la colaboración de los usuarios para alojar y mantener los dispositivos medidores y poner a la orden parte de su ancho de banda; a cambio, los usuarios obtienen créditos que pueden usar para realizar sus propias pruebas aprovechando toda la red de medición.
+
+Project Bismark\cite{sundaresan2014bismark} es un proyecto orientado a la investigación de la calidad de servicio de Internet en hogares. Los usuarios que deseen participar en el proyecto reciben un enrutador con el software de Bismark que analiza el tráfico de la red local y realiza una batería de pruebas de forma regular.  En este caso, el usuario se beneficia obteniendo un mayor entendimiento de los patrones de uso de su red y evaluando el servicio prestado por su proveedor de servicio de Internet; sin embargo, el usuario no tiene control sobre las pruebas realizadas y los recursos utilizados. Por su parte, Project Bismark usa tanto los datos obtenidos por las pruebas regulares como el hardware distribuido para hacer investigaciones.
+
+Por otra parte servicios con modelos de negocios mixtos o de pago como Pingdom\cite{PINGDOM} y UptimeRobot\cite{UPTIMEROBOT} ofrecen un servicio de monitoreo automatizado de la disponibilidad y tiempo de respuesta de servicios web. Estos sistemas funcionan realizando mediciones regulares para determinar el estado del servicio y determinan tiempo de respuesta y eventos relevantes tales como interrupciones de servicio o mensajes de error en las respuestas obtenidas. Estos sistemas son sencillos de usar ya que solo es necesario especificar el URL o dirección IP del servicio a monitorear, sin embargo, las características mas atractivas como alertas automáticas cuando ocurren eventos relevantes o el ajuste de la frecuencia de las mediciones no son gratuitas, la batería de pruebas está limitada al protocolo HTTP y solo es posible monitear un número limitado de \textit{hosts}.
+
+En este trabajo, hacemos énfasis en el control sobre el uso de recursos del monitoreo. El usuario puede configurar la frecuencia y tipos de pruebas que se estarán ejecutando. Ademas, como se trata de una solución DIY, el usuario tiene la libertad de desplegar agentes de monitoreo fácilmente gracias a que usamos una solución de software que puede ser instalada incluso en una amplia gama de dispositivos.
+
+\section{Resumen del Estado del Arte}
 En esta sección resumimos las características de estos sistemas a través de los siguientes parámetros:
 
 \begin{enumerate}
@@ -774,7 +789,7 @@ En esta sección resumimos las características de estos sistemas a través de los 
 
 \chapter{Aplicación Web "Optopus Head"}
 
-El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos principales: (1) La aplicación web "Octopus Head" que funciona como cerebro y coordinador del monitoreo, (2) un conjunto de agentes monitores de red "Tentacle Probe Source" que realizan acciones de monitoreo a partir de las instrucciones de Octopus Head, (3) Nodos a monitorear llamados "Tentacle Probe Destination" y (4) La nube, que ofrece funcionalidades de paso de mensajes y alojamiento de datos compartido entre los distintos entes.
+El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos principales: (1) La aplicación web "Octopus Head" que funciona como coordinador del monitoreo, (2) un conjunto de agentes monitores de red "Tentacle Probe Source" que realizan acciones de monitoreo a partir de las instrucciones de Octopus Head, (3) Nodos a monitorear llamados "Tentacle Probe Destination" y (4) El servicio de almacenamiento en la nube, que ofrece funcionalidades de paso de mensajes y alojamiento de datos compartido entre los distintos entes.
 
 \begin{figure}[h!]
 	\centering
@@ -785,7 +800,7 @@ El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos 
 
 En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicacion web, los tentáculos están conformados por monitores de red Tentacle Probe Sorce, nodos Tentacle Probe Destination, y una cantidad variable de nodos intermedios entre ellos, en otras palabras, los tentáculos conforman los enlaces de interes a a monitorear. Se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
 
-Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir, el conjunto de pruebas específicas planificadas para ejecutarse con el fin de recoger datos relevantes de la red. Es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos; toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene al día sobre los cambios realizados al plan de monitoreo y ejecuta fielmente el plan de monitoreo.
+Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir, el conjunto de pruebas específicas planificadas para ejecutarse con el fin de recoger datos relevantes de la red. Es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos; toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de notificaciones la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene al día sobre los cambios realizados al plan de monitoreo y ejecuta fielmente el plan de monitoreo.
 
 \begin{figure}[h]
 	\centering
@@ -794,7 +809,7 @@ Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir
 	\label{fig:monitor-config}
 \end{figure}
 
-Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, y simplifica el manejo de monitores de red remotos que podrían potencialmente ser abandonados en sitios de difícil acceso; la nube no solo sirve para almacenar datos a bajo costo y a largo plazo, sino que podemos aprovechar sus funcionalidades para mantener cualquier número de monitores actualizados a baja latencia sin necesidad de mantener un servicio de notificaciones propio. 
+Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, y simplifica el manejo de monitores de red remotos que podrían potencialmente ser abandonados en sitios de difícil acceso; la nube no solo sirve para almacenar datos a bajo costo y a largo plazo, sino que podemos aprovechar sus funcionalidades para mantener cualquier número de monitores actualizados de forma tolerante a fallas sin necesidad de mantener un servicio de notificaciones propio.
 
 \begin{figure}[h]
 	\centering
@@ -821,7 +836,7 @@ Para el desarrollo de esta aplicación se usó el Framework de desarrollo web Djan
 	\label{fig:webapp-arch}
 \end{figure}
 
-La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, administrador o quien sea que vea los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de servicio que es ejecutada por el servidor web, este responde a las peticiones de los usuarios, delega tareas a la capa tres y retira y actualiza datos de la capa cuatro, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, cache, datos en la nube, etc.
+La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o capa de presentación se ejecuta en el navegador del cliente monitor, para ver los resultados obtenidos a partir del monitoreo, esta capa se comunica con la capa dos o capa de servicio que es ejecutada por el servidor web, y es responsable de responder a las peticiones de los usuarios del sistema, la capa tres es la encargada de ejecutar tareas largas o computacionalmente intensas así como de planificar e iniciar tareas periódicas, la capa cuatro o capa de datos aloja los datos de la aplicación como usuarios, monitores, planes de monitoreo, historiales, datos recolectados de las redes, reportes, cache, datos en la nube, etc.
 
 
 
@@ -830,20 +845,21 @@ La arquitectura de Octopus Head consiste en cuatro capas, la capa superior o cap
 
 \subsection{Capa 1: Presentación}
 
-La capa de presentación o front-end es la interfaz gráfica que permite la interacción del usuario con el sistema de monitoreo, esta se despliega a través de un navegador en cualquier dispositivo conectado a Internet y su propósito es ofrecer al usuario un flujo de trabajo claro para ingresar al sistema, configurar y manejar monitores TPS, planificar pruebas, observar los resultados obtenidos, entre otros.
+La capa de presentación o front-end es la interfaz gráfica que permite la interacción del usuario con el sistema de monitoreo. Esta capa consiste en los despliegues en navegadores en cualquier dispositivo conectado a Internet y su propósito es ofrecer al usuario una interfaz gráfica para ingresar al sistema, configurar y manejar monitores TPS, planificar pruebas, observar los resultados obtenidos, entre otros.
 
 La capa de presentación puede ser extendida para permitir la implementación de distintos front-ends como aplicaciones nativas para sistemas operativos móviles o de escritorio a través de APIs programáticas. 
 
 \subsection{Capa 2: Servidor Web}
 \label{sub:servidorweb}
 
-El servidor web es el punto de entrada a la aplicacion, este responde a las peticiones realizadas desde el front-end a través del protocolo HTTP, el enfoque del servidor web es manejar tareas ligeras de la forma mas rápida posible y retornar respuestas para ofrecer al usuario baja latencia en su interacción con el sistema. 
+El servidor web es el punto de entrada a la aplicación, éste responde a las peticiones realizadas desde el front-end a través del protocolo HTTP, el enfoque del servidor web es manejar tareas ligeras de la forma mas rápida posible y retornar respuestas para ofrecer al usuario baja latencia en su interacción con el sistema. 
 
-La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas, de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice; esto hace posible manejar un mayor numero de usuarios que visiten concurrentemente el sitio, igualmente el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
+La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas (\ref{sub:procesamiento}), de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice. Esto hace posible manejar un mayor numero de usuarios que visiten concurrentemente el sitio, igualmente el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
 
-El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a cada usuario particular que visite el sistema y peticiones de archivos estáticos como CSS, JavaScript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar severamente el servidor web en entornos de producción.
+El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a los datos específicos que pertenecen a cada usuario particular y peticiones de archivos estáticos como CSS, JavaScript, imágenes o archivos html pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el pipeline de Django (middlewares, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar el servidor web en entornos de producción.
 
-Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como proxy entre el front-end y la aplicacion web, hay una gran variedad de servidores web ligeros como ngnix o lighthttpd diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. la aplicacion web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
+Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como \textit{proxy} entre el front-end y la aplicacion web, hay una gran variedad de servidores web ligeros como Ngnix\footnote{Ngnix http://nginx.org/} o Lighttpd \footnote{Lighttpd https://www.lighttpd.net/} diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. La aplicacion web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
+
 
 \begin{table}[]
 	\centering
@@ -851,40 +867,40 @@ Para manejar eficientemente todo tipo de peticiones, debemos implementar un meca
 	\label{table:routing}
 	\begin{tabular}{l|l}
 		Ruta & Acción            \\ \hline
-		/static/ & static serve      \\
-		/media/  & static serve      \\
-		/        & proxy to web  app
+		/static/ & servicio de archivo estático      \\
+		/media/  & servicio de archivo estático      \\
+		/        & redirección a la aplicacion web.
 	\end{tabular}
 	
 		\caption{Tabla de enrutamiento del servidor web}
 \end{table}
 
-\subsection{Capa 3: Procesamiento asíncrono de tareas}
+\subsection{Capa 3: Procesamiento asíncrono de tareas} \label{sub:procesamiento}
 
-Mantener el servidor web ocupado con tareas largas puede degradar su calidad de servicio y ocupar rápidamente sus recursos disponibles, mas aún muchas veces no es posible dejar al usuario esperando indefinidamente mientras se procesa su petición, por este motivo es menester tener un sistema de procesamiento asíncrono de tareas, de manera que las tareas se puedan mandar a ejecutar en segundo plano y ofrecer una respuesta inmediata al usuario.
+Mantener el servidor web ocupado con tareas largas puede degradar su calidad de servicio y ocupar rápidamente sus recursos disponibles, mas aún muchas veces no es posible dejar al usuario esperando indefinidamente mientras se procesa su petición. Por este motivo es menester tener un sistema de procesamiento asíncrono de tareas, de manera que las tareas se puedan mandar a ejecutar en segundo plano y ofrecer una respuesta inmediata al usuario.
 
-Ya que es imposible conocer de antemano el número de tareas que se van a estar ejecutando concurrentemente necesitamos una manera de encolar las tareas para que puedan ser ejecutadas cuando alguno de los trabajadores se desocupe, de igual forma, para la implementación de sincronizaciones periódicas de los monitores, necesitamos tener un planificador que inicie las tareas según el horario definido.
+Ya que es imposible conocer de antemano el número de tareas que se van a estar ejecutando concurrentemente necesitamos una manera de encolar las tareas para que puedan ser ejecutadas cuando alguno de los trabajadores se desocupe, de igual forma, para la implementación de sincronizaciones periódicas de los monitores, necesitamos tener un planificador que inicie ciertas tareas según el horario definido por los usuarios.
 
 La inmensa mayoría de las peticiones realizadas por los usuarios serán manejadas directamente por el servidor web, las tareas delegadas a este capa son las siguientes:
 \begin{itemize}
-	\item{\textbf{Conexiones con la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse "de largo tiempo de ejecucion" ya que es necesario obtener recursos presentes en Internet.}
-	\item{\textbf{Computo de visualizaciones:} el tiempo y poder de computo necesario para generar visualizaciones depende altamente del tipo de visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando largos periodos de tiempo.}
-	\item{\textbf{Sincronizaciones:} las sincronizaciones combinan varias subtareas altamente costosas: la primera de ellas es descargar los archivos de la nube, esto depende altamente de la cantidad de archivos por descargar y el tamaño de los archivos, la segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos, la tercera es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
+	\item{\textbf{Conexiones con el servicio de almacenamiento en la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse de largo tiempo de ejecucion ya que es necesario obtener recursos presentes en Internet.}
+	\item{\textbf{Computo de visualizaciones:} El tiempo y poder de cómputo necesario para generar visualizaciones depende altamente del tipo de visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar en el orden de las decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando largos periodos de tiempo.}
+	\item{\textbf{Sincronizaciones:} Las sincronizaciones combinan varias subtareas altamente costosas: La primera de ellas es descargar los archivos de la nube, esto depende de la cantidad de archivos por descargar y del tamaño de los archivos. La segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos. La tercera y última es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
 \end{itemize}
 
-El sistema de procesamiento asíncrono de tareas está construido usando Celery, Celery no es solo cada uno de los micro-servicios necesarios para el procesamiento distribuido de las tareas, sino también el protocolo de comunicación entre ellos. Hay que tener en mente que el esquema de Celery \textbf{no incluye ninguna autoridad central} que lleve la cuenta de todos los entes participantes. A continuación se explica cada uno de los micro-servicios y su implementación en el marco de Octopus Head. 
+El sistema de procesamiento asíncrono de tareas está construido usando Celery (\ref{sub:celery}), Celery no es solo cada uno de los micro-servicios necesarios para el procesamiento distribuido de las tareas, sino también el protocolo de comunicación entre ellos. Hay que tener en mente que el esquema de Celery \textbf{no incluye ninguna autoridad central} que lleve la cuenta de todos los entes participantes. A continuación se explica cada uno de los micro-servicios y su implementación en el marco de Octopus Head. 
 
 \subsubsection{Planificador}
 
-El planificador retrasa la ejecucion de tareas según un horario dado, Celery incluye un planificador llamado Celery Beat que se puede configurar fácilmente para usar la base de datos de la aplicacion web a modo de almacén para sus tareas a ejecutar. Celery Beat consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicacion web solo modifica esa tabla y deja que Celery Beat se encargue de inciar las tareas en el momento adecuado.
+El planificador despacha la ejecucion de tareas según un horario dado, Celery incluye un planificador llamado \textit{Beat} que se puede configurar fácilmente para usar la base de datos de la aplicacion web a modo de almacén para sus tareas a ejecutar. \textit{Beat} consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicacion web solo modifica esa tabla y deja que \textit{Beat} se encargue de iniciar las tareas en el momento adecuado.
 
-Celery Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
+\textit{Beat} no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
 
 \subsubsection{Broker de Mensajería}
 
-El broker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando tareas urgentes rápidamente al tope la cola. 
+El broker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo, sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas\cite{Octopus2015}. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando tareas urgentes rápidamente al tope la cola. 
 
-Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes al buzón del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, las sincronizaciones planificadas por otra parte pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable.
+Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes al buzón del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, las sincronizaciones planificadas por otra parte pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable\cite{nielsen1994usability}.
 
 Existen distintos sistemas que pueden hacer el papel de broker de mensajería, algunas opciones populares incluyen RabbitMQ, un sistema de mensajería robusto y persistente, Redis del que se habló en la Sección \ref{sub:redis} o algún SMBD, la elección del message broker debe depender de volumen de tareas que se va a manejar, el uso de base de datos puede ser aceptable cuando se maneja una cantidad reducida de tareas, pero sistemas más rápidos como RabbitMQ y Redis son preferibles en entornos de producción.
 
@@ -894,11 +910,13 @@ Los trabajadores son los encargados de ejecutar las tareas encoladas, estos se s
 
 Tener múltiples trabajadores permite tener un gran control sobre los recursos computacionales usados por el sistema, es posible instanciar nuevos trabajadores ejecutándose en distintas maquinas físicas durante los momentos de alta carga del sistema, y liberar estos recursos cuando no se estén usando, esto hace posible manejar una escala variable y minimiza los costos de operación.
 
-Ya que los trabajadores se pueden estar ejecutando en múltiples máquinas físicas es necesario tener alguna manera de controlarlos remotamente, para esto, los trabajadores se subscriben a una cola de 'broadcasting' de alta prioridad en la que se pueden dirigir comandos a todos o a un grupo específico de trabajadores. Existe un conjunto de comandos predefinidos para realizar acciones básicas como revocar tareas, apagar trabajadores o hacer "ping", sin embargo, también es posible implementar nuevos comandos, por ejemplo sería posible implementar un comando para que los trabajadores puedan actualizar su propio código y reiniciar, de este modo podrían aceptar nuevas tareas implementadas.
+Ya que los trabajadores se pueden estar ejecutando en múltiples máquinas físicas es necesario tener alguna manera de controlarlos remotamente, para esto, los trabajadores se subscriben a una cola de 'broadcasting' de alta prioridad en la que se pueden dirigir comandos a todos o a un grupo específico de trabajadores. Existe un conjunto de comandos predefinidos para realizar acciones básicas como revocar tareas, apagar trabajadores o revisar su estado. Es posible implementar nuevos comandos para los trabajadores, por ejemplo, sería posible implementar un comando para que los trabajadores puedan actualizar su propio código y reiniciar, de este modo podrían aceptar nuevas tareas implementadas\cite{Octopus2015}.
 
 \subsubsection{Backend de Resultados}
 
-Ya que Celery es un sistema distribuido sin una autoridad central que conozca el estado de todo el sistema, es necesario tener algún micro-servicio donde los distintos entes puedan publicar y consultar el estado de las tareas y su valor de retorno. Tener un backend de resultados permite hacer seguimiento del estado de las tareas e implementar mecanismos como barras de carga que indiquen el progreso de alguna tarea particularmente costosa, es posible crear estados personalizados para estos fines, los estados incorporados por omisión en el sistema se pueden ver en la Tabla \ref{table:task-states}
+Puesto que Celery es un sistema distribuido sin una autoridad central que conozca el estado de todo el sistema, es necesario tener algún micro-servicio donde los distintos entes puedan consultar el estado de una tarea. El \textit{backend} de resultados puede ser visto como un espacio de memoria compartido donde se guarda el estado y valor de retorno de las tareas que están siendo o fueron ejecutadas por el sistema. El valor de retorno de las tareas se guarda durante un periodo de tiempo y luego se desecha para evitar que el uso de memoria crezca indefinidamente. En este trabajo hemos elegido Redis (\ref{sub:redis}) como \textit{backend} de resultados.
+
+El backend de resultados no solo permite obtener el valor de retorno de una tarea, también hace posible hacer seguimiento del estado de las tareas e implementar mecanismos que indiquen el progreso de alguna tarea particularmente costosa. Los estados predefinidos se pueden ver en la Tabla \ref{table:task-states}, sin embargo, es posible definir cualquier estado que sea necesario.
 
 \begin{table}[h]
 	\centering
@@ -907,7 +925,7 @@ Ya que Celery es un sistema distribuido sin una autoridad central que conozca el
 	\begin{tabular}{l|l|l}
 		Estado  & Descripcion                            & Metadata                      \\ \hline
 		PENDING & La tarea está esperando  ser ejecutada & -                             \\
-		STARTED & La tarea ha sido iniciada              & pid y hostname del trabajador \\
+		STARTED & La tarea ha sido iniciada              & \textit{pid} y \textit{hostname} del trabajador \\
 		SUCESS  & La tarea se ejecuto con exito          & valor de retorno de la tarea  \\
 		FAILURE & La tarea no se ejecuto con exito       & traza de la exepcion          \\
 		RETRY   & Se está reintando ejecutar la tarea    & traza de la última excepcion  \\
@@ -915,8 +933,6 @@ Ya que Celery es un sistema distribuido sin una autoridad central que conozca el
 	\end{tabular}
 	\caption{Estados de las tareas}
 \end{table}
-
-Para este sistema hemos elegido Redis como backend, ya que guarda el estado de las tares en memoria ofreciendo consultas rápidas y poco costosas a costo, el comportamiento por defecto del backend es poner un tiempo de vencimiento a sus registros, pasado el cual son eliminados y no pueden volver a ser consultados.
 
 \subsection{Capa 4: Datos}
 
