@@ -595,7 +595,7 @@ SQL por sus siglas en ingles "Structured Query Language" (lenguaje de consulta e
 
 Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus siglas en ingles) de codigo abierto bajo la licencia GPL (GNU General Public License). Mysql se caracteriza por ser rápido, confiable, escalable y fácil de usar, es posible instalar Mysql tanto en una maquina junto a otras aplicaciones como servidores web o también instarlo en maquinas dedicadas para que use todo el poder de cómputo disponible. Mysql posee características para ejecutarse en clusters de maquinas junto con un motor de replicacion para obtener una alta escalabilidad \cite{MysqlDev}.
 
-\subsubsection{Mapeo Objeto-Relacional}
+\subsubsection{Mapeo Objeto-Relacional} \label{sub:orm}
 
 El Mapeo Objeto-Relacional (ORM por sus siglas en ingles) es un método para interactuar con bases de datos relaciones desde el paradigma de la programación orientada a objetos, de esta manera es posible aprovechar conceptos como herencia y polimorfismo.
 
@@ -940,56 +940,58 @@ La capa de datos incluye todos los sistemas encargados de almacenar o alojar dat
 
 \subsubsection{Base de Datos}
 
-La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parámetros de conexión a Dropbox, y sirve como backend del Framework de Integración de Pruebas del que se hablará en el Capitulo \ref{cap:framework}.
+La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parámetros de conexión a Dropbox, y detalles de las pruebas implementadas en el Framework de Integración de Pruebas del que se hablará en el Capitulo \ref{cap:framework}.
 
-El diseño de la base de datos es uno de los pilares fundamentales del diseño del sistema, el correcto diseño e indexación de las tablas de la base de datos tiene repercusiones importantes en la escalabilidad y tiempo de respuesta del sistema, el diseño de la base de datos se explica a fondo en la Sección \ref{sub:basededatos}
+El diseño de la base de datos es uno de los pilares fundamentales del diseño del sistema, el correcto diseño e indización de las tablas de la base de datos tiene repercusiones importantes en la escalabilidad y tiempo de respuesta del sistema, el diseño de la base de datos se explica a fondo en la Sección \ref{sub:basededatos}
 
 \subsubsection{Caché de archivos}
 
 El caché de archivos es un almacén de archivos con el objetivo principal de almacenar visualizaciones pre-computadas y así evitar la repetición de procesamiento ya realizado y reducir los tiempos de espera del usuario.
 
-Los archivos se guardan en distintos directorios dependiendo del tipo de visualización, cada visualización tiene un código hash asociado que se genera a partir de sus parámetros, por lo tanto el acceso a los archivos en el caché es directo, la velocidad de búsqueda en el caché depende de la implementación del sistema de archivos (por ejemplo ext3, ext4, XFS), los sistemas de archivos modernos pueden manejar cientos de miles de archivos en el mismo directorio sin ningún problema de rendimiento. Usar un caché de archivos ciertamente es mas lento que usar un caché en memoria pero es capaz de almacenar una cantidad mucho mayor de datos a un menor costo. 
+Los archivos se guardan en distintos directorios dependiendo del tipo de visualización, cada visualización tiene un código hash asociado que se genera a partir de sus parámetros, por lo tanto el acceso a los archivos en el caché es directo. La velocidad de búsqueda en el caché depende de la implementación del sistema de archivos (por ejemplo ext3, ext4, XFS), los sistemas de archivos modernos pueden manejar cientos de miles de archivos en el mismo directorio sin ningún problema de rendimiento. Usar un caché de archivos ciertamente es mas lento que usar un caché en memoria, pero el caché de archivos es capaz de almacenar una cantidad mucho mayor de datos a un menor costo. 
 
-\subsubsection{Alojamiento en la nube}
+\subsubsection{Almacenamiento en la nube}
 
-El alojamiento en la nube sirve como intermediario entre la aplicacion web OH y los monitores remotos TPS, la nube ofrece muchas ventajas con respecto a la escalabilidad y facilidad de implementación del sistema. Usamos el alojamiento en la nube para guardar los archivos de trazas generados por los monitores en las redes remotas y también a modo de "buzón" para enviar mensajes a los monitores remotos. 
+El almacenamiento en la nube sirve como intermediario entre la aplicacion web OH y los monitores remotos TPS, la nube ofrece muchas ventajas con respecto a la escalabilidad y facilidad de implementación del sistema. Usamos el almacenamiento en la nube para guardar los archivos de trazas generados por los monitores en las redes remotas y también a modo de "buzón" para enviar mensajes a los monitores remotos. 
 
 \subsection{Diseño de la base de datos} \label{sub:basededatos}
 
-La base de datos de Octopus Head esencialmente modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), los resultados obtenidos para cada enlace (o monitor) de cada una de sus pruebas, las pruebas y sus parámetros, el historial de cambios en el plan de monitoreo, entre otros. Ya que Django usa un ORM para manejar la base de datos, desde el punto de vista de la aplicación cada entidad es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos, como herencia de clases, clases abstractas implementación de métodos específicos a un modelo y sobrecarga de métodos de los padres, a continuación se describen las entidades que se desea modelar:
+La base de datos de Octopus Head modela un conjunto de monitores junto con sus enlaces monitoreados (tentáculos), asi como los resultados obtenidos para cada enlace (o monitor) de cada una de sus pruebas. De igual manera modela las pruebas y sus parámetros y el historial de cambios en el plan de monitoreo. Puesto que Django usa un ORM (\ref{sub:orm}) para manejar la base de datos, desde el punto de vista de la aplicación web, cada modelo de la base de datos es una clase por lo que es posible aprovechar todas las características de la programación orientada a objetos: herencia de clases, clases abstractas, implementación de métodos específicos a un modelo, y sobrecarga de métodos de los padres.
 
-Cada usuario registrado del sistema está representado por el modelo "User" que viene incluido como parte del framework web, este guarda la información mínima necesaria para autenticar al usuario, así como sus grupos y permisos, un usuario autenticado puede estar en uno o mas grupos y puede tener uno o mas permisos, por defecto se tienen tres tipos de usuarios: el usuario normal, el usuario "staff" que puede ingresar la panel de administración del sistema y el superusuario, el superusuario tiene todos los privilegios de lectura y escritura de la base de datos, por lo tanto puede manejar otros usuarios (agregando grupos, permisos, cambiando el tipo de otros usuarios, etc) y hacer cambios a cualquier otra tabla del sistema.
+A continuación se describen los modelos que forman parte de la base de datos:
 
-Los usuarios finales del sistema (es decir aquellos que no son staff o superuser) tienen un modelo adicional llamado "UserProfile" (perfil de usuario), para implementar esta funcionalidad podría parecer conveniente sencillamente extender el modelo "User" sin embargo esto interfiere con el mecanismo de autenticación (que no espera que exista otra tabla de usuarios) de modo que implementar una relación uno-a-uno entre el modelo "UserProfile" y el modelo "User" es preferido. El perfil de usuario aloja los detalles adicionales del usuario monitor como credenciales de Dropbox y códigos de confirmación.
+Cada usuario registrado del sistema está representado por el modelo \textit{User}, este guarda la información necesaria para autenticar al usuario, así como sus grupos y permisos, un usuario autenticado puede estar en uno o mas grupos y puede tener uno o mas permisos. Se tienen dos tipos de usuarios: el usuario monitor, que puede ingresar al sistema, manejar sus TPS y observar resultados, y el superusuario que tiene todos los privilegios de lectura y escritura sobre las entidades de la base de datos.
 
-El modelo central de la base de datos es el monitor, que representa un Tentacle Probe Source haciendo pruebas en una red remota. Cada usuario posee uno o mas monitores, el monitor está compuesto por un número de enlaces monitoreados y un plan de monitoreo así como su horario de sincronización y sus detalles específicos como zona horaria, posición geográfica, dirección ip entre otros. 
+Los usuarios monitor tienen un modelo adicional llamado \textit{UserProfile} (perfil de usuario) con una relación uno-a-uno con el modelo \textit{User} es preferido. El perfil de usuario aloja los detalles adicionales del usuario monitor como credenciales de Dropbox y códigos de confirmación.
 
-Los enlaces monitoreados son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada uno de ellos consiste de un Tentacle Probe Source (el monitor) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos (como enrutadores, proxys, etc), para representar esto usamos el modelo "Link" que guarda el ip del Tentacle Probe Source y otros detalles como posición geográfica, nombre y descripción.
+El modelo \textit{Monitor} representa un Tentacle Probe Source. Cada usuario puede tener uno o mas TPS, y a su vez, cada TPS tiene un número de enlaces monitoreados, un plan de monitoreo así como un horario de sincronización y sus detalles específicos como zona horaria, posición geográfica y dirección IP.
 
-Las pruebas son procedimientos que el usuario puede planificar para que sus monitores ejecuten según una planificación dada, es a esto a lo que llamamos el 'plan de monitoreo', una prueba consiste en cualquier código python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada, desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables, estos son usados para construir un formulario que permite al usuario editar el plan de monitoreo.
+Los enlaces monitoreados son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada uno de ellos consiste de un Tentacle Probe Source (modelo \textit{Monitor}) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos (como enrutadores, proxys, etc), para representar esto usamos el modelo \textit{Link} que guarda el IP del Tentacle Probe Destination y otros detalles como posición geográfica, nombre y descripción.
 
-Los resultados de las pruebas también llamados trazas se guardan según las características especificas de cada prueba, no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas, sin embargo las pruebas implementadas hasta ahora tienen en común un timestamp (el tiempo de ejecucion de la prueba) y el enlace relacionado a la prueba, sin embargo sería posible guardar trazas que no estén relacionadas a ningún enlace (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS)
+Las pruebas son procedimientos que el usuario puede planificar para que sus TPS ejecuten según una planificación dada, es a esto a lo que llamamos el \textquoteleft plan de monitoreo\textquoteright. Una prueba consiste en cualquier código python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada. Desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables, estos son usados para construir un formulario que permite al usuario editar el plan de monitoreo.
 
-"MonitorTest" es un modelo intermedio que representa una prueba planificada para un monitor y sus parámetros, en otras palabras el conjunto de "MonitorTest" para un monitor conforman el plan de monitoreo, este modelo aloja el tiempo inicial de ejecucion de una prueba, el tiempo final, intervalo entre pruebas, y su estado (activa o inactiva). 
+Los resultados de las pruebas (también llamados trazas), se guardan según las características especificas de cada prueba y no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas. Sin embargo, las pruebas implementadas hasta ahora tienen en común una marca de tiempo y el enlace relacionado a la prueba. Adicionalmente, sería posible guardar trazas que no estén relacionadas a ningún enlace (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS).
 
-Ya que el usuario tiene la libertad de modificar el plan de ejecucion en cualquier momento dado, se guarda un historial de los cambios hechos a los "MonitorTest" en una tabla a modo de historial, de esta manera es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecucion en algún momento especifico. 
+El modelo \textit{MonitorTest} relaciona los TPS con las pruebas a ejecutar. Este modo contiene una referencia al TPS que ejecutará, el tipo de prueba, la lista de parámetros, el tiempo inicial y final, el intervalo entre pruebas (si lo hay) y el estado (activa o inactiva). En otras palabras el conjunto de \textit{MonitorTest} para un TPS conforman su plan de monitoreo.
 
-A los distintos métodos de análisis y visualización los datos que permiten al usuario explorar y obtener información relevante a partir de ellos, las llamamos visualizaciones, computar visualizaciones consiste en retirar los datos seleccionados de la base de datos, pasar estos datos por algún algoritmo de análisis y prepararlos para ser desplegados en alguna forma elegida por el usuario, como mapas de calor, gráficas de barras, mapas, etc.
+Ya que el usuario tiene la libertad de modificar el plan de ejecucion en cualquier momento, se guarda un historial de los cambios hechos a las instancias del modelo \textit{MonitorTest}, para esto usamos el modelo \textit{MonitorTestHistory}. De esta manera, es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecucion. 
 
-Las sincronizaciones consisten en recoger los datos dejados por los monitores remotos en la nube y insertarlos a la base de datos, generalmente haciendo algún pre-procesamiento o parsing, se guarda un historial de sincronizaciones no sólo como forma de informar al usuario de la cantidad de archivos recolectados y si ocurrieron errores, el mecanismo de sincronización depende un cursor que indica al sistema cuales son los archivos nuevos o modificados que deben ser insertados, el mecanismo de sincronización se explicará a fondo en la Sección \ref{sub:Recolector}. 
+El objetivo de recoger datos a través de pruebas es poder hacer análisis sobre esos datos para obtener información relevante y sacar conclusiones. El modelo \textit{Visualization} representa cualquier tipo de visualización de resultados, tales como mapas de calor, gráficas de barras, mapas geográficos de la red, etc.
 
-Como se vió en la figura \ref{fig:webapp-arch} el planificador depende de la base de datos para determinar el horario de sincronizaciones, por lo que es necesario un modelo para guardar el horario de sincronizaciones, ya sea este por intervalos o a una hora especifica del día. 
+Las sincronizaciones consisten en recoger los datos dejados por los monitores remotos en la nube e insertarlos a la base de datos, generalmente haciendo algún pre-procesamiento o \textit{parsing}, se guarda un historial de sincronizaciones no sólo como forma de informar al usuario de la cantidad de archivos recolectados y si ocurrieron errores, el mecanismo de sincronización depende de un cursor que indica al sistema cuales son los archivos nuevos o modificados que deben ser insertados, el mecanismo de sincronización se explicará a fondo en la Sección \ref{sub:Recolector}. 
 
-Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos enlaces, o incluso de distintos monitores y ademas compartirlas con usuarios no autenticados haciendo los resultados públicos.
+Como se vió en la figura \ref{fig:webapp-arch} el planificador depende de la base de datos para determinar el horario de sincronizaciones, por lo que es necesario un modelo para guardar el horario de sincronizaciones de cada TPS, ya sea este por intervalos con el modelo \textit{IntervaSchedule} o a una hora especifica del día con el modelo \textit{CustomSchedule}.
+
+Los reportes son una forma de mostrar y compartir conjuntos de visualizaciones en una sola vista, de esta manera es posible hacer comparaciones de gráficas de distintos enlaces, o incluso de distintos monitores y además compartirlas con usuarios no autenticados haciendo los resultados públicos.
 
 \subsubsection{Diagrama de entidad-relación}
 
-La figura \ref{fig:basicl} muestra las entidades primordiales de la base de datos: usuarios, monitores, enlaces y resultados de las pruebas implementadas.
+La figura \ref{fig:basicl} muestra algunas de las entidades principales de la base de datos: usuarios, monitores, enlaces y resultados de las pruebas implementadas.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{img/basicl}
-\caption{Entidades primordiales de la base de datos}
+\caption{Entidades principales de la base de datos}
 \label{fig:basicl}
 \end{figure}
 
@@ -1048,8 +1050,8 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\hline
 			\textbf{\textit{Monitor}} &
 			 \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Source como dirección ip, posición geográfica y zona horaria.}\\
-			\textbf{\textit{Link}} & \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Destination como dirección ip, posición geográfica y si está activo para el monitoreo.}\\
-			\textbf{\textit{TracePing}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de ping como marca de tiempo, rtt y TPD relacionado.}\\
+			\textbf{\textit{Link}} & \multicolumn{2}{p{10cm}}{Almacena detalles del Tentacle Probe Destination como dirección IP, posición geográfica y si está activo para el monitoreo.}\\
+			\textbf{\textit{TracePing}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de ping como marca de tiempo, RTT y TPD relacionado.}\\
 			\textbf{\textit{TraceHttping}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de httping como marca de tiempo, tiempo de respuesta, código de estado y TPD relacionado.}\\
 			\textbf{\textit{TraceTraceroute}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de traceroute como marca de tiempo, número de saltos, alcanzabilidad y TPD relacionado.}\\
 			\textbf{\textit{TraceIperf}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una prueba de iperf como marca de tiempo, dirección del flujo, rendimiento obtenido en bytes por segundo y TPD relacionado.}\\
@@ -1068,7 +1070,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\textbf{\textit{Nombre de la entidad}} & \multicolumn{2}{l}{\textbf{Función}}\\
 			\hline
 			\textbf{\textit{Syncronization}} & \multicolumn{2}{p{10cm}}{Almacena el resultado de una planificación y algunos detalles como número de archivos recolectados y número de errores.}\\
-			\textbf{\textit{DropboxCursor}} & \multicolumn{2}{p{10cm}}{Almacena un cursor obtenido de la última sincronizacion de un monitor.}\\
+			\textbf{\textit{DropboxCursor}} & \multicolumn{2}{p{10cm}}{Almacena un cursor(\ref{sub;Recolector}) obtenido de la última sincronizacion de un monitor.}\\
 			\textbf{\textit{IntervalSchedule}} & \multicolumn{2}{p{10cm}}{Almacena el intervalo entre sincronizaciones de un monitor.}\\
 			\textbf{\textit{CustomSchedule}} & \multicolumn{2}{p{10cm}}{Almacena la hora de y los días de la semana en que debe sincronizarse un monitor.}\\
 		\end{tabular}
@@ -1092,11 +1094,11 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 \begin{itemize}
 	\item{\textbf{users - userprofiles (1-1)}: Un usuario solo puede tener un perfil de usuario.}
-	\item{\textbf{users - monitors (n-1):} Un usuario puede ser dueño de cero o mas monitores, pero un monitor solo puede tener un dueño.}
-	\item{\textbf{monitors - links (n-1):} Un monitor puede tener cero o mas tentacles, pero un tentacle solo puede estar en un monitor.}
+	\item{\textbf{users - monitors (n-1):} Un usuario puede ser dueño de uno o mas monitores, pero un monitor solo puede tener un dueño.}
+	\item{\textbf{monitors - links (n-1):} Un monitor puede tener uno o mas tentacles, pero un tentacle solo puede estar en un monitor.}
 	\item{\textbf{links - traces (n-1):} Un enlace puede tener cero o mas trazas relacionadas, pero una traza solo puede estar relacionada a un enlace.}
 	\item{\textbf{test - parameter (n-1):} Una prueba puede tener uno o mas parámetros, pero un parámetro solo puede ser parte de una prueba.}
-	\item{\textbf{test - monitor (n-n):} Una prueba puede ser planificada cero o mas veces en cero o mas monitores.}
+	\item{\textbf{test - monitor (n-n):} Una prueba puede ser planificada una o mas veces en uno o mas monitores.}
 	\item{\textbf{monitortest - monitortesthistory (n-1):} Una instancia de monitortest puede tener una o mas entradas en el historial, pero una entrada en el historial solo se refiere a un monitortest.}
 	\item{\textbf{monitor - synchronization(n-1):} Un monitor puede ser sincronizado cero o mas veces pero una sincronizacion solo puede estar relacionada a un monitor.}
 	\item{\textbf{synchronization - dropboxcursor (n-1):} Una sincronizacion puede tener uno o mas cursores, pero un cursor solo pertenece a una sincronizacion.}
@@ -1111,9 +1113,9 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos CSS y la lógica en archivos JavaScript para desplegar una pagina web adaptada al dispositivo del usuario.
 
-Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas se le llama \textit{rendering}.
+Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Se le llama \textit{rendering} al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas.
 
-Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas", los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/JavaScript \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina \textbf{(5) bloque de JavaScript} bloque para incluir archivos y métodos JavaScript. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
+Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo html, la cabecera y define bloques que pueden ser sobreescritos por las plantillas "hijas". Los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina, \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/JavaScript, \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento, \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina, \textbf{(5) bloque de JavaScript} bloque para incluir archivos y métodos JavaScript. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el submenú del monitor.
 
 A continuación se muestra el diseño de las principales pantallas de la interfaz de usuario del servicio web.
 
@@ -1122,27 +1124,27 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{img/1-landing-page}
+\includegraphics[width=0.9\linewidth]{img/1-landing-page}
 \caption{Pantalla Inicial del sistema}
 \label{fig:1-landing-page}
 \end{figure}
 
 	
-	\item{\textbf{Pantalla de registro de usuario,} en esta pantalla un usuario que desee utilizar el sistema de monitoreo introduce su nombre de usuario, contraseña y correo electrónico para registrarse}
+	\item{\textbf{Pantalla de registro de usuario,} en esta pantalla un usuario que desee utilizar el sistema de monitoreo introduce su nombre de usuario, contraseña y correo electrónico para registrarse.}
 	
 	\item{\textbf{Pantalla de inicio de sesión,} en esta pantalla un usuario autenticado puede introducir su nombre de usuario y contraseña para iniciar sesión, también se incluyen enlaces para recuperar contraseña o crear una nueva cuenta en caso de no tener una.}
 	
-	\item{\textbf{Pantalla "Home",} esta es la pantalla de bienvenida al sistema para un usuario autenticado, esta muestra algunas estadísticas rápidas del uso del sistema (como número de monitores, tentáculos, pruebas, sincronizaciones ejecutada, etc), así como enlaces a las principales subsecciones de cada monitor. Todas las pantallas a partir de ahora comparten un menú de navegación superior con enlaces al home, y funcionalidades para ver el perfil de usuario y hacer logout y un menú de navegación lateral con enlaces a las principales secciones del sistema}
+	\item{\textbf{Pantalla "Home",} esta es la pantalla de bienvenida al sistema para un usuario autenticado, esta muestra algunas estadísticas rápidas del uso del sistema (como número de monitores, tentáculos, pruebas, sincronizaciones ejecutada, etc), así como enlaces a las principales subsecciones de cada monitor. Todas las pantallas a partir de ahora comparten un menú de navegación superior con enlaces al home, y funcionalidades para ver el perfil de usuario y hacer logout y un menú de navegación lateral con enlaces a las principales secciones del sistema.}
 	
 	\item{\textbf{Pantalla de selección de monitores,} esta pantalla muestra los monitores del usuario y le permite seleccionar alguno de ellos para dirigirlo a la pantalla del monitor, ademas incluye un botón para crear nuevos monitores.}
 	
 	\item{\textbf{Pantalla de creación de monitores,} en esta pantalla se introducen del detalles del monitor a crear como nombre, descripción, dirección ip, sistema operativo del dispositivo host y zona horaria del monitor, todas las pantallas.}
 	
-	\item{\textbf{Pantalla del monitor,} esta es la pantalla principal del monitor donde se muestran los detalles del monitor, un mapa de la red mostrando la localizacion de los distintos dispositivos de red (TPS y TPS) generado a partir de la información suministrada por el usuario y una lista de verificación para ayudar al usuario a seguir los pasos para monitorear una red. Todas las vistas relacionadas a un monitor específico despliegan un submenú de navegación para visitar las distintas subsecciones de manejo del monitor como tentáculos, resultados y sincronizaciones.}
+	\item{\textbf{Pantalla del monitor,} esta es la pantalla principal del monitor donde se muestran los detalles del monitor, un mapa de la red mostrando la localizacion de los distintos dispositivos de red (TPS y TPD) generado a partir de la información suministrada por el usuario y una lista de verificación para ayudar al usuario a seguir los pasos para monitorear una red. Todas las vistas relacionadas a un monitor específico despliegan un submenú de navegación para visitar las distintas subsecciones de manejo del monitor como tentáculos, resultados y sincronizaciones.}
 	
 	\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{img/3-monitor}
+\includegraphics[width=0.9\linewidth]{img/3-monitor}
 \caption{Pantalla del monitor}
 \label{fig:3-monitor}
 \end{figure}
@@ -1150,23 +1152,23 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\item{\textbf{Pantalla de tentáculos,} esta pantalla muestra los detalles de los distintos tentáculos de un monitor, y incluye enlaces para registrar nuevos tentáculos y editar los detalles de los existentes.}
 	
-	\item{\textbf{Pantalla de Plan de monitoreo,} esta pantalla permite ver el plan de monitoreo por tipo de prueba, incluye enlaces para editar pruebas planificadas y para planificar nuevas pruebas ya sean periodicas o de una sola vez. En caso de que hayan muchas pruebas planificadas separa el contenido en páginas numeradas}
+	\item{\textbf{Pantalla de Plan de monitoreo,} esta pantalla permite ver el plan de monitoreo por tipo de prueba, incluye enlaces para editar pruebas planificadas y para planificar nuevas pruebas ya sean periodicas o de una sola vez. En caso de que hayan muchas pruebas planificadas separa el contenido en páginas numeradas.}
 	
 	\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{img/4-plan}
+\includegraphics[width=0.9\linewidth]{img/4-plan}
 \caption{Pantalla de Plan de monitoreo}
 \label{fig:4-plan}
 \end{figure}
 
 	
-	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecucion de la prueba}
+	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecucion de la prueba.}
 	
-	\item{\textbf{Pantalla de detalles de la prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario editable, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los periodos en que estuvo inactiva y sus distintos parámetros en periodos de inactividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
+	\item{\textbf{Pantalla de detalles de la prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario editable, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los períodos en que estuvo inactiva y sus distintos parámetros en períodos de actividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
 	
 	\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{img/4-testview}
+\includegraphics[width=0.9\linewidth]{img/4-testview}
 \caption{Pantalla de detalles de la prueba}
 \label{fig:4-testview}
 \end{figure}
@@ -1174,41 +1176,29 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\item{\textbf{Pantalla de resultados,} esta pantalla muestra todas las visualizaciones disponibles para un monitor (a partir de las pruebas activas o planificadas en algún momento) y una barra de búsqueda para filtrar los resultados.}
 	
-	\item{\textbf{Pantalla de visualización de resultados,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido}
+	\item{\textbf{Pantalla de visualización de resultados,} esta pantalla muestra un formulario para introducir los datos a visualizar y una barra de herramientas, con opciones para re-computar la visualizaciones, obtener enlaces directos para compartir o agregar la visualización a un reporte dado. Esta pantalla muestra un animación de carga para indicar que una gráfica se está computando o retirando del servidor y mensajes de error en caso de que el servicio no esté disponible o un problema haya aparecido.}
 	
 	\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{img/4-result}
+\includegraphics[width=0.9\linewidth]{img/4-result}
 \caption{Pantalla de visualización de resultados}
 \label{fig:4-result}
 \end{figure}
 
 	
-	\item{\textbf{Pantalla de sincronizaciones,} esta pantalla muestra el tiempo desde la última sincronizacion y el tiempo  para la próxima así como un botón para forzar una sincronizacion inmediata, también muestra un formulario para definir el horario de sincronizacion y en un panel lateral muestra el historial de sincronizaciones, este ofrece información sobre la cantidad de archivos recolectados y el numero de errores encontrados durante las últimas sincronizaciones}
+	\item{\textbf{Pantalla de sincronizaciones,} esta pantalla muestra el tiempo desde la última sincronización y el tiempo  para la próxima así como un botón para forzar una sincronización inmediata, también muestra un formulario para definir el horario de sincronización y en un panel lateral muestra el historial de sincronizaciones, este ofrece información sobre la cantidad de archivos recolectados y el numero de errores encontrados.}
 	
 	\item{\textbf{Pantalla de reportes,} esta pantalla muestra una tabla de los reportes del usuario con enlaces para ver cada uno de ellos y su última fecha de modificación así como un botón para ir al formulario de creación de reportes}
 	
-	\item{\textbf{Pantalla de visualización y edición de reporte,} esta pantalla puede desplegarse de distintas maneras según el usuario que la observe, si se trata del usuario al que pertenece el reporte entonces este verá una barra de herramientas para agregar visualizaciones al reporte, cambiar la privacidad del reporte (publico o privado) o editar y borrar, del mismo modo podrá editar los comentarios de cada una de las visualizaciones o quitarlas del reporte. Un usuario que no sea dueño del reporte solo podrá leer su contenido y observar las visualizaciones}
-	
-	\begin{figure}[h!]
-\centering
-\includegraphics[width=0.7\linewidth]{img/6-report}
-\caption{Pantalla de visualización y edición de reporte}
-\label{fig:6-report}
-\end{figure}
+	\item{\textbf{Pantalla de visualización y edición de reporte,} esta pantalla puede desplegarse de distintas maneras según el usuario que la observe, si se trata del usuario al que pertenece el reporte entonces este verá una barra de herramientas para agregar visualizaciones al reporte, cambiar la privacidad del reporte (publico o privado) o editar y borrar, del mismo modo podrá editar los comentarios de cada una de las visualizaciones o quitarlas del reporte. Un usuario que no sea dueño del reporte solo podrá leer su contenido y observar las visualizaciones.}
 
-	
-	\item{\textbf{Pantalla de cuenta del usuario,} esta pantalla muestra los detalles de la cuenta del usuario, así como enlaces para cambiar la contraseña y renovar el token de acceso a dropbox en caso de que en algún momento este haya sido revocado}
-	
-	\item{\textbf{Pantalla de descargas,} en esta pantalla se muestra una lista de las descargas disponibles, como distintas versiones del montitor de red o publicaciones relacionadas}
-	
-	\item{\textbf{Pantalla de ayuda,} esta pantalla muestra tópicos de ayuda al usuario como conceptos básicas, manual de instalación básico, especificaciones de las pruebas, etc.}
+	\item{\textbf{Pantalla de cuenta del usuario,} esta pantalla muestra los detalles de la cuenta del usuario, así como enlaces para cambiar la contraseña y renovar el token de acceso a dropbox en caso de que en algún momento este haya sido revocado.}
 	
 \end{itemize}
 
 \subsection{Diseño de URLs}
 
-Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseñar URLs que apunten a cada una de las vistas de forma ordenada y lógica, para esto, se ha usado una convención en la que la unidad principal de operación es una colección de objetos, como monitores, o reportes, a continuación se muestran ejemplos de las reglas usadas para diseñar los URLs:
+Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseñar URLs que apunten a cada una de ellas de forma ordenada y lógica. Para esto, se ha usado una convención en la que la unidad principal de operación es una colección de objetos, como monitores, o reportes, a continuación se muestran ejemplos de las reglas usadas para diseñar los URLs:
 
 \begin{itemize}
 	\item{Operaciones sobre colecciones:
@@ -1216,7 +1206,7 @@ Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseña
 \begin{itemize}
 	\item{\textbf{GET /monitors} retorna la lista de monitores}
 	\item{\textbf{GET /monitors/new} retorna un formulario para crear un nuevo monitor}
-	\item{\textbf{POST /monitors/new} somete los campos para crear un nuevo monitor}
+	\item{\textbf{POST /monitors/new} envía los campos para crear un nuevo monitor}
 \end{itemize} 
 }
 
@@ -1225,7 +1215,7 @@ Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseña
 \begin{itemize}
 			\item{\textbf{GET /monitor/1} retorna el primer monitor}
 			\item{\textbf{GET /monitor/1/edit} retorna un formulario para editar el primer monitor}
-			\item{\textbf{POST /monitor/1/edit} somete los campos para editar el monitor 1}
+			\item{\textbf{POST /monitor/1/edit} envía los campos para editar el monitor 1}
 			\item{\textbf{GET /monitor/1/delete} destruye el primer monitor y todos sus registros relacionados}
 \end{itemize} 
 }
@@ -1244,7 +1234,7 @@ Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseña
 	\begin{itemize}
 		\item{\textbf{GET /monitor/1/sync/now} manda a sincronizar el primer monitor inmediatamente}
 		\item{\textbf{GET /monitor/1/test/12/toggle} activa o desactiva la prueba con id \#12 del primer monitor.}
-		\item{\textbf{POST /monitor/1/form/average-rtt-heatmap/} somete los campos del formulario del mapa de calor de rtt para el primer monitor.}
+		\item{\textbf{POST /monitor/1/form/average-rtt-heatmap/} envía los campos del formulario del mapa de calor de rtt para ser validados por el servidor.}
 	\end{itemize} 
 }
 		
@@ -1257,8 +1247,7 @@ En esta sección se explican los distintos componentes de software que son parte 
 
 \subsection{Enlazador de cuentas de Dropbox}
 
-Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicación web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. El proceso de autenticación es un algoritmo a dos pasos que se puede observar a continuación:
-
+Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicación web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. 
 
 \begin{algorithm}
 	\caption{Enlazamiento con Dropbox}\label{alg:linking}
@@ -1291,15 +1280,43 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 	\end{algorithmic}
 \end{algorithm}
 
-La estructura de esta función es similar a muchas otras que manejan datos suministrados por el usuario: si la petición es de tipo GET entonces devuelve el formulario se devuelve un formulario en blanco donde el usuario deberá introducir algunos datos. Si la petición es de tipo POST pasamos a validar el formulario si es válido, entonces hacemos alguna operación como actualizar la base de datos y redireccionamos al usuario a una vista indicando el éxito de la operación, de modo contrario el formulario es inválido y se dibuja el formulario mostrando los mensajes de error correspondientes.
+El proceso de autenticación es un algoritmo a dos pasos que se puede observar en el Algoritmo \ref{alg:linking}:
 
-En este caso cuando el usuario visita la ruta \textit{'/dropbox/link-account/'} con el método GET la aplicacion web crea un URL hacia el sitio de Dropbox y muestra al usuario un formulario con una caja de texto para introducir un código y un enlace con el URL generado previamente, cuando el usuario hace click al enlace, este lo lleva al sitio de Dropbox que a su vez despliega un dialogo preguntando al usuario si dará permiso a la aplicacion de Octopus Monitor para hacer cambios en su carpeta personal, en caso positivo se genera un token que el usuario debe copiar en el formulario, cuando el usuario somete el formulario una petición HTTP POST se envía al servidor, entonces este llama al método "finish" con el token, este método retorna el código de acceso al Dropbox del usuario para nuestra aplicacion y el identificador del usuario, guardamos los cambios en la base de datos y llevamos al usuario a una página indicando que el proceso de enlazamiento fue exitoso. 
+\begin{enumerate}
+	\item{Si la petición es de tipo GET, entonces la aplicacion web inicia el proceso de enlazado con Dropbox:
+		\begin{enumerate}
+			\item La aplicacion web solicita a Dropbox un URL que se usará para que el usuario se autentique con Dropbox y de permisos a Octopus Monitor para hacer cambios en su carpeta.
+			\item La aplicacion web devuelve un formulario con una caja de texto para introducir un código y un enlace con el URL generado en el paso previo.
+			\item El usuario hace click en el enlace el cual lo lleva al sitio de Dropbox, Dropbox pregunta al usuario si desea dar acceso a Octopus Monitor a su carpeta de Dropbox:
+				\begin{enumerate}
+					\item Si el usuario acepta se genera un \textit{token} único.
+					\item Si el usuario no acepta se termina el proceso.
+				\end{enumerate}
+			\item El usuario introduce el \textit{token} y envía el formulario.
+		\end{enumerate}
+		}
+	\item{Si la petición es de tipo POST, entonces el servidor valida el formulario a partir de los datos enviados:
+		\begin{enumerate}
+			\item{Si el formulario es válido entonces:
+				\begin{enumerate}
+					\item El servidor llama al método \textit{finish}, este se comunica con Dropbox, valida el \textit{token} y retorna el código de acceso del usuario para nuestra aplicacion.
+					\item Se guarda en la base de datos el código de acceso del usuario.
+					\item El servidor redirecciona al usuario a una vista indicando que la operación fue exitosa.
+				\end{enumerate}
+				}
+			
+			\item{Si el formulario no es valido, el servidor devuelve el formulario mostrando los mensajes de error correspondientes; los datos introducidos previamente por el usuario persisten, facilitando la corrección del formulario.}
+		\end{enumerate}
+		
+		}
+	
+\end{enumerate}
 
 A partir de este momento tenemos los dos elementos necesarios para hacer peticiones al API de Dropbox: los permisos sobre la carpeta en la nube del usuario y el token de acceso a su dropbox.
 
 \subsection{Subidor de mensajes}
 
-Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada, etc.)
+Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada).
 
 Los mensajes que se suben a la nube se escriben en formato json, este formato ofrece grandes ventajas para el desarrollo de aplicaciones distribuidas ya que es fácil de codificar del lado del servidor y fácil de decodificar del lado del monitor es mucho mas ligero que otros formatos como XML y al mismo tiempo es legible para seres humanos, todos las funciones que suben archivos a la nube funcionan de forma simular:
 \begin{enumerate}
@@ -1338,7 +1355,7 @@ Los mensajes que se suben a la nube se escriben en formato json, este formato of
 	\end{algorithmic}
 \end{algorithm}
 
-Los mensajes deben contener la información necesaria para que el monitor pueda reconstruir el plan de monitoreo a partir de ellos, la estructura y posibles valores de los mensajes pueden ser vistos en la Tabla \ref{tab:testmessage} para los mensajes relacionados a las pruebas y en la Tabla \ref{tab:linkmessage}
+Los mensajes deben contener la información necesaria para que el monitor pueda reconstruir el plan de monitoreo a partir de ellos, la estructura y posibles valores de los mensajes pueden ser vistos en la Tabla \ref{tab:testmessage} para los mensajes relacionados a las pruebas y en la Tabla \ref{tab:linkmessage} para los mensajes relacionados a los tentáculos.
 
 \begin{table}
 	
@@ -1360,9 +1377,9 @@ Los mensajes deben contener la información necesaria para que el monitor pueda r
 	
 		Clave  & Valor                & Descripción                                                    \\ \hline
 		status & true$|$false           & Si es \textit{false} indica que el enlace debe ser desactivado \\ 
-		ip     & cadena de caracteres & dirección ip del TPS del enlace.                               \\ 
+		ip     & cadena de caracteres & dirección IP del TPD del enlace.                               \\ 
 		id     & entero positivo      & identificador único del enlace                                 \\ 
-		host   & cadena de caracteres & nombre de dominio del TPS del enlace.                          \\
+		host   & cadena de caracteres & nombre de dominio del TPD del enlace.                          \\
 	\end{tabular}
 	\caption{Contenido del mensaje de enlace monitoreado}
 	\label{tab:linkmessage}
@@ -1370,9 +1387,9 @@ Los mensajes deben contener la información necesaria para que el monitor pueda r
 
 \subsection{Sincronización de datos} \label{sub:Recolector}
 
-El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicacion web a su vez recolectar estos archivos y introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de "sincronizacion".
+El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicacion web a su vez recolectar estos archivos e introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de sincronización.
 
-El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el token de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de parsing de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronización, los cursores (de los cuales se hablará próximamente) y actualiza el tiempo de ultima sincronización del monitor.
+El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el token de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos. Finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de parsing de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronización, los cursores y actualiza el tiempo de ultima sincronización del monitor.
 
 
 \begin{algorithm}
@@ -1416,7 +1433,7 @@ El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la 
 	\end{algorithmic}
 \end{algorithm}
 
-Debemos recordar que los resultados de las pruebas se guardan en una carpeta por prueba, donde constantemente se están guardando nuevos archivos, por lo tanto, la subrutina de sincronización debe determinar cuales son los archivos nuevos y modificados desde la ultima sincronización, para esto, el API de Dropbox provee el método \textit{delta}, que determina los cambios realizados a una carpeta a partir de un momento específico, a continuación puede verse un ejemplo de la respuesta en formato json obtenida tras llamar el método delta para una carpeta:
+Debemos recordar que los resultados de las pruebas se guardan en una carpeta por prueba, donde constantemente se están guardando nuevos archivos, por lo tanto, la subrutina de sincronización debe determinar cuales son los archivos nuevos y modificados desde la última sincronización. Para facilitar facilitar este proceso, el API de Dropbox provee el método \textit{delta}, que determina los cambios realizados a una carpeta a partir de un momento específico, a continuación puede verse un ejemplo de la respuesta en formato json obtenida tras llamar el método delta para una carpeta:
 
 \begin{lstlisting}][h,frame=single]
 {
@@ -1448,20 +1465,20 @@ Como se puede observar, se trata de un diccionario con cuatro entradas:
 	\item{reset: determina si se debe "limpiar" el estado local antes de procesar las entradas delta, es verdadero solo durante la primera llamada a delta o en raras ocasiones.}
 	\item{cursor: el cursor es una cadena de caracteres de longitud 64, y representa el estado de la carpeta en un momento dado, se puede usar en llamadas sucesivas de "delta" para obtener los cambios a partir de ese momento específico.}
 	\item{has\_more: determina si hay mas entradas delta en la carpeta, en tal caso es necesario volver a llamar el método delta inmediatamente de nuevo, esto solo es necesario cuando hay grandes cantidades archivos modificados.}
-	\item{entries: es una lista de "entradas delta" cada entrada representa un archivo o carpeta que cambió desde la ultima llamada a delta, cada entrada es un par $<$path,metadata$>$ donde "path" es el nombre del archivo y "metadata" es un diccionario conteniendo algunos datos relevantes al archivo, si "metadata" es "null" indica que el archivo fue eliminado.}
+	\item{entries: es una lista de "entradas delta" cada entrada representa un archivo o carpeta que cambió desde la última llamada a delta, cada entrada es un par $<$path,metadata$>$ donde "path" es el nombre del archivo y "metadata" es un diccionario conteniendo algunos datos relevantes al archivo, si "metadata" es "null" indica que el archivo fue eliminado.}
 \end{itemize}
 
-El algoritmo de sincronización depende del cursor para determinar los cambios desde la última sincronización, este llama al método delta y obtiene la lista de "entradas delta" luego recorre aquellas entradas delta cuya metadata no es nula (es decir, que no fueron borrados) y le pasa el contenido del archivo a un algoritmo de parsing, que lo lee, procesa e inserta su contenido en el formato apropiado en la base de datos, debemos recordar que cada archivo de traza puede tener un formato distinto dependiendo del tipo de prueba al que pertenezca, por lo que también es trabajo de del algoritmo de sincronización elegir el método correcto al cual pasará el archivo.
+El algoritmo de sincronización depende del cursor para determinar los cambios desde la última sincronización, este llama al método delta y obtiene la lista de "entradas delta" luego recorre aquellas entradas delta cuya metadata no es nula (es decir, que no fueron eliminados) y le pasa el contenido del archivo a un algoritmo de \textit{parsing}. El \textit{parser} lee el archivo, lo procesa e inserta su contenido en el formato apropiado en la base de datos. Debemos recordar que cada archivo de traza puede tener un formato distinto dependiendo del tipo de prueba al que pertenezca, por lo que también es trabajo de del algoritmo de sincronización elegir el \textit{parser} apropiado al cual pasará el archivo.
 
-\subsection{Computo de visualizaciones}
+\section{Computo de visualizaciones}
 
 El computo de las visualizaciones consiste de tres fases comunes a todas las visualizaciones, primero, los datos necesarios son retirados de la base de datos, después estos datos son transformados o pre-procesados de alguna manera, por ejemplo, los timestamps se transforman en horas localizadas según la zona horaria del monitor, o se eliminan valores atípicos de la muestra y finalmente estos datos se combinan con una plantilla para generar una página HTML. 
 
-Muchas de las visualizaciones obtenidas en el sistema se pueden generar trivialmente pasando a la biblioteca de rendering de gráficas un arreglo de pares $<$x,y$>$ por ejemplo rtt vs tiempo, sin embargo otras visualizaciones requieren de algoritmos de análisis que hagan algún pre-procesamiento de los datos y saquen algún tipo de conclusión para mostrar al usuario, a continuación se explica el calculo de las visualizaciones no-triviales del sistema.
+Muchas de las visualizaciones obtenidas en el sistema se pueden generar trivialmente pasando a la biblioteca de \textit{rendering} de gráficas un arreglo de pares $<$x,y$>$ por ejemplo RTT vs tiempo. Sin embargo otras visualizaciones requieren de algoritmos de análisis que hagan algún pre-procesamiento de los datos y saquen algún tipo de conclusión para mostrar al usuario, a continuación se explica el calculo de las visualizaciones no-triviales del sistema.
 
 \subsubsection{Cálculo de Mapas de Calor}
 
-En este trabajo usamos mapas de calor para representar el valor del tiempo de respuesta promedio en relación a la fecha y la hora del día, los valores "altos" están representados por colores cálidos y los valores "bajos" están representados por colores fríos; cabe destacar que un valor de "alto" para un red de fibra óptica puede ser "bajo" para una red satelital, de modo que el cálculo estos valores dependen unicamente de los datos en la muestra. 
+En este trabajo usamos mapas de calor para representar el valor del tiempo de respuesta promedio en relación a la fecha y la hora del día, los valores "altos" están representados por colores cálidos y los valores "bajos" están representados por colores fríos. Cabe destacar que un valor de "alto" para un red de fibra óptica puede ser "bajo" para una red satelital, de modo que el cálculo estos valores dependen unicamente de los datos contenidos en la muestra. 
 
 Los mapas de calor permiten evaluar rápidamente la fluctuación del RTT durante un día especifico o notar patrones a largo plazo, otra ventaja de los mapas de calor es que es posible observar periodos de inactividad de la red como "espacios en blanco" en la gráfica ya que para estos periodos no hay datos.
 
