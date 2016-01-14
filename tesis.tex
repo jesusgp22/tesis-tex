@@ -1485,13 +1485,13 @@ Los mapas de calor permiten evaluar rápidamente la fluctuación del RTT durante u
 Los parámetros de los mapas de calor son los siguientes:
 \begin{itemize}
 	\item{\textbf{Enlace:} el enlace seleccionado para observar}
-	\item{\textbf{Intervalo de agrupación:} la "granularidad" del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo, el valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 144 puntos por día}
-	\item{\textbf{Rango de tiempo:} ajusta el periodo de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o "todo el tiempo".}
+	\item{\textbf{Intervalo de agrupación:} la "granularidad" del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo. El valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 144 puntos por día}
+	\item{\textbf{Rango de tiempo:} ajusta el periodo de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o todo el tiempo.}
 \end{itemize}
 
-Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y rango de tiempo seleccionado, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación sin embargo cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, sumas, etc. a la base de datos, si la tabla está apropiadamente indexada esta puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciéndolos directamente en la aplicacion.
+Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y rango de tiempo seleccionado, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación ,sin embargo, cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios y sumas. a la base de datos. Si la tabla está apropiadamente indexada esta puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciéndolos directamente en la aplicacion.
 
-La tabla \textit{TracePing} tiene los campos "time\_60", "time\_30", "time\_15", "time\_20" y "time\_10" estos campos tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra, estas columnas facilitan al SMBD a agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor; un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
+La tabla \textit{TracePing} tiene los campos \textit{time\_60}, \textit{time\_30}, \textit{time\_15}, \textit{time\_20} y \textit{time\_10}, los cuales tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra. Estas columnas facilitan al SMBD a agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor; un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
 
 \begin{table}[]
 	\centering
@@ -1501,7 +1501,7 @@ La tabla \textit{TracePing} tiene los campos "time\_60", "time\_30", "time\_15",
 		-4:30    & 2015-11-17 22:29:42 & 2015-11-17 17:00:00 & 2015-11-17 17:50:00 \\
 		UTC      & 2015-11-17 22:29:42 & 2015-11-17 22:00:00 & 2015-11-17 22:20:00
 	\end{tabular}
-	\caption{Ejemplo de los valores de time\_60 y time\_10 para la misma traza en UTC(+0:00) y Caracas (-4:30)}
+	\caption{Ejemplo de los valores de \textit{time\_60} y \textit{time\_10} para la misma traza en UTC(+0:00) y Caracas (-4:30)}
 	\label{tab:time}
 \end{table}
 
@@ -1527,19 +1527,19 @@ Donde:
 
 Esta consulta retorna entonces el promedio del valor del RTT de las trazas con RTT positivo agrupadas según su intervalo de agrupación, un RTT negativo indica que la prueba se realizó pero no obtuvo respuesta del host o el paquete se perdió, por lo tanto no se consideran para el cálculo de esta gráfica.
 
-Ya teniendo estos datos es trivial desplegar el mapa de calor usando highcharts, sencillamente se prepara un arreglo de tuplas de tipo $<$fecha,hora,rtt promedio$>$ donde fecha es el día mes y año del grupo y hora es un punto flotante entre 0 y 24 que resulta de sumar la hora (0-23) al minuto dividido entre 60.
+Ya teniendo estos datos es trivial desplegar el mapa de calor usando Highcharts, sencillamente se prepara un arreglo de tuplas de tipo $<$fecha,hora,RTT promedio$>$ donde fecha es el día mes y año del grupo y hora es un punto flotante entre 0 y 24 que resulta de sumar la hora (0-23) al minuto (10-60) dividido entre 60.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\linewidth]{img/heatmap}
-\caption{Mapa de Calor de RTT con granularidad de 10 minutos para el mes de noviembre (REDISE)}
+\caption{Mapa de Calor de RTT con granularidad de 10 minutos para el mes de noviembre 2015 (REDISE)}
 \label{fig:heatmap}
 \end{figure}
 
 
 \subsubsection{Cálculo de horas activas}
 
-En el marco de este trabajo llamaremos a una hora "activa" cuando se pudieron recoger al menos el 50\% de las muestras durante dicha hora, análogamente una hora "inactiva" es aquella donde no se pudieron recoger el 50\% de las muestras, para determinar si una hora es activa se usa la siguiente fórmula:
+En el marco de este trabajo llamaremos a una hora "activa" cuando se pudieron recoger al menos el 50\% de las muestras esperadas durante dicha hora, análogamente una hora "inactiva" es aquella donde no se pudieron recoger el 50\% de las muestras. Para determinar si una hora es activa se usa la siguiente fórmula:
 
 \begin{equation}
 	T_{min} = 3600/interval * 0.5 
@@ -1557,7 +1557,7 @@ Donde \textit{interval} es el tiempo entre pruebas en segundos y $T_{min}$ es la
 Y  $T_{observadas}$ es la cantidad de trazas capturadas exitosamente durante una hora.
 
 
-De forma similar al algoritmo de cálculo de mapas de calor, debemos agrupar las trazas por hora y contar el número de trazas por grupo, afortunadamente podemos aprovechar la columna "time\_60" para hacer este agrupamiento, luego debemos comparar con el umbral mínimo $T_{min}$ para esa hora. Para determinar el intervalo entre pruebas que estuvo activo durante la prueba, podemos buscar los parámetros activos en cualquier momento usando el historial del plan de monitoreo, sin embargo cada traza se guarda junto con el intervalo entre pruebas, de manera que podemos hacer una consulta mucho mas sencilla a la base de datos.
+De forma similar al algoritmo de cálculo de mapas de calor, debemos agrupar las trazas por hora y contar el número de trazas por grupo, afortunadamente podemos aprovechar la columna \textit{time\_60} para hacer este agrupamiento, luego debemos comparar con el umbral mínimo $T_{min}$ para esa hora. Para determinar el intervalo entre pruebas que estuvo activo durante la prueba, podemos buscar los parámetros activos en cualquier momento usando el historial del plan de monitoreo, sin embargo, cada traza se guarda junto con el intervalo entre pruebas, de manera que podemos hacer una consulta mucho mas sencilla a la base de datos.
 
 Sabiendo esto, la consulta a la base de datos queda así:
 
@@ -1575,7 +1575,7 @@ Donde:
 	\item{f: es la fecha final}
 \end{itemize}
 
-La consulta anterior retorna: un timestamp que representa la hora de agrupación, el número de muestras observadas exitosamente, y el intervalo entre pruebas promedio. Calculamos el promedio ya que el usuario puede cambiar el intervalo entre pruebas en cualquier momento, de modo que una misma hora puede tener muestras tomadas con intervalo distinto, calculando el promedio, obtendremos el mismo valor de tiempo entre pruebas para una hora en que el usuario no hizo cambios y un valor promedio para horas en que hubo cambios.
+La consulta anterior retorna: una marca de tiempo (o \textit{timestamp}) que representa la hora de agrupación, el número de muestras observadas ($T_{observadas}$), y el intervalo entre pruebas promedio. Calculamos el promedio ya que el usuario puede cambiar el intervalo entre pruebas en cualquier momento, de modo que una misma hora puede tener muestras tomadas con intervalo distinto, calculando el promedio, obtendremos el mismo valor de tiempo entre pruebas para una hora en que el usuario no hizo cambios y un valor aproximado para horas en que hubo cambios.
 
 El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es trivial calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
 
@@ -1611,7 +1611,7 @@ El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora
 
 \subsubsection{Cálculo de periodos de actividad continúa}
 
-Como se dijo en la Subsección \ref{sub:disponibilidad} llamaremos "actividad continua" a un evento durante el cual un servicio está continuamente disponible para un cliente, en este trabajo un servicio está disponible en un instante de tiempo cuando se ha capturado exitosamente una muestra durante ese instante, en caso contrario se guarda un valor de rtt de "-1" indicando que el servicio no estaba disponible, las pruebas que usamos para determinar periodos de actividad continua son las de ping y httping ya que ambas realizan un trabajo similar, pero usando protocolos distintos.
+Como se dijo en la Sección \ref{sub:disponibilidad} llamaremos "actividad continua" a un evento durante el cual un servicio está continuamente disponible para un cliente, en este trabajo un servicio está disponible en un instante de tiempo cuando se ha capturado exitosamente una muestra durante ese instante, en caso contrario se guarda un valor de RTT de "-1" indicando que el servicio no estaba disponible, las pruebas que usamos para determinar periodos de actividad continua son las de ping y httping ya que ambas realizan un trabajo similar, pero usando protocolos distintos.
 
 El algoritmo de cálculo de periodos de actividad continúa recorre las trazas para el intervalo de tiempo seleccionado extendiendo periodos de actividad cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es positivo (hubo respuesta del TPD y por lo tanto el servicio está disponible) y de forma análoga extiende periodos de inactividad continua cuando encuentra trazas \textbf{consecutivas} para las cuales el valor de RTT es -1 (no hubo respuesta). La consulta a la base de datos es muy sencilla ya que solo hace falta consultar el RTT y marca de tiempo de las trazas ordenadas por tiempo:
 
@@ -1629,7 +1629,9 @@ Donde:
 	\item{f: es la fecha final}
 \end{itemize}
 
-Tras ejecutar la consulta a la base se verificar que se tenga al menos una muestra, en caso contrario, a falta de información el periodo se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un periodo activo y se marca el inicio del periodo como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del periodo activo al tiempo de la traza negativa, este proceso se repite análogamente para el periodo inactivo y así hasta llegar a la última traza, cada vez que se determina el instante final de un periodo este se añade a la lista de periodos activos o inactivos según corresponda. Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
+Tras ejecutar la consulta a la base de datos, se verifica que se tenga al menos una muestra, en caso contrario, a falta de información el periodo se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un periodo activo y se marca el inicio del periodo como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del periodo activo al tiempo de la traza negativa. Este proceso se repite análogamente para el periodo inactivo y así hasta llegar a la última traza, cada vez que se determina el instante final de un periodo este se añade a la lista de periodos activos o inactivos según corresponda.
+
+Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
 
 \begin{algorithm}[h!]
 	\caption{Calculo de periodos de actividad continua}\label{alg:continuo}
@@ -1685,7 +1687,7 @@ Tras ejecutar la consulta a la base se verificar que se tenga al menos una muest
 
 \subsubsection{Cálculo de días activos}
 
-A diferencia de las horas activas, definimos a un día como "activo" cuando podemos recoger un periodo de actividad continua de al menos una hora durante ese día, el algoritmo para determinar días activos es en realidad muy similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), con la excepción de que este funciona separando las trazas por días, y luego busca un periodo activo de al menos una hora.
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos observar un periodo de actividad continua de al menos una hora durante ese día. El algoritmo para determinar días activos es similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), la diferencia radica en que primero se agrupan las trazas por día y luego se aplica el algoritmo de actividad continua, si se observa un periodo continuo de al menos una hora, el día se considera activo y se pasa al siguiente día.
 
 Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfico de barras indicando el porcentaje de días activos, también es necesario determinar la cantidad de días totales en el periodo seleccionado por el usuario, luego cuando se tenga el total de días activos por día de la semana se puede dividir entre los días totales, un ejemplo del resultado deseado como salida del algoritmo de días activos puede ser visto en la Tabla \ref{table:diasactivos}
 
@@ -1694,7 +1696,7 @@ Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfic
 	
 
 	\begin{tabular}{l|l|l|l|l|l|l|l}
-		& L   & M   & W    & J   & V   & S & D   \\ \hline
+		& Lunes   & Martes   & Miércoles    & Jueves   & Viernes   & Sábado & Domingo   \\ \hline
 		Activos  & 4   & 5   & 3    & 4   & 4   & 3 & 4   \\
 		Porcentaje & 100 & 100 & 60 & 100 & 100 &75   & 100 \\
 		Totales    & 4   & 5   & 5    & 4   & 4   & 4 & 4  
@@ -1791,9 +1793,9 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 
 \section{Pruebas de Rendimiento}
 
-Ya que la aplicacion web está pensada para atender a una cantidad arbitraria de usuarios, deseamos conocer el número máximo de usuarios concurrentes a los que se les puede dar servicio con el hardware disponible, llevaremos a cabo pruebas de carga en las cuales se simulará un ráfaga de peticiones variable durante un intervalo de tiempo y así determinar la cantidad de peticiones para cual ocurre una degradación de servicio o el servidor es incapaz de responder a mas peticiones.
+Ya que la aplicacion web está pensada para atender a una cantidad arbitraria de usuarios, deseamos conocer el número máximo de usuarios concurrentes a los que se les puede dar servicio con el hardware disponible. Llevaremos a cabo pruebas de carga en las cuales se simulará un ráfaga de peticiones variable para determinar la cantidad de peticiones concurrentes que el servidor puede manejar antes de que ocurra una degradación de servicio o el servidor sea incapaz de responder a mas peticiones.
 
-Consideramos que ocurre una degradación de servicio cuando el tiempo de espera del usuario aumenta mas allá de un umbral máximo, según \cite{nielsen1994usability} existen tres umbrales importantes a la hora de evaluar el tiempo de respuesta de una aplicacion:
+Consideramos que ocurre una degradación de servicio cuando el tiempo de espera del usuario aumenta mas allá de un umbral máximo, según Nielsen \cite{nielsen1994usability}, existen tres umbrales importantes a la hora de evaluar el tiempo de respuesta de una aplicacion:
 
 \begin{enumerate}
 	\item{\textbf{0.1 segundo:} Límite en el cual un usuario siente que está manipulando los objetos desde la interfaz de usuario.}
@@ -1815,15 +1817,15 @@ Para las siguientes pruebas consideraremos las siguientes métricas de rendimient
 
 Consideraremos una prueba como exitosa cuando el porcentaje de error sea igual a 0 y el tiempo máximo de espera de una petición no supere los 10.000ms, tomando en cuenta los umbrales definidos por \cite{nielsen1994usability}. Se considerará optima aquella prueba que ademas de cumplir con ser exitosa, tenga el mayor rendimiento en términos de peticiones por segundo (Req/s) entre todas las pruebas realizadas.
 
-La herramienta elegida para ejecutar las pruebas fue JMeter \cite{JMeter}, esta herramienta permite simular casos de uso específicos de una aplicacion web como ráfagas de peticiones que pueden ser configuradas para seguir cualquier patrón dado. En nuestro caso, Jmeter se usará para generar una ráfaga de peticiones con un intervalo constante en cada petición durante un tiempo de un minito. Jmeter provee un componente llamado \textit{Summary Report} que totaliza y promedia los resultados obtenidos de todas las peticiones enviadas del que podemos extraer todas las métricas de interés.
+La herramienta elegida para ejecutar las pruebas fue JMeter \cite{JMeter}, esta herramienta permite simular casos de uso específicos de una aplicacion web como ráfagas de peticiones que pueden ser configuradas para seguir cualquier patrón dado. En nuestro caso, Jmeter se usará para generar una ráfaga de peticiones con un intervalo constante entre cada petición durante un tiempo de un minuto. Jmeter provee un componente llamado \textit{Summary Report} que totaliza y promedia los resultados obtenidos de todas las peticiones enviadas del que podemos extraer todas las métricas de interés.
 
 \subsection{Metodología de las pruebas}
 
 Para determinar la carga máxima que la aplicacion web es capaz de soportar en términos de peticiones por minuto, simularemos una ráfaga de peticiones en un intervalo de tiempo de un minuto, variando el número de peticiones hasta obtener un valor óptimo. La metodología a seguir es la siguiente:
 
 \begin{enumerate}
-	\item{Se comenzará ejecutando una primera prueba con un número  prudencial de peticiones durante 60 segundos, este número debe preferiblemente ser múltiplo de dos como 32 o 64.}
-	\item{Se varía el número de peticiones enviadas en la ráfaga multiplicando por dos cada vez que una prueba es exitosa, así si la primera prueba se hace con 16 peticiones, la siguiente tendrá 32, 64 y así sucesivamente.}
+	\item{Se comenzará ejecutando una primera prueba con un número  prudencialmente bajo de peticiones durante 60 segundos, este número debe preferiblemente ser múltiplo de dos.}
+	\item{Se varía el número de peticiones enviadas en la ráfaga multiplicando por dos cada vez que una prueba es exitosa, así si la primera prueba se hace con 16 peticiones, la siguiente tendrá 32, 64, 128 y así sucesivamente.}
 	\item{Tras la primera prueba fallida, se calculará el número de peticiones de la siguiente prueba ($P_{sig}$) como el punto medio entre la cantidad de peticiones de la prueba previa ($P_{prev}$) y la prueba actual ($P_{act}$). 
 		
 		\[P_{sig} = \begin{cases}
@@ -1836,11 +1838,9 @@ Para determinar la carga máxima que la aplicacion web es capaz de soportar en té
 
 \end{enumerate}
 
-
-
 \subsection{Condiciones de las pruebas}
 
-Todas las pruebas se ejecutaron sobre una red local, entre dos máquinas conectadas a un mismo enrutador: una de ellas ejecuta el servidor web y la otra ejecuta el plan de pruebas simulando las peticiones y totalizando los resultados observados; la latencia de la red se considera menor a 5ms.
+Todas las pruebas se ejecutaron sobre una red local entre dos máquinas conectadas a un mismo enrutador: una de ellas ejecuta el servidor web, y la otra ejecuta las pruebas simulando las peticiones y totalizando los resultados observados; la latencia de la red se considera menor a 5ms.
 
 Las características del servidor web se pueden observar en la Tabla \ref{tab:hardware}
 
@@ -1858,7 +1858,7 @@ Las características del servidor web se pueden observar en la Tabla \ref{tab:har
 \subsection{Resultados obtenidos}
 
 \begin{enumerate}
-	\item{\textbf{Archivos estáticos con Apache:} En esta prueba se configuró un servidor Apache para servir solo páginas web y archivos estáticos, como se puede observar en la Tabla \ref{tab:staticserve}, se ha elegido el valor de 640 peticiones/minuto como valor óptimo ya que tiene el mejor rendimiento en término de peticiones por segundo.}
+	\item{\textbf{Archivos estáticos con Apache\footnote{Apache: Servidor Web HTTP  https://httpd.apache.org/}:} En esta prueba se configuró un servidor Apache para servir solo páginas web y archivos estáticos, como se puede observar en la Tabla \ref{tab:staticserve}, se ha elegido el valor de 640 peticiones por minuto como valor óptimo ya que tiene el mejor rendimiento entre las pruebas exitosas.}
 	
 	\begin{table}[h]
 		\centering
@@ -1880,7 +1880,7 @@ Las características del servidor web se pueden observar en la Tabla \ref{tab:har
 		\label{tab:staticserve}
 	\end{table}
 	
-	\item{\textbf{Páginas dinámicas con Django sobre Apache:} En esta prueba se configuró Apache para ejecutar \textbf{solo} la aplicacion web Django a través del módulo \textit{mod\_wsgi}, no se solicitaron los archivos estáticos vinculados a las páginas visitadas. En la tabla \ref{tab:djangotest} se observa un valor óptimo de 768 peticiones por minuto, para el cual la media y la mediana se mantienen por debajo del umbral de los 0.1 segundos.}
+	\item{\textbf{Páginas dinámicas con Django sobre Apache:} En esta prueba se configuró Apache para ejecutar \textbf{solo} la aplicacion web Django a través del módulo \textit{mod\_wsgi} y no se solicitaron los archivos estáticos vinculados a las páginas visitadas. En la tabla \ref{tab:djangotest} se observa un valor óptimo de 768 peticiones por minuto, para el cual la media y la mediana se mantienen por debajo del umbral de los 0.1 segundos.}
 	
 	
 	\begin{table}[h]
@@ -1926,11 +1926,11 @@ Las características del servidor web se pueden observar en la Tabla \ref{tab:har
 
 Como se pudo observar en las pruebas anteriores y corroborando lo dicho en la Sección \ref{sub:servidorweb}, de tenerse los recursos suficientes, Django debería ejecutarse preferiblemente en una máquina separada a la encarga de servir archivos estáticos. Se ha observado que un servidor de las características descritas puede manejar una carga de 768 peticiones dinámicas por minuto, y solo 640 peticiones estáticas, lo cual representa una diferencia de mas del 16\%. 
 
-Independiente de la cantidad de peticiones que el servidor pueda manejar en condiciones ideales, en la realidad cada visita \textbf{única}, es decir, cada usuario que visite por primera vez el sitio web deberá descargar todos los archivos estáticos junto con la página HTML generada dinámicamente, como se observó en la tabla \ref{tab:djangostatic}, el servidor es capaz de atender unas 32 peticiones de este tipo por minuto, lo cual representa una marcada diferencia del 95\% en comparación con la prueba sin archivos estáticos, por lo tanto, los archivos estáticos representan un cuello de botella importante para la aplicacion.
+Independiente de la cantidad de peticiones que el servidor pueda manejar en condiciones ideales, en la realidad cada visita única, es decir, cada usuario que visite por primera vez el sitio web deberá descargar todos los archivos estáticos junto con la página HTML generada dinámicamente, como se observó en la tabla \ref{tab:djangostatic}, el servidor es capaz de atender unas 32 peticiones de este tipo por minuto, lo cual representa una marcada diferencia del 95\% en comparación con la prueba sin archivos estáticos, por lo tanto, los archivos estáticos representan un cuello de botella importante para la aplicacion.
 
 A pesar de los anterior, en peticiones sucesivas el navegador web usará los archivos en el caché de modo que en la práctica sería posible atender muchas mas peticiones por minuto.
 
-Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como se ve en la tabla \ref{tab:djangotest} tanto la velocidad de respuesta promedio como la mediana se mantienen muy por debajo del umbral de los 0.1 segundos, e incluso el tiempo de respuesta máximo se mantiene cerca del umbral del segundo, sin tomar en cuenta la latencia de la red, esto conforma una experiencia de navegación bastante rápida.rag
+Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como se ve en la tabla \ref{tab:djangotest} tanto la velocidad de respuesta promedio como la mediana se mantienen muy por debajo del umbral de los 0.1 segundos, e incluso el tiempo de respuesta máximo se mantiene cerca del umbral del segundo, dejando de lado la latencia de la red, esto conforma una experiencia de navegación rápida.
 
 \chapter{Monitor de Red "Tentacle Probe Source"} \label{cap:monitor}
 
