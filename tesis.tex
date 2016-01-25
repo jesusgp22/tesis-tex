@@ -2619,9 +2619,9 @@ Habiendo entendido todos los componentes que hacen posible el monitoreo de redes
 
 Durante la etapa de desarrollo se diseñan, implementan y validan las pruebas y visualizaciones que serán parte del sistema en el futuro próximo. La etapa de desarrollo ocurre en un entorno de desarrollo que se configura para ser lo más parecido posible al entorno de producción y así evitar potenciales inconsistencias que produzcan en errores al momento del despliegue. 
 
-Para desarrollar código fácilmente en distintos entornos se usa un repositorio de código git\footnote{git https://git-scm.com/}. Los cambios hechos en el entorno de desarrollo pueden ser descargados en el entorno de producción y aplicados al servidor web, los trabajadores celery y la base de datos. Todos los componentes deben compartir la misma versión del código antes de ir a producción para evitar comportamientos inesperados durante su interacción.
+Para desarrollar código fácilmente en distintos entornos se usa un repositorio de código git\footnote{git https://git-scm.com/}. Los cambios hechos en el entorno de desarrollo pueden ser descargados en el entorno de producción y aplicados al servidor web, los trabajadores Celery y la base de datos. Todos los componentes deben compartir la misma versión del código antes de ir a producción para evitar comportamientos inesperados durante su interacción.
 
-Cuando se desea desarrollar una prueba, el primer paso es entender y describir los requisitos de la prueba, para facilitar el entendimiento de esta sección usaremos como ejemplo el diseño una prueba que determine la pérdida de paquetes usando el comando ping en modo flood, es decir, que ping generará y enviará paquetes tan rápido como pueda hasta pasar una cierta cantidad de paquetes y se determinará cuantos se perdieron durante la prueba, el módulo de pruebas solo debe encargarse de iniciar el comando y obtener los datos del número de paquetes envíados y el número de paquetes recibidos a partir de la salida.
+Cuando se desea desarrollar una prueba, el primer paso es entender y describir los requisitos de la prueba, para facilitar el entendimiento de esta sección usaremos como ejemplo el diseño una prueba que determine la pérdida de paquetes usando el comando ping en modo \textit{flood} (inundación). Para eso haremos que ping envíe paquetes tan rápido como pueda hasta pasar una cierta cantidad de paquetes luego determinaremos cuantos se perdieron durante la prueba.
 
 El módulo de prueba se muestra a continuación, cada ejecucion de la prueba anexa una linea en formato  $<$marca de tiempo,paquetes enviados, paquetes recibidos$>$ al archivo de trazas correspondiente:
 
@@ -2629,7 +2629,7 @@ El módulo de prueba se muestra a continuación, cada ejecucion de la prueba anexa
 
 def parse(out,link_id):
    time = str(time.strftime("%d_%m_%y_%H"))
-   filename = os.path.join(DATA_FOLDER,"pkgloss","link_%s_%s.txt"%(link_id,time))
+   filename = os.path.join(DATA_FOLDER,"pktloss","link_%s_%s.txt"%(link_id,time))
    output_file = open(filename,'a')
 
    lines= out.split('\n')
@@ -2668,41 +2668,36 @@ parameters:
          log.error(str(e))
 \end{lstlisting}
 
-Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicacion web, para esto, comenzamos con incluir en el modelo de la base de datos la tabla que alojará las trazas de esta prueba, para eso escribimos la clase \textit{TracePkgLoss}, esta consiste de un marca de tiempo (time), el identificador de enlace (link), el número de paquetes enviados (sent\_packets), el número de paquetes recibidos (recieved\_packets), el porcentaje de pérdida de paquetes (percentage) y un índice que indexa las columnas \textit{time} , \textit{link} y porcentaje de pérdida de paquetes, a continuación se muestra la definición de dicha clase:
+Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicacion web. Para esto, comenzamos con incluir en el modelo de la base de datos la tabla que alojará las trazas de esta prueba, para esto definimos la clase \textit{TracePaketLoss}, esta consiste de un marca de tiempo (\textit{time}), el identificador de enlace (\textit{link}), el número de paquetes enviados (\textit{sent\_packets}), el número de paquetes recibidos (\textit{recieved\_packets}), el porcentaje de pérdida de paquetes (\textit{percentage}) y un índice que indexa las columnas \textit{time} , \textit{link} y \textit{percentage}. A continuación se muestra la definición de dicha clase:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
-class TraceBase(models.Model):
+class TracegPaketLoss(models.Model):
    link = models.ForeignKey(Link)
    time = models.DateTimeField()
-
-   class Meta:
-      abstract = True
-      unique_together = ("time", "link")
-
-class TracegPkgLoss(TraceBase):
    sent_packets = models.IntegerField
    recieved_packets = models.IntegerField()
    percentage = models.SmallIntegerField()
    
    def save(self, *args, **kwargs):
       self.percentage = self.recieved/float/(self.sent)
-      super(TracePkgLoss, self).save(*args, **kwargs)
+      super(TracegPaketLoss, self).save(*args, **kwargs)
 
    class Meta(TraceBase.Meta):
       index_together = [
                ["link", "time","percentage"],
             ]
+     unique_together = ("time", "link")
 
 \end{lstlisting}
 
-Cuando hacemos cambios al modelo de la base de datos debemos crear archivos llamados \textit{migrations} que describen los cambios que deben realizarse sobre el modelo de la base de datos, para crear estos archivos, Django crea un archivo de migración inicial que luego compara con el modelo de la base de datos y así descubre los cambios que se han hecho, para realizar esta operación Django incluye el comando \textit{makemigrations}, las migraciones son guardadas en un paquete y conforman una especie de "historial" que puede ser aplicado a la base de datos en el entorno de producción.
+Cuando hacemos cambios al modelo de la base de datos en el código de la aplicacion, debemos crear archivos llamados \textit{migrations} que describen los cambios que deben realizarse sobre la estructura de la base de datos. Para crear \textit{migrations}, Django crea un archivo de migración inicial que luego compara con el modelo de la base de datos y así descubre los cambios que se han hecho, para realizar esta operación, Django incluye el comando \textit{makemigrations}, las migraciones son guardadas en un paquete y conforman una especie de "historial" que puede ser aplicado a la base de datos en el entorno de producción.
 
-El siguiente paso es crear el parser del archivo de trazas, ya que el archivo de trazas viene en formato csv es muy sencillo leer el archivo linea por linea, separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, esta función se puede observar a continuación:
+El siguiente paso es crear el \textit{parser} del archivo de trazas, puesto que el archivo de trazas viene en formato csv es muy sencillo separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, esta función se puede observar a continuación:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
-def parse_pkgloss(f,filename,monitor):
+def parse_packet_loss(f,filename,monitor):
 
    tokens = filename.split('/')
    filename_tokens = tokens[len(tokens)-1].split('_')
@@ -2718,24 +2713,24 @@ def parse_pkgloss(f,filename,monitor):
          received= int(received)
          time = datetime.datetime.fromtimestamp(float(time),timezone)
       except Exception: continue
-      trace = TracePkgLoss(link_id=link_id,time=time,sent_packets=sent,received_packets=received)
+      trace = TracePacketLoss(link_id=link_id,time=time,sent_packets=sent,received_packets=received)
 
       try: trace.save()
       except IntegrityError: pass 
 \end{lstlisting}
 
-Ahora que tenemos los elementos necesarios para alojar los datos obtenidos de las pruebas solo nos queda definir las visualizaciones que harán uso de esas pruebas, por motivos de simplicidad solo definiremos una visualización que muestre una gráfica de stock del porcentaje de pérdida de paquetes desde el momento actual hasta una cantidad dada de tiempo en el pasado como 24 horas.
+Ahora que tenemos los elementos necesarios para alojar los datos obtenidos de las pruebas solo nos queda definir las visualizaciones que harán uso de esas pruebas. Para efectos de este ejemplo, definiremos una visualización que muestre una gráfica de stock del porcentaje de pérdida de paquetes desde el momento actual hasta una cantidad dada de tiempo en el pasado como 24 horas.
 
-A continuación se puede observar el código de la visualización, primero tomamos del diccionario de parámetros el número de horas seleccionadas, luego hacemos una consulta a la base de datos extrayendo todas las trazas que caigan en el periodo de tiempo, luego recorremos el arreglo para localizar las marcas de tiempo a la zona horaria del monitor, finalmente llamamos al método \textit{render\_to\_string} que dibuja la plantilla, en este caso usamos la plantilla genérica \textit{generic-stock.html}.
+A continuación se puede observar el código de la visualización, primero tomamos del diccionario de parámetros el número de horas seleccionadas y luego hacemos una consulta a la base de datos extrayendo todas las trazas que se encuentren en el período de tiempo. Seguidamente recorremos el arreglo para localizar las marcas de tiempo a la zona horaria del monitor, finalmente llamamos al método \textit{render\_to\_string} que dibuja la plantilla, en este caso usamos la plantilla genérica \textit{generic-stock.html}.
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
-def generate_pkgloss_sample_stock(parameters):
+def generate_packetloss_sample_stock(parameters):
    link_id = parameters["link"]
    period =  int(parameters["period"])
    link = Link.objects.get(id=link_id)
    min_time = datetime.datetime.now() - datetime.timedelta(hours=period)
 
-   rows = TracePkgLoss.objects.values_list('time', 'elapsed').filter(time__gt=min_time,
+   rows = TracePacketLoss.objects.values_list('time', 'elapsed').filter(time__gt=min_time,
                                                               link_id=link_id,
                                                               elapsed__gt=0)
    array = []
@@ -2748,9 +2743,9 @@ def generate_pkgloss_sample_stock(parameters):
 
 \end{lstlisting}
 
-Habiendo definido todas las clases y funciones necesarias, solo falta introducir en la base de datos los registros necesarios para que el sistema sepa de la nueva prueba y donde buscar las funciones correspondientes cuando necesite importarlas. Esto puede hacerse directamente desde el CRUD del sistema, sin embargo, podemos usar archivos llamados \textit{fixtures} que permiten definir los registros que queremos introducir a la base de datos en formato JSON y luego introducirlos a la base de datos en el entorno de producción con el comando \textit{loaddata}.
+Habiendo definido todas las clases y funciones necesarias, solo falta introducir en la base de datos los registros necesarios para que el sistema sepa de la nueva prueba y donde buscar las funciones correspondientes cuando necesite importarlas. Para esto, podemos usar archivos llamados \textit{fixtures} que permiten definir los registros que queremos introducir a la base de datos en formato JSON y luego introducirlos a la base de datos en el entorno de producción con el comando \textit{loaddata}.
 
-El fixture incluirá entonces, la entrada para la prueba, las entradas para los parámetros de la prueba y la visualización: 
+El \textit{fixture} incluirá entonces, la entrada para la prueba, las entradas para los parámetros de la prueba y la visualización. A continuación se puede ver el \textit{fixture} para la prueba de \textit{packet loss}:
 
 \begin{lstlisting}[basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 [
@@ -2759,11 +2754,11 @@ El fixture incluirá entonces, la entrada para la prueba, las entradas para los p
       "pk": 5,
       "fields": {
         "name": "Packet Loss",
-        "module_name": "pkgloss",
-        "description": "Sends a burst of ICMP packages in quick susecion and counts the number
-         of lost packages",
+        "module_name": "pktloss",
+        "description": "Sends a burst of ICMP packages in quick succession and counts the number
+         of lost packets",
         "is_periodic": true,
-        sync_function: "octopusmonitor.management.parsing.parse_pkgloss"
+        sync_function: "octopusmonitor.management.parsing.parse_packet_loss"
       }
   },
   {
@@ -2784,12 +2779,12 @@ El fixture incluirá entonces, la entrada para la prueba, las entradas para los p
     "model": "main.result_view",
     "pk": 26,
     "fields": {
-      "name": "Package loss % Stockchart",
-      "description": "Displays a stockchart of the last package loss data",
+      "name": "Packet loss % Stockchart",
+      "description": "Displays a stockchart of the last packet loss data",
       "type": "k",   (stock chart)
       "test_id": 15,
       "form_class": "octopusmonitor.main.forms.ElapsedForm",
-      "generating_function" "octopusmonitor.visual.pkgloss_visual.generate_pkgloss_sample_stock":
+      "generating_function" "octopusmonitor.visual.packet_loss_visual.generate_packetloss_sample_stock":
     }
   }
 ]
@@ -2797,24 +2792,23 @@ El fixture incluirá entonces, la entrada para la prueba, las entradas para los p
 \end{lstlisting}
 
 
-
-Antes de pasar a la siguiente etapa es recomendable probar exhaustivamente todo el código usando distintos conjuntos de datos, parámetros, o escribiendo pruebas unitarias.
+%Antes de pasar a la siguiente etapa es recomendable probar exhaustivamente todo el código usando distintos conjuntos de datos, parámetros, o escribiendo pruebas unitarias.
 
 \subsection{Etapa de Despliegue}
 
-En la etapa de despliegue se aplicarán en el entorno de producción todos los cambios realizados en la etapa de desarrollo; esta etapa consiste en una serie de pasos intencionalmente simples y rápidos para evitar largas interrupciones de servicio mientras que estos son aplicados, después de que finaliza la etapa de despliegue la nueva prueba estará disponible para que los usuarios la incluyan a sus monitores. 
+En la etapa de despliegue se aplicarán, en el entorno de producción, todos los cambios realizados en la etapa de desarrollo. Esta etapa consiste en una serie de pasos intencionalmente simples y rápidos para evitar largas interrupciones de servicio mientras que estos son aplicados. Después de que finaliza la etapa de despliegue la nueva prueba estará disponible para que los usuarios la incluyan a sus monitores. 
 
-La etapa de despliegue comienza descargando la última versión del código del repositorio y parando el servidor web para evitar cualquier petición durante este periodo, es buena idea planificar los despliegues para momentos de baja carga del servidor, y notificar a los usuarios con previo avisto.
+La etapa de despliegue comienza descargando la última versión del código del repositorio y parando el servidor web para evitar cualquier petición durante este periodo, es buena idea planificar los despliegues para momentos de baja carga del servidor, y notificar a los usuarios del sistema.
 
-Para actualizar el servidor web y los trabajadores basta con reemplazar el código que estos ejecutan, sin embargo, para actualizar la base de datos se hace uso de archivos de migraciones que se crear en la etapa de desarrollo; las migraciones pueden ser aplicadas con el comando \textit{migrate}, para saber cual fue la última migración aplicada Django mantiene una tabla para llevar cuenta del estado de la base de datos, así es posible saber cuales de las migraciones deben ser aplicadas. Se debe tener especial ciudado al ejecutar migraciones, mientras algunas veces estas pueden ser rápidas y seguras, algunas migraciones incluyen operaciones costosas como agregar indices a tablas existentes o actualizar todas las entradas de una tabla, también es importante tomar en cuenta que las migraciones no incurran en conflictos con datos contenidos en la base de datos, por ejemplo, aplicar una restricción de unicidad sobre una columna con valores repetidos.
+Para actualizar el servidor web y los trabajadores basta con reemplazar el código que estos ejecutan, sin embargo, para actualizar la base de datos se hace uso de archivos de migraciones que se crean en la etapa de desarrollo. las migraciones pueden ser aplicadas con el comando \textit{migrate}, para saber cual fue la última migración aplicada Django mantiene una tabla para llevar cuenta del estado de la base de datos, así es posible saber cuales de las migraciones deben ser aplicadas. Se debe tener especial cuidado al ejecutar migraciones, algunas migraciones incluyen operaciones costosas como agregar indices a tablas existentes o actualizar todas las entradas de una tabla, también es importante tomar en cuenta que las migraciones no incurran en conflictos con datos contenidos en la base de datos, por ejemplo, aplicar una restricción de unicidad sobre una columna con valores repetidos.
 
-En la Sección \ref{sub:servidorweb} se dijo que la aplicacion web Django no se encarga de servir los archivos estáticos al cliente, es por esto que generalmente un entidad desacoplada ya sea el mismo servidor web configurado para servir ciertas rutas sin pasarlas a Django o otro servidor web aparte deben proveer este servicio, sin embargo los archivos estáticos viven junto al resto del código de la aplicacion, para que el servidor desacoplado pueda encontrar estos archivos, estos deben ser copiados al directorio apuntado por la variable \textit{STATIC\_ROOT}, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
+En la Sección \ref{sub:servidorweb} se dijo que la aplicacion web Django no se encarga de servir los archivos estáticos al cliente, es por esto que estos deben ser copiados a la carpeta correspondiente ya sea en el propio servidor web o en un servidor externo, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
 
-El paso final de despliegue es reiniciar los componentes que lo requieran, en otras palabras el servidor web y los trabajadores de modo que estos puedan importar el nuevo código, los demás micro-servicios como broker de mensajería, planificador y backend de resultados no requieren ser reiniciados durante los despliegues. 
+Finalmente, se reinician los componentes que lo requieran, en otras palabras el servidor web y los trabajadores de modo que estos puedan importar el nuevo código, los demás micro-servicios como broker de mensajería, planificador y backend de resultados no requieren ser reiniciados durante los despliegues. 
 
-Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicacion para forzar a apache a releer todo el código antes de levantar la aplicacion. 
+%Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicacion para forzar a apache a releer todo el código antes de levantar la aplicacion. 
 
-Reiniciar los trabajadores puede hacerse de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo broadcast para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina host del trabajador previamente, en futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
+Los trabajadores pueden ser reiniciados de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX http://supervisord.org/}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo \textit{broadcast} para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina \textit{host} del trabajador previamente. En futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
 
 \chapter{Conclusiones y Recomendaciones}
 
