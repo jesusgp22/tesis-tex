@@ -1932,24 +1932,28 @@ A pesar de los anterior, en peticiones sucesivas el navegador web usará los arch
 
 Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como se ve en la tabla \ref{tab:djangotest} tanto la velocidad de respuesta promedio como la mediana se mantienen muy por debajo del umbral de los 0.1 segundos, e incluso el tiempo de respuesta máximo se mantiene cerca del umbral del segundo, dejando de lado la latencia de la red, esto conforma una experiencia de navegación rápida.
 
-\chapter{Monitor de Red "Tentacle Probe Source"} \label{cap:monitor}
+\chapter{Tentáculos}
 
-Tentacle Probe Source (TPS) es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo. Su misión es ejecutar pruebas periódicas siguiendo el plan de monitoreo definido por el usuario con el objetivo de recoger datos sobre las métricas relevantes a la red a monitorear, los resultados de las pruebas son guardados temporalmente en la memoria del dispositivo y se suben a la nube regularmente. La frecuencia en que se suben los datos a la nube depende de la cantidad de memoria disponible en el dispositivo, la cantidad de datos generados por el monitoreo, y el ancho de banda disponible.
-
-Uno de los objetivos principales del monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. Como ya se mencionó, el comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre los monitores Tentacle Probe Source y Octopus Head ocurre a través de la nube, Octopus Head transfiere el plan de monitoreo a través de mensajes individuales que especifican cambios tales como replanificación de pruebas, cambios a los parámetros de ejecución, e incluir nuevos enlaces a monitorear.
+En el marco de este trabajo hemos definido una analogía sencilla que compara un enlace en una red a un tentáculo de un pulpo, a cada extremo del tentáculo se encuentran los agentes relevantes al sistema de monitoreo: monitores de red que hemos llamado \textit{Tentacle Probe Source} ya que estos generan sondas y funciones como los puntos activos del monitoreo y los \textit{Tentacle Probe Destination} que son los nodos de interés a monitorear. Cada tentáculo está compuesto ademas por una cantidad variable de nodos intermedios como enrutadores y proxies que establecen la comunicación entre el TPS y cada TPD.
 
 \section{Diseño del Monitor}
 
 El diseño del monitor esta sujeto a los siguientes baremos: 
 
 \begin{itemize}
-	\item{\textbf{Estabilidad} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá los resultados esperados en la aplicación web.}
-	\item{\textbf{Flexibilidad} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando.}
-	\item{\textbf{Planificación precisa} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de manera fiel el plan de monitoreo.}
-	\item{\textbf{Ejecutable en equipos de bajo costo} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del host.}
-	\item{\textbf{Configuración remota} el monitor debe implementar algún protocolo para actualizar su plan de monitoreo a partir de cambios hechos en la aplicación web.}
-	\item{\textbf{Bitácora} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre los eventos relevantes durante la ejecución.}
+	\item{\textbf{Estabilidad:} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá los resultados esperados en la aplicación web.}
+	\item{\textbf{Flexibilidad:} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando.}
+	\item{\textbf{Planificación precisa:} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de manera fiel el plan de monitoreo.}
+	\item{\textbf{Ejecutable en equipos de bajo costo:} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del host.}
+	\item{\textbf{Configuración remota:} el monitor debe implementar algún protocolo para actualizar su plan de monitoreo a partir de cambios hechos en la aplicación web.}
+	\item{\textbf{Bitácora:} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre los eventos relevantes durante la ejecución.}
 \end{itemize}
+
+\section{Tentacle Probe Source} \label{cap:monitor}
+
+Tentacle Probe Source (TPS) es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo. Su misión es ejecutar pruebas periódicas siguiendo el plan de monitoreo definido por el usuario con el objetivo de recoger datos sobre las métricas relevantes a la red a monitorear, los resultados de las pruebas son guardados temporalmente en la memoria del dispositivo y se suben a la nube regularmente. La frecuencia en que se suben los datos a la nube depende de la cantidad de memoria disponible en el dispositivo, la cantidad de datos generados por el monitoreo, y el ancho de banda disponible.
+
+Uno de los objetivos principales del monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. Como ya se mencionó, el comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre los monitores Tentacle Probe Source y Octopus Head ocurre a través de la nube, Octopus Head transfiere el plan de monitoreo a través de mensajes individuales que especifican cambios tales como replanificación de pruebas, cambios a los parámetros de ejecución, e incluir nuevos enlaces a monitorear.
 
 \subsection{Arquitectura}
 
@@ -1986,11 +1990,11 @@ El monitor solo puede detenerse a través de una señal del sistema operativo (SIG
 Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activity}.
 
 
-\section{Componentes}
+\subsection{Componentes}
 
 En esta sección se explican a detalle los componentes que forman parte de la arquitectura del monitor.
 
-\subsection{Cliente}
+\subsubsection{Cliente}
 
 El cliente de TPS es el programa encargado de iniciar o detener la ejecución del monitor en modo daemon y funge como interfaz entre el usuario y monitor.
 
@@ -2026,7 +2030,7 @@ $ python tentacle.py start --no-daemon
 	\label{tab:clientcommands}
 \end{table}
 
-\subsection{Hilo Principal}
+\subsubsection{Hilo Principal}
 
 El hilo principal de ejecución es el punto de partida desde el momento en que el proceso ya se ha convertido en un daemon, se encarga de inicializar el planificador el cual a su vez pasa a ejecutarse en segundo plano, luego, su tarea consiste en mantener el plan de monitoreo al día a partir de los cambios que se hagan en Octopus Head.
 
@@ -2059,13 +2063,14 @@ El diagrama de secuencia del hilo principal del monitor puede ser observado en l
 \end{figure}
 
 
-\subsection{Planificador}
+\subsubsection{Planificador}
 
 Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite retrasar la ejecución de código python a instantes específicos en el futuro; el planificador se puede ejecutar como un subproceso de modo que otro hilo puede encargarse de mantener el estado de planificador actualizado, indicando cuando se deban agregar, re-planificar o eliminar pruebas.
 
 El planificador está compuesto de de gatillos para determinar el tiempo de ejecucion de las pruebas, ejecutores, y almacenes de tareas que guardan el estado del planificador, todos estos componentes son altamente configurables y se pueden extender o reusar para obtener cualquier comportamiento deseado. A continuación se explica su funcionamiento y como se usaron en el marco de este trabajo.
 
-\subsubsection{Gatillos (Triggers)}
+\begin{itemize}
+\item{\textbf{Gatillos (Triggers)}
 
 Los gatillos contienen la lógica para determinar en que momento se debe ejecutar una tarea, la biblioteca APScheduler incluye varios gatillos predefinidos de los cuales dos se han usado para el desarrollo de esta aplicación: 
 
@@ -2073,26 +2078,30 @@ Los gatillos contienen la lógica para determinar en que momento se debe ejecutar
 	\item{\textbf{Gatillo por intervalos:} ejecuta pruebas en intervalos regulares, opcionalmente se pueden suministrar fechas finales e iniciales de modo que las pruebas solo se ejecuten durante un período especifico, después de la fecha final el planificador elimina la prueba automáticamente.}
 	\item{\textbf{Gatillo por fecha:} ejecuta la prueba en una fecha especifica dada, una sola vez, útil para ejecutar pruebas que usen muchos recursos de red como benchmarks o capturas de tráfico de la red.}
 \end{itemize}
+}
 
-\subsubsection{Ejecutores (Executors)}
+
+\item{\textbf{Ejecutores (Executors)}
 
 El ejecutor es el ente encargado de llevar a cabo la ejecución de las tareas, en nuestro caso se ha hecho uso de un grupo de subprocesos (\textit{thread pool}), la cantidad de hilos en el grupo esta dado por el número de pruebas que estaremos ejecutando de modo que siempre se tenga al menos un hilo disponible cuando se inicia una prueba. 
 
 El ejecutor comunica el estado de ejecución de las tareas al planificador, de modo que se pueden implementar limites de concurrencia tales que una tarea solo pueda ser ejecutada simultáneamente un cierto número de veces. En este trabajo solo puede ser ejecutada una prueba del mismo tipo a la vez, en otras palabras la concurrencia máxima es uno.
-
-\subsubsection{Almacén de tareas (Job store)}
+}
+\item{\textbf{Almacén de tareas (Job store)}
 
 El almacén de tareas guarda las tareas planificadas, el comportamiento por omisión es guardar las tareas en memoria, pero existen distintos tipos de almacenes como Redis \cite{RedisWebsite} y bases de datos. Hemos usado la clase SQLAlchemyJobStore que permite guardar tareas en una base de datos ligera como Sqlite\footnote{Sqlite: https://www.sqlite.org/} y así asegurar la persistencia de los datos de la aplicación en caso de interrupciones o reinicios.
 
 El almacén de tareas debe guardar toda la información necesaria para recrear las tareas, en otras palabras debe guardar el gatillo, la ruta del ejecutable de la prueba, el arreglo de parámetros y el tiempo de la última ejecución. La estructura de la base de datos es muy sencilla: se guarda el identificador de la tarea como clave, el tiempo de la última ejecución (timestamp) y los datos de la ruta del ejecutable y los parámetros se serializan y se guardan en un campo BLOB.
+}
+\end{itemize}
 
-\subsection{Almacenamiento Compartido}
+\subsubsection{Almacenamiento Compartido}
 
 El almacenamiento compartido se encarga de alojar los resultados de las pruebas en archivos de trazas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos.
 
 El costo de alojar archivos en la nube no depende del número de archivos sino del espacio total de disco en uso, sin embargo, Dropbox impone un limite de peticiones diarias por usuario por lo que debemos intentar minimizar la cantidad de peticiones que realizamos. Para reducir el número de archivos en el almacenamiento compartido se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese período se anexan al archivo correspondiente. 
 
-\section{Pruebas Implementadas}
+\subsection{Pruebas Implementadas}
 
 Gracias a la arquitectura del TPS, implementar una prueba es tan sencillo como crear un paquete e implementar la función \verb|run| en el archivo \verb|init.py|, todas las pruebas implementadas hasta ahora comparten una flujo de ejecución similar:
 \begin{enumerate}
@@ -2105,7 +2114,7 @@ Gracias a la arquitectura del TPS, implementar una prueba es tan sencillo como c
 
 Durante el desarrollo de este trabajo se han implementaron \textit{wrappers} para los programas \textit{ping}, \textit{traceroute} e \textit{iperf} y se desarrolló una prueba para determinar el estado de servidores a través del protocolo HTTP.
 
-\subsection{Ping}
+\subsubsection{Ping}
 
 Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como ya se menciono en la sección \ref{sub:ping} ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo. La prueba consiste en instanciar un hilo por cada enlace monitoreado y ejecutar el comando ping. La prueba se realiza en paralelo para asegurar que la diferencia entre el tiempo de inicio esperado de la prueba y su tiempo ejecucion efectivo sea mínimo.
 
@@ -2149,7 +2158,7 @@ Independientemente del número de sondas que se envíen elegiremos solo la mediana
 	\caption{Parámetros de la prueba ping}
 \end{table}
 
-\subsection{Httping}
+\subsubsection{Httping}
 
 Esta prueba usa el protocolo HTTP para hacer un \textit{HEAD Request} y obtener el tiempo de respuesta y código de estatus HTTP. Esta prueba no es un \textit{wrapper} de un comando externo, sino que llama directamente a una función para hacer la petición HTTP. Para facilitar el manejo de peticiones HTTP se usó la biblioteca Requests\footnote{Requests: HTTP para Humanos http://docs.python-requests.org/es/latest/}.
 
@@ -2185,7 +2194,7 @@ La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba http
 
 Esta prueba es útil para monitorear todo tipo de servidores web y posee la ventaja sobre ping de utilizar un protocolo de capa aplicación por lo que da una idea mas precisa de la experiencia del usuario al visitar dicho servicio; a diferencia de ping, el resultado obtenido no solo es la latencia de la red, sino la suma de la latencia de la red y el tiempo de respuesta del servidor, que puede estar sujeto, por ejemplo, al nivel de carga que esté manejando dicho servicio, o a la petición especifica que se esté realizando.
 
-\subsection{Traceroute}
+\subsubsection{Traceroute}
 
 Esta prueba ejecuta el comando traceroute para obtener la ruta entre un par de nodos a través de una red IP, llamamos ruta a una secuencia de saltos (\textit{hops}) que hace un paquete al atravesar un enrutador. 
 
@@ -2249,9 +2258,15 @@ Las parámetros de esta prueba son los siguientes:
 	\label{tab:traceroute-params}
 \end{table}
 
-\subsection{Throughput con Iperf}
+\subsubsection{Throughput con Iperf}
 
 La prueba de \textit{throughput} con Iperf hace mediciones de ancho de banda entre un par de nodos usando el programa Iperf. Ya que Iperf es un programa de tipo cliente-servidor, el usuario que realiza el monitoreo debe asegurarse de mantener una instancia de Iperf en modo servidor en el TPD, en otras palabras es un requisito para esta prueba que el usuario tenga acceso o cuente con la colaboración explicita de los TPD.
+
+El comando Iperf se puede ejecutar en modo servidor lo cual le permite conectarse a un puerto y esperar conexiones para ejecutar pruebas de throughput, el comando para iniciar Iperf en el TPD en modo daemon es el siguiente:
+
+\begin{verbatim}
+$iperf -s -D
+\end{verbatim}
 
 A diferencia de las pruebas como las de ping o httping que solo envían unas pocas sondas ICMP o peticiones \textit{HTTP HEAD}, Iperf utiliza una gran cantidad de recursos de red intentando inundar el enlace y obtener el mayor throughput posible, por lo tanto, el usuario debe asegurarse de no interferir constantemente el rendimiento de la red planificando demasiadas ejecuciones de esta prueba. Aunado a esto, cada ejecucion del comando Iperf se realiza secuencialmente, de esta manera, se evita que los distintos enlaces monitoreados tengan que compartir los recursos de red y se generen cuellos de botella en el TPS.
 
@@ -2295,23 +2310,29 @@ for link in links.values():
 	\label{tab:traceroute-params}
 \end{table}
 
+\section{Tentacle Probe Destination}
+
+Los Tentacle Probe Destination son los nodos de interés a monitorear, cualquier nodo en la red es candidato a convertirse en un TPD, sin embargo, el usuario deberá tener en cuenta las características del nodo y del enlace al elegir las pruebas que recolectaran datos del enlace. La mayoría de los nodos de una red IP son capaces de responder a mensajes del protocolo ICMP y por lo tanto será posible monitorearlos a través de las pruebas de ping o traceroute. Otros ejemplos en que aprovechamos características ya disponibles en los nodos de una red es al monitorear servidores web a través del protocolo HTTP.
+
+Mientras es posible obtener información de los TPD sin necesidad de tener privilegios para instalar y ejecutar software en ellos, determinar ciertas métricas como el \textit{throughput} requiere que un programa se ejecute en el TPD y esté esperando peticiones por parte del TPS. Sumado a esto, el usuario deberá asegurar que el monitoreo no entorpezca el funcionamiento del TPD, por ejemplo, un intervalo entre pruebas de un segundo para la prueba de HTTP agregaría decenas de peticiones por minuto lo cual estaría desperdiciando sus recursos internos innecesariamente.
+
 \chapter{Framework de integración de pruebas} \label{cap:framework}
 
 A pesar de que Octopus Monitor incluye un conjunto de pruebas como ping, httping, traceroute y iperf que proveen datos sobre latencia, rendimiento, disponibilidad y alcanzabilidad de los enlaces y servicios monitoreados, una de sus características mas importantes es la facilidad de implementación de nuevas pruebas. 
 
-El framework de integración de pruebas le ahorra al desarrollador la repetición de las tareas comunes a todas las pruebas como definición de URLs, formularios de parámetros, lógica de las vistas, escritura de plantillas,etc. Gracias a esto, el desarrollador se puede concentrar en escribir solo el código especifico a cada prueba particular facilitando y acelerando la expansión de la aplicacion.
+El framework de integración de pruebas le ahorra al desarrollador la repetición de las tareas comunes a todas las pruebas como definición de URLs, formularios de parámetros, lógica de las vistas o escritura de plantillas. Gracias a esto, el desarrollador se puede concentrar en escribir solo el código especifico a cada prueba particular facilitando y acelerando la expansión de la aplicación.
 
 Para entender los requisitos que resultarán en los distintos componentes que serán parte del framework, debemos entender el flujo de trabajo del monitoreo a través del cual se obtienen datos de las redes monitoreadas:
 
 \begin{enumerate}
 	\item{El usuario selecciona una prueba de la lista de pruebas disponibles para el monitor.}
 	\item{La aplicación web despliega un formulario donde el usuario puede planificar la ejecución de la prueba seleccionada y establecer sus parámetros.}
-	\item{La aplicacion web sube un mensaje al buzón del monitor de red con los detalles de la prueba planificada.}
+	\item{La aplicacion web sube un mensaje a la carpeta monitor de red con los detalles de la prueba planificada.}
 	\item{El monitor es notificado del nuevo mensaje, lee su contenido y prepara la prueba para su ejecucion}
 	\item{El monitor ejecuta la prueba y guarda los resultados en un archivo de trazas temporal}
 	\item{El monitor sube los archivos generados a la nube para su almacenamiento a largo plazo}
-	\item{La aplicacion web inicia una rutina de sincronización la cual descarga los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
-	\item{El usuario selecciona una visualización dada de la lista de visualizaciones disponibles y selecciona los datos y las opciones a través de un formulario.}
+	\item{La aplicacion web inicia una rutina de sincronización para descargar los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
+	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles y selecciona los datos y las opciones a través de un formulario.}
 	\item{El servidor busca la visualización solicitada en el caché, si no la encuentra, llama a la función correspondiente para computarla, la introduce en el cache para futuras consultas y la muestra al usuario.}
 \end{enumerate}
 
@@ -2324,7 +2345,7 @@ A partir de este flujo podemos inferir los siguientes requisitos:
 			\item{Una lista de parámetros para cada una de las pruebas}
 			\item{Un formulario para permitir la selección de los parámetros cada vez que el usuario planifica una prueba}
 	\end{itemize}
-	\item{Un módulo de sincronización genérico que pueda procesar los archivos de trazas y almacenar los datos de las pruebas.}
+	\item{Un módulo de sincronización genérico que pueda procesar los archivos de trazas y almacenar los datos de las pruebas en la base de datos.}
 	\item{Un módulo de análisis y visualización de los datos recolectados que incluya los siguientes componentes:}
 	\begin{itemize}
 			\item{Definiciones de las visualizaciones disponibles para los datos de cada prueba.}
@@ -2337,17 +2358,17 @@ A partir de este flujo podemos inferir los siguientes requisitos:
 
 \section{Planificación genérica de pruebas}
 
-La planificación genérica de pruebas provee una interfaz única que permite a los usuarios agregar pruebas a ejecutar para sus monitores remotos. Como ya se explicó en la Sección \ref{sub:basededatos} mantenemos en la base de datos dos tablas que describen las pruebas que son parte del sistema, la tabla "Test" que incluye los detalles básicos de cada prueba como su nombre, descripción y \textit{nombre de módulo} y la tabla "Parameter" que incluye el nombre, tipo, valor por omisión, ámbito y otros detalles de los parámetros, una prueba puede ser vista como una agregación de sus parámetros. El sistema soporta parámetros de tipo bolean, entero, flotante y cadena de caracteres, sin embargo nuevos tipos podrían ser implementados para ser parte del sistema.
+La planificación genérica de pruebas provee una interfaz única que permite a los usuarios agregar pruebas a ejecutar para sus monitores remotos. Como se explicó en la Sección \ref{sub:basededatos} mantenemos en la base de datos dos tablas que describen las pruebas que son parte del sistema, la tabla \textit{Test} que incluye los detalles básicos de cada prueba como su nombre, descripción y nombre de módulo y la tabla \textit{Parameter} que incluye el nombre, tipo, valor por omisión, ámbito y otros detalles de los parámetros. Una prueba puede ser vista como una agregación de sus parámetros.
 
-Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionadas, esta tabla guarda los parámetros de la prueba en formato json y la información de la planificación (intervalo entre prueba, fecha inicial (o fecha de ejecucion), fecha final, estado, etc.)
+Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato json y el momento de la planificación.
 
-Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares a partir de una fecha inicial y hasta una fecha final y pruebas de una sola ejecucion que pueden ser ejecutadas en un tiempo específico. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente, otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas mucho mas largo en caso de planificarse de forma periódica.
+Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente, otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas mucho mas largo en caso de planificarse de forma periódica.
 
-Cuando un usuario desea planificar una prueba, el sistema filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor, de esta manera, por ejemplo, un dispositivo de bajo poder de computo como un raspberry pi no tendría disponible una prueba computacionalmente intensiva de troughput multi-flujos, esto se podría extender también para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para cada sistema operativo. Por ahora, el sistema filtra las pruebas según el esquema de planificación: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas.
+Cuando un usuario desea planificar una prueba, el sistema filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor. De esta manera, por ejemplo, un dispositivo de bajo poder de computo como un Raspberry Pi\footnote{Raspberry Pi https://www.raspberrypi.org/} no tendría disponible una prueba computacionalmente intensiva de troughput multi-flujos, esto se podría extender también para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para cada sistema operativo. Por ahora, el sistema filtra las pruebas según el esquema de planificación: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas.
 
-Cuando el usuario selecciona una prueba el sistema crea un formulario partir de la lista de parámetros, ya se mencionó que los parámetros pueden ser de tipo bolean, entero, flotante y cadena de caracteres, pero también pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace.
+Cuando el usuario selecciona una prueba, el sistema crea un formulario partir de la lista de parámetros, ya se mencionó que los parámetros pueden ser de tipo bolean, entero, flotante y cadena de caracteres, pero también pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace.
 
-Los formularios en Django se modelan a través de una clase "Form" que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario, cuando deseamos crear un nuevo formulario debemos crear una subclase de "Form" e incluir todos los campos que serán parte del formulario y cualquier validación especial de dichos campos.
+Los formularios en Django se modelan a través de la clase \textit{Form} que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario. Cuando deseamos crear un nuevo formulario debemos crear una subclase de \textit{Form} e incluir todos los campos que serán parte del formulario y cualquier validación especifica a dichos campos.
 
 \subsection{Formulario de Parámetros de la Prueba}
 
@@ -2395,30 +2416,30 @@ Es posible crear clases de forma dinámica en tiempo de ejecucion usando las cara
 	\end{algorithmic}
 \end{algorithm}
 
-La clase generada luego es pasada a una plantilla genérica capaz de dibujar cualquier formulario dado, cuando el usuario introduce los datos estos son validados por la misma forma, el formulario generado incluye validaciones básicas de tipos de datos, un trabajo futuro podría incluir validaciones mas complejas como intervalos máximos y mínimos para los capos numéricos o validaciones personalizables para campos  de tipo "string".
+La clase generada luego es pasada a una plantilla genérica capaz de dibujar cualquier formulario dado, cuando el usuario introduce los datos estos son validados por la misma forma. El formulario generado incluye validaciones básicas de tipos de datos, un trabajo futuro podría incluir validaciones mas complejas como intervalos máximos y mínimos para los capos numéricos o validaciones personalizables para campos  de tipo \textit{string}.
 
 \subsection{Formulario de Planificación}
 
-Junto con el formulario de parámetros debemos incluir un formulario para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola vez.
+Junto con el formulario de parámetros debemos incluir los campos para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola vez.
 
 La validación de este formulario es usada para asegurar las reglas de negocio del sistema:
 	\begin{enumerate}
-		\item{La fecha inicial y la fecha final no pueden ser previas al tiempo actual}
-		\item{la fecha final no puede ser previa a la fecha inicial}
-		\item{La fecha inicial no puede ser modificada después de que la prueba ya ha comenzado}
+		\item{La fecha inicial y la fecha final no pueden ser previas al tiempo actual.}
+		\item{la fecha final no puede ser previa a la fecha inicial.}
+		\item{La fecha inicial no puede ser modificada después de que la prueba ya ha comenzado.}
 		\item{El intervalo entre pruebas no puede ser menor o igual que 0.}
-		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor, es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo periodo}
+		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor.} % es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo periodo}
 	\end{enumerate}
 
 Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se verifica que la prueba a insertar en el plan de monitoreo no se intercepte con ninguna otra.
 
 \section{Sincronización genérica de datos} \label{sec:syncgeneric}
 
-El mecanismo general de recolección de datos se ha explicado detalladamente en la Sección \ref{sub:Recolector}, se ha dicho que por cada prueba activa para el monitor se llama a una subrutina de sincronización que descarga los archivos de trazas e introduce los resultados en la base de datos, sin embargo no se ha entrado en detalle sobre el método de procesamiento de los archivos y la forma en que los datos de cada prueba se almacenan en la base de datos.
+El mecanismo general de recolección de datos se ha explicado detalladamente en la Sección \ref{sub:Recolector}, se ha dicho que por cada prueba activa para el monitor se llama a una subrutina de sincronización que descarga los archivos de trazas e introduce los resultados en la base de datos, sin embargo no se ha entrado en detalle sobre el método de procesamiento de los archivos y la forma en que los datos de cada prueba se almacenan en la base de datos. A continuación, se discuten los elementos que conforman la sincronización genérica de datos.
 
 \subsection{Almacén de datos}
 
-Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas, desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente cientos de millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en cualquier formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
+Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas. Desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente cientos de millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en cualquier formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
 
 Estos argumentos evidencian la necesidad de definir modelos específicos diseñados para ajustarse a las necesidades de cada prueba y optimizados para facilitar y acelerar el cálculo de las visualizaciones relacionadas a las pruebas, como ya se vio con el calculo de mapas de calor para las datos de ping y httping.
 
