@@ -1077,7 +1077,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 	\end{center}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[H] 
 	\caption{Entidades relacionadas a las visualizaciones y reportes}
 	\begin{center}
 		\begin{tabular}{r|p{2cm}p{8cm}}	
@@ -1088,6 +1088,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\textbf{\textit{ResultItem}} & \multicolumn{2}{p{10cm}}{Almacena el url relacionado a una visualización que es parte de un reporte y comentarios.}\\
 		\end{tabular}
 	\end{center}
+	\label{table:db-visualization}
 \end{table}
 
 \subsubsection{Relaciones}
@@ -1314,7 +1315,7 @@ El proceso de autenticación es un algoritmo a dos pasos que se puede observar en
 
 A partir de este momento tenemos los dos elementos necesarios para hacer peticiones al API de Dropbox: los permisos sobre la carpeta en la nube del usuario y el token de acceso a su dropbox.
 
-\subsection{Subidor de mensajes}
+\subsection{Subidor de mensajes} \label{subidordemensajes}
 
 Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada).
 
@@ -2101,7 +2102,7 @@ El almacenamiento compartido se encarga de alojar los resultados de las pruebas 
 
 El costo de alojar archivos en la nube no depende del número de archivos sino del espacio total de disco en uso, sin embargo, Dropbox impone un limite de peticiones diarias por usuario por lo que debemos intentar minimizar la cantidad de peticiones que realizamos. Para reducir el número de archivos en el almacenamiento compartido se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese período se anexan al archivo correspondiente. 
 
-\subsection{Pruebas Implementadas}
+\subsection{Pruebas Implementadas} \label{pruebasimplementadas}
 
 Gracias a la arquitectura del TPS, implementar una prueba es tan sencillo como crear un paquete e implementar la función \verb|run| en el archivo \verb|init.py|, todas las pruebas implementadas hasta ahora comparten una flujo de ejecución similar:
 \begin{enumerate}
@@ -2248,11 +2249,11 @@ Las parámetros de esta prueba son los siguientes:
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{rp{2cm}p{9cm}}
-		\rowcolor[HTML]{C0C0C0} 
+	\begin{tabular}{r|p{2cm}|p{9cm}}
+		\rowcolor{light-gray} 
 		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
 		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
-		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\ \hline
+		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\
 	\end{tabular}
 	\caption{Parametros de la prueba con traceroute}
 	\label{tab:traceroute-params}
@@ -2297,14 +2298,14 @@ for link in links.values():
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{rp{2cm}p{9cm}}
-		\rowcolor[HTML]{C0C0C0} 
+	\begin{tabular}{r|p{2cm}|p{9cm}}
+		\rowcolor{light-gray} 
 		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
 		Probar este enlace & Booleano                      & Determina si se debe o no ejecutar la prueba para un enlace especifico.                      \\ \hline
 		Tiempo de transmisión       & Entero                      & Numero de segundos para transmitir datos durante la prueba. \\ \hline
 		Bytes a enviar      & String                      & Cantidad de bytes a enviar durante la prueba, se puede especificar si el numero es en bytes o megabytes usando las letras B o M respectivamente, este parámetro se ignora si se establece el parametro anterior.. \\ \hline
 		Numero de flujos       & Entero                      & Numero de flujos TCP simultáneos a usar durante la prueba. \\ \hline
-		Puerto       & Entero                      & Especifica el puerto en que el servidor está escuchando en el TPS. \\ \hline
+		Puerto       & Entero                      & Especifica el puerto en que el servidor está escuchando en el TPS. \\
 	\end{tabular}
 	\caption{Parametros de la prueba con iperf}
 	\label{tab:traceroute-params}
@@ -2362,18 +2363,23 @@ La planificación genérica de pruebas provee una interfaz única que permite a los
 
 Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato json y el momento de la planificación.
 
-Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente, otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas mucho mas largo en caso de planificarse de forma periódica.
+Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
 
-Cuando un usuario desea planificar una prueba, el sistema filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor. De esta manera, por ejemplo, un dispositivo de bajo poder de computo como un Raspberry Pi\footnote{Raspberry Pi https://www.raspberrypi.org/} no tendría disponible una prueba computacionalmente intensiva de troughput multi-flujos, esto se podría extender también para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para cada sistema operativo. Por ahora, el sistema filtra las pruebas según el esquema de planificación: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas.
+%, selecciona el esquema de planificación que va a elegir: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas
 
-Cuando el usuario selecciona una prueba, el sistema crea un formulario partir de la lista de parámetros, ya se mencionó que los parámetros pueden ser de tipo bolean, entero, flotante y cadena de caracteres, pero también pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace.
+%Octopus Head filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor. Por ahora, el sistema filtra las pruebas según el esquema de planificación. En un trabajo futuro este filtro se podría extender para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para monitores ejecutándose en distintos sistemas operativos. 
+
+ %De esta manera, por ejemplo, un dispositivo de bajo poder de computo como un Raspberry Pi\footnote{Raspberry Pi https://www.raspberrypi.org/} solo tendría un subconjunto de pruebas para este tipo de dispositivos. La lógica del filtro de pruebas se podría 
+
+Cuando el usuario selecciona una prueba, el sistema crea un formulario partir de la lista de parámetros. Los parámetros de las pruebas pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace. Por ejemplo, la prueba de httping tiene parámetros globales como el \textit{timeout} y parámetros específicos a los enlaces como \textit{path} y \textit{port}.
 
 Los formularios en Django se modelan a través de la clase \textit{Form} que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario. Cuando deseamos crear un nuevo formulario debemos crear una subclase de \textit{Form} e incluir todos los campos que serán parte del formulario y cualquier validación especifica a dichos campos.
 
 \subsection{Formulario de Parámetros de la Prueba}
 
-Es posible crear clases de forma dinámica en tiempo de ejecucion usando las características de meta-programación de python; el Algoritmo \ref{alg:formgen} muestra la estructura básica para agregar campos al formulario según el tipo de datos de los parámetros, sin embargo cada parámetro también incluye datos para determinar si el campo es obligatorio, texto de ayuda y valor por omisión.
+Ya que cada prueba tiene una lista de parámetros especifica que ademas puede depender de los enlaces de un monitor TPS, es necesario crear formularios de forma dinámica. Para esto, python ofrece características de meta-programación que permiten crear clases en tiempo de ejecucion. En este caso, definimos una función capaz de generar subclases de la clase \textit{Form} y que tengan como atributos los campos que serán parte del formulario.
 
+El Algoritmo \ref{alg:formgen} muestra la estructura básica para agregar campos al formulario según el tipo de datos de los parámetros, sin embargo cada parámetro también incluye datos para determinar si el campo es obligatorio, incluir textos de ayuda y proveer valores por omisión.
 
 \begin{algorithm}[h]
 	\caption{Generación dinámica de formularios}\label{alg:formgen}
@@ -2397,7 +2403,7 @@ Es posible crear clases de forma dinámica en tiempo de ejecucion usando las cara
 		\EndIf
 		\EndFor
 		
-		\Return $\text{A class inheriting FORM base class containing \textit{form\_fields}}$
+		\Return $\text{Una clase que herede de FORM conteniendo los \textit{form\_fields}}$
 		\EndProcedure
 		
 		\Procedure{get\_field}{type}
@@ -2416,11 +2422,11 @@ Es posible crear clases de forma dinámica en tiempo de ejecucion usando las cara
 	\end{algorithmic}
 \end{algorithm}
 
-La clase generada luego es pasada a una plantilla genérica capaz de dibujar cualquier formulario dado, cuando el usuario introduce los datos estos son validados por la misma forma. El formulario generado incluye validaciones básicas de tipos de datos, un trabajo futuro podría incluir validaciones mas complejas como intervalos máximos y mínimos para los capos numéricos o validaciones personalizables para campos  de tipo \textit{string}.
+La clase generada luego es pasada a una plantilla genérica capaz de dibujar cualquier formulario dado, cuando el usuario introduce los datos, estos son validados por la misma forma. El formulario generado incluye validaciones básicas de tipos de datos, en un trabajo futuro se podrían incluir validaciones mas complejas como intervalos máximos y mínimos para los capos numéricos o validaciones personalizables para campos  de tipo \textit{string} que puedan ser adjuntados fácilmente a los parámetros existentes.
 
 \subsection{Formulario de Planificación}
 
-Junto con el formulario de parámetros debemos incluir los campos para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola vez.
+Junto con el formulario de parámetros de la prueba, debemos incluir los campos para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola ejecución.
 
 La validación de este formulario es usada para asegurar las reglas de negocio del sistema:
 	\begin{enumerate}
@@ -2431,7 +2437,7 @@ La validación de este formulario es usada para asegurar las reglas de negocio de
 		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor.} % es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo periodo}
 	\end{enumerate}
 
-Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se verifica que la prueba a insertar en el plan de monitoreo no se intercepte con ninguna otra.
+Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se valida que la prueba a insertar en el plan de monitoreo no ocurra de forma concurrente con ninguna otra.
 
 \section{Sincronización genérica de datos} \label{sec:syncgeneric}
 
@@ -2451,9 +2457,9 @@ Django incluye un poderoso ORM que puede ayudar a construir y mantener cualquier
 
 \subsection{Procesamiento de archivos de trazas}
 
-Ya que los requisitos y características de cada prueba son distintas, el desarrollador de las pruebas tiene la libertad de establecer cualquier formato al guardar sus archivos de trazas, es por esto que el sincronizador no tiene una forma "generica" de procesador dichos archivos; depende del desarrollador escribir la función o \textit{parser} que tome como entrada un archivo de trazas en el formato establecido para el tipo de prueba y lo transforme en objetos a introducir en la base de datos.
+Ya que los requisitos y características de cada prueba son distintas, el desarrollador de las pruebas tiene la libertad de establecer cualquier formato al guardar sus archivos de trazas, es por esto que el sincronizador no tiene una forma "genérica" de procesar dichos archivos. Depende entonces del desarrollador escribir la función o \textit{parser} que tome como entrada un archivo de trazas en el formato establecido para el tipo de prueba y lo transforme en objetos a introducir en la base de datos.
 
-Para elegir la función correcta para procesar un archivo de trazas específico el mecanismo de sincronización busca en la base de datos la dirección absoluta del método y lo importa, python incluye funcionalidades para importar módulos en tiempo de ejecucion y pasar métodos a modo de variables, esto puede verse en al Algoritmo \ref{alg:loadsync}.
+Para elegir la función correcta para procesar un archivo de trazas específico, el mecanismo de sincronización busca en la base de datos la dirección absoluta del método y lo importa. Python incluye funcionalidades para importar módulos en tiempo de ejecucion y pasar métodos a modo de variables (Línea 4, Algoritmo \ref{alg:loadsync}).
 
 \begin{algorithm}[h]
 	\caption{Getter de la función de sincronización}\label{alg:loadsync}
@@ -2472,17 +2478,17 @@ Para elegir la función correcta para procesar un archivo de trazas específico el
 	\end{algorithmic}
 \end{algorithm}
 
-Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la base de datos como implementar la función en sí, la función puede vivir en cualquier parte del código pero por convención se colocan en el módulo \textit{parsing.py} dentro del paquete \textit{management}.
+Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la base de datos como implementar el \textit{parser} en sí, la función puede vivir en cualquier parte del código pero por convención se colocan en el módulo \textit{parsing.py} dentro del paquete \textit{management}.
 
-El parser debe manejar archivos corruptos o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba, por ejemplo, no tiene sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un host en o valores imposiblemente altos, introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
+El \textit{parser} debe manejar archivos dañados o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba. Por ejemplo, no tendría sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un \textit{host} o valores imposiblemente altos. Introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
 
-En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json, luego el parser puede leer el archivo y mapear los diccionarios a objetos e introducirlos en la tabla correspondiente a la prueba en la base de datos, eso se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf.
+En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json. Luego el \textit{parser} puede leer el archivo y mapear los diccionarios a objetos e introducirlos en la tabla correspondiente a la prueba en la base de datos. Esto se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf (ver Sección \ref{pruebasimplementadas})
 
 \section{Visualización genérica de datos}
 
-Después de haber recolectado y almacenado los datos de las pruebas el ultimo paso lógico y el objetivo final del sistema de monitoreo es la visualización de los datos; las visualizaciones son cargadas y desplegadas a través de una interfaz genérica que incluye un formulario para seleccionar las opciones y los datos a visualizar, herramientas como re-computo de visualizaciones (para incluir los datos mas recientes en visualizaciones que estén obsoletas) , creación de enlaces directos para compartir y opciones para ver en una nueva pestaña.
+Después de haber recolectado y almacenado los datos de las pruebas el último paso y el objetivo final del sistema de monitoreo es la visualización de los datos. Las visualizaciones son cargadas y desplegadas a través de una interfaz genérica que incluye un formulario para seleccionar las opciones y los datos a visualizar, herramientas como re-computo de visualizaciones (para incluir los datos mas recientes en visualizaciones que estén obsoletas) , creación de enlaces directos para compartir, y opciones para ver en una nueva pestaña.
 
-Las visualizaciones al igual que las pruebas se guardan en su propia tabla en la base de datos; como ya se dijo en la Sección \ref{sub:basededatos}, esta tabla lleva el nombre de \textit{ResultView}, y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear urls legibles y desplegar el formulario apropiado cuando se genera la gráfica. Los tipos de visualizaciones incluidos en el sistema se pueden ver en la Tabla \ref{tab:visual-types}
+Las visualizaciones, al igual que las pruebas, se guardan en su propia tabla en la base de datos; esta tabla lleva el nombre de \textit{ResultView} (ver Tabla \ref{table:db-visualization}), y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear URLs legibles y desplegar el formulario apropiado cuando se genera la gráfica. Los tipos de visualizaciones incluidos en el sistema se pueden ver en la Tabla \ref{tab:visual-types}
 
 \begin{table}[h]
 	\begin{tabular}{p{2.5cm}|p{12cm}}
@@ -2508,15 +2514,15 @@ Las visualizaciones al igual que las pruebas se guardan en su propia tabla en la
 
 \subsection{Construcción de URLs genéricos}
 
-Debemos recordar que estamos desarrollando un framework en el tope de una aplicacion web, por lo tanto, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una visualización específica, en la mayoría de los casos sencillamente incluimos el identificador del objeto, por ejemplo, la dirección \textit{"/monitor/2/"} identifica de forma única la página del monitor con id 2, podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre, a este tipo de cadenas de caracteres se les da el nombre de \textit{slug} y se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII. Cuando deseamos ver una visualización específica en vez de visitar un url como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
+En el contexto del desarrollo de un framework en el tope de una aplicacion web, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una vista específica. En la mayoría de los casos sencillamente incluimos el identificador del objeto, por ejemplo, la dirección "/monitor/2/" identifica de forma única la página del monitor con ID 2. Podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre. A este tipo de cadenas de caracteres se les da el nombre de \textit{slug}\footnote{los \textit{slugs} se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII}. Cuando deseamos ver una visualización específica en vez de visitar un url como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
 
-Para generar el slug correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}, ya que solo deseamos generar el slug la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma la cadena de caracteres en un slug válido, los slugs pueden ser de hasta 50 caracteres, así que el si el slug es muy largo debe ser cortado, finalmente debemos asegurarnos de que  sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo slug y si se encuentra anexamos al final un guión y un número, esto se repite hasta hallar un slug único de hasta 50 caracteres.
+Para generar el \textit{slug} correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}. Ya que solo deseamos generar el slug la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma la cadena de caracteres en un slug válido, los \textit{slugs} pueden ser de hasta 50 caracteres, así que el si el slug es muy largo debe ser cortado. Finalmente debemos asegurarnos de que  sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo slug y si se encuentra anexamos al final un guión y un número, esto se repite hasta hallar un slug único de hasta 50 caracteres.
 
 \subsection{Interfaz de visualización}
 
-Cuando un usuario selecciona una visualización de la lista de visualizaciones disponibles para su monitor, el servidor elije el formulario correspondiente, cada visualización tiene distintos parámetros de configuración, por ejemplo algunas pueden pedir al usuario que introduzca un tiempo inicial y un tiempo final para filtrar los datos, otras podrían tener opciones para seleccionar un mes específico, o un periodo de tiempo desde el momento actual como "últimas 24 horas" o "la semana pasada", algunas visualizaciones toman en cuenta los datos de todos los tentáculos de un monitor, otras piden seleccionar primero un tentáculo específico. Como hemos visto en varias oportunidades antes, los formularios no son mas que clases que podemos importar con el método definido en el Algoritmo \ref{alg:loadsync}, para esto la tabla \textit{ResultView} guarda una referencia a la clase del formulario en la columna \textit{form\_class}.
+Cuando un usuario selecciona una visualización de la lista de visualizaciones disponibles para su monitor, el servidor elije el formulario correspondiente, cada visualización tiene distintos parámetros de configuración. Por ejemplo, algunas pueden pedir al usuario que introduzca un tiempo inicial y un tiempo final para filtrar los datos, otras podrían tener opciones para seleccionar un mes específico, o un período de tiempo desde el momento actual como "últimas 24 horas" o "la semana pasada". Algunas visualizaciones toman en cuenta los datos de todos los tentáculos de un monitor, otras piden seleccionar primero un tentáculo específico. Como hemos visto en varias oportunidades antes, los formularios no son mas que clases que podemos importar con el método definido en el Algoritmo \ref{alg:loadsync}, para esto la tabla \textit{ResultView} guarda una referencia a la clase del formulario en la columna \textit{form\_class}.
 
-Ya que los formularios de las visualizaciones generalmente incluyen los mismos campos, el framework incluye algunos formularios que pueden ser reutilizados o extendidos para lograr cualquier comportamiento deseado; todos los formularios de visualizaciones heredan de un formulario base llamado \textit{BaseResultForm}, este recibe el id del monitor que luego podría ser usado por algún formulario que tome en cuenta los enlaces del monitor. Por ejemplo, la clase \textit{LinkSelectionForm} crea un menú para seleccionar de entre la lista de enlaces del monitor, todos los formularios predefinidos pueden ser vistos en la tabla \ref{table:formularios}
+Ya que los formularios de las visualizaciones generalmente son similares entre sí, el framework incluye algunos formularios que pueden ser reutilizados o extendidos para lograr cualquier comportamiento deseado. Todos los formularios de visualizaciones heredan de un formulario base llamado \textit{BaseResultForm}, este tiene como atributo el identificador del monitor con la finalidad de facilitar la construcción de formularios ajustados al monitor. Por ejemplo, la clase \textit{LinkSelectionForm} crea un menú para seleccionar de entre la lista de enlaces del monitor, todos los formularios predefinidos pueden ser vistos en la tabla \ref{table:formularios}
 
 \begin{table}[h!]
 	\centering
@@ -2534,34 +2540,34 @@ Ya que los formularios de las visualizaciones generalmente incluyen los mismos c
 	\caption{Formularios predefinidos}
 \end{table}
 
-Una característica muy poderosa de los formularios es que se les puede "adjuntar" archivos JavaScript y hojas de estilo, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario. Por ejemplo, el formulario de los mapas de calor de RTT permite seleccionar entre periodos de "todo el tiempo", "por año" y "por mes"; si se selecciona "año" se muestra un campo para introducir el año y si se selecciona "mes" se muestra un dropdown para seleccionar el mes. Los archivos CSS y JavaScript van dentro del paquete "management" en la carpeta "static/css" y "static/js" respectivamente.
+Una característica de los formularios es que se les puede "adjuntar" archivos JavaScript y hojas de estilo CSS, luego la plantilla que dibuja el formulario puede vincular estos archivos y así obtener cualquier comportamiento deseado en el formulario. Por ejemplo, el formulario de los mapas de calor de RTT incluye Javascript para mostrar y esconder campos según las selecciones del usuario.
 
-Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina JavaScript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta json:
+Cuando el usuario hace click en el botón "PLOT" comienza el proceso de validación del formulario, una rutina JavaScript toma el control, extrae los valores seleccionados del formulario y los envía al servidor a través de una petición POST, el servidor valida el formulario y genera una respuesta JSON:
 \begin{itemize}
-	\item{Si el formulario es válido, el servidor codifica un url de la visualización con los parámetros en formato GET y un "url directo".}
-	\item{Si el formulario es inválido el archivo json contiene un código HTML que luego se incrusta en el tope del formulario e indica los errores de validación.}
+	\item{Si el formulario es válido, el servidor codifica un URL de la visualización con los parámetros en formato GET y un "URL directo".}
+	\item{Si el formulario es inválido el archivo JSON contiene un código HTML que luego se incrusta en el tope del formulario e indica los errores de validación.}
 	\item{Si no se recibe respuesta del servidor o el código de estado de la respuesta es distinto de "200 OK", entonces la rutina JavaScript muestra un mensaje indicando al usuario que ocurrió un problema.}
 \end{itemize}
 
-Para desplegar las visualizaciones se usa un elemento HTML llamado \textit{iframe}, este elemento se usa para incrustar páginas html dentro de otras a partir de un URL dado, la rutina JavaScript le pasa al iframe el URL retornado en el archivo json y el iframe a su vez lo solicita al servidor, del lado del servidor el cargador genérico devuelve una visualización en formato HTML.
+Para desplegar las visualizaciones se usa un elemento HTML llamado iframe. Este elemento permite incrustar páginas web dentro de otras a partir de un URL dado. La rutina JavaScript le pasa al iframe el URL retornado en el archivo JSON y el iframe a su vez carga el URL que devuelve una página conteniendo la visualización.
 
-Algunas veces las visualizaciones pueden tardar largos periodos de tiempo en computarse, para ofrecer al usuario retroalimentación es recomendable mostrar algún tipo de animación de carga o indicador de progreso de la operación. Para implementar esta funcionalidad, se muestra una animación de carga inmediatamente después de que el usuario hace click en el botón "PLOT" o "Re-compute", luego es posible aprovechar una señal emitida por el iframe cuando obtiene respuesta del servidor para ocultar esta animación.
+En el caso de visualizaciones como los mapas de calor o periodos de actividad continua que pueden tardar largos periodos de tiempo en computarse, para ofrecer al usuario retroalimentación es recomendable mostrar algún tipo de animación de carga o indicador de progreso de la operación. Para implementar esta funcionalidad, se muestra una animación de carga inmediatamente después de que el usuario hace click en el botón "PLOT" o "Re-compute", luego es posible aprovechar una señal emitida por el iframe cuando obtiene respuesta del servidor para ocultar esta animación.
 
 La característica de re-computar visualizaciones funciona de manera análoga al flujo normal de visualización, con la única diferencia de que se solicita al cargador genérico que ignore el caché y force el computo de la visualización.
 
 \subsection{Cargador genérico de visualizaciones}
 
-El cargador genérico de visualizaciones maneja la tarea de retornar visualizaciones listas en formato HTML, el cargador recibe el slug correspondiente a la visualización y una cadena de parámetros GET, el cargador no computa las visualizaciones inmediatamente, sino que primero se asegura de que la visualización exista en el caché.
+El cargador genérico de visualizaciones maneja la tarea de retornar visualizaciones listas en formato HTML. El cargador recibe el \textit{slug} correspondiente a la visualización y una cadena de parámetros GET y no computa las visualizaciones inmediatamente, sino que primero se asegura de que la visualización exista en el caché.
 
-Se puede decir que una visualización existe en el caché cuando los parámetros de dicha visualización son los mismos que los parámetros GET pasados al cargador, sin embargo, revisar esta condición traería una complejidad innecesaria ya que habría que guardar una arreglo de la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
+Se puede decir que una visualización existe en el caché cuando los parámetros de dicha visualización son los mismos que los parámetros GET pasados al cargador. Para facilitar la búsqueda en el caché, las visualizaciones se identifican a través de un código \textit{hash} que se calcula a partir de la lista de parámetros, luego se puede buscar el archivo que contiene la visualización por si nombre en la carpeta correspondiente. Ya que la búsqueda en un directorio depende de la cantidad de archivos en el, dividimos el caché por carpetas para acelerar las consultas, las carpetas tienen como nombre el \textit{slug} de la visualización a la que pertenecen, por lo tanto un archivo en el caché se identifica como: $CACHE\_ROOT/<slug>/<hash>.html$
 
-Para evitar esta complejidad, las visualizaciones se identifican a través de un código hash que se genera a partir de la lista de parámetros, luego es tan simple como buscar el archivo por nombre en la carpeta correspondiente, ya que la búsqueda en un directorio depende de la cantidad de archivos en el, dividimos el caché por carpetas para acelerar las consultas al caché, las carpetas tienen como nombre el slug de la visualización a la que pertenecen, por lo tanto un archivo en el caché se identifica como: $CACHE\_ROOT/<slug>/<hash>.html$
+%, revisar esta condición traería una complejidad innecesaria ya que habría que guardar una arreglo de la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
 
-Cuando una búsqueda en el caché no obtiene resultados, entonces el sistema pasa a computar la gráfica, para esto, se guarda una referencia a la función en la base de datos, y esta se carga dinámicamente como ya se vió en el Algoritmo \ref{alg:loadsync}, las funciones de cómputo de visualizaciones se guardan dentro del paquete \textit{visual}, en un módulo con el nombre $<test>\_visual.py$ donde test es el nombre de módulo de la prueba a la pertenece dicha visualización.
+Cuando una búsqueda en el caché no obtiene resultados, entonces el sistema pasa a computar la gráfica, para esto, se guarda una referencia a la función que computa la visualización en la base de datos, y esta se carga dinámicamente como ya se vió en el Algoritmo \ref{alg:loadsync}. Las funciones de cómputo de visualizaciones se guardan dentro del paquete \textit{visual}, en un módulo con el nombre $<test>\_visual.py$ donde test es el nombre de módulo de la prueba a la que pertenece dicha visualización.
 
-El único requisito para las funciones de computo es retornar una cadena de caracteres válida en formato HTML (sin embargo los formatos CSV y JSON también son soportados), en caso de retornar algún otro tipo objeto (o retornar nulo) el usuario verá la representación en unicode de dicho objeto en la Interfaz de Visualización.
+El único requisito para las funciones de computo es retornar una cadena de caracteres válida en formato HTML (sin embargo los formatos CSV y JSON también son soportados). En caso de retornar algún otro tipo objeto (o retornar nulo) el usuario verá la representación en \textit{unicode} de dicho objeto en la Interfaz de Visualización.
 
-Se recomienda manejar apropiadamente las excepciones dentro de esta función, en caso contrario, estas se propagarán al cargador de visualizaciones que a su vez responderá con una página de error 500 que se cargará en el marco de la Interfaz de visualización.
+%Se recomienda manejar apropiadamente las excepciones dentro de esta función, en caso contrario, estas se propagarán al cargador de visualizaciones que a su vez responderá con una página de error 500 que se cargará en el marco de la Interfaz de visualización.
 
 \subsubsection{Plantillas genéricas}
 
@@ -2573,14 +2579,14 @@ El desarrollador debe seguir una serie de pautas al escribir plantillas para vis
 	\item{Siempre se deben usar HighCharts o Google Maps sobre otras bibliotecas que tengas las mismas funcionalidades o similares.}
 	\item{Las visualizaciones deben estar preferiblemente sobre fondo blanco.}
 	\item{En caso de que no se encontraran datos para el periodo seleccionado, se debe mostrar un mensaje de alerta en vez de una visualización en blanco.}
-	\item{se deben usar las hojas de estilo de Bootstrap al dibujar visualizaciones que estén compuestas de elementos HTML.}
+	\item{Se deben usar las hojas de estilo de Bootstrap al dibujar visualizaciones que estén compuestas de elementos HTML.}
 \end{itemize}
 
 Para simplificar la tarea de escribir código repetitivo, se ha incluido un conjunto plantillas predefinidas, algunas de ellas pueden ser extendidas para escribir nuevas visualizaciones, otras son plantillas listas para usar que aceptan alguna estructura de datos y resultan en una visualización, las plantillas predefinidas se pueden ver en la Tabla \ref{table:plantillas}.
 
 \begin{table}[h!]
 	\centering
-	\label{table:plantillas}
+	
 	\begin{tabular}{l|p{10cm}}
 		Plantilla                        & Descripcion                                                                                                               \\ \hline
 		base-visual.html                             & Plantilla base para todas las visualizaciones                                                                             \\
@@ -2594,25 +2600,26 @@ Para simplificar la tarea de escribir código repetitivo, se ha incluido un conju
 		generic-line-multi.html   & Plantilla base para gráficas de linea de tipo \textless time,value\textgreater con múltiples series,                      
 	\end{tabular}
 	\caption{Plantillas Predefinidas}
+	\label{table:plantillas}
 \end{table}
 
-\section{Workflow de integración de pruebas}
+\section{Integración de nuevas pruebas}
 
-Habiendo entendido todos los componentes que son parte del Framework de Integración de pruebas, solo queda explicar como usarlos para integrar rápidamente una prueba en un entorno de producción. El workflow de integración de pruebas consiste a de dos etapas: la etapa de desarrollo y la etapa de despliegue, esto puede ser visto en la Figura \ref{fig:workflow}.
+Habiendo entendido todos los componentes que hacen posible el monitoreo de redes, solo queda explicar como usarlos para integrar rápidamente una prueba en un entorno de producción. El \textit{workflow} de integración de pruebas consiste de dos etapas: la etapa de desarrollo y la etapa de despliegue, esto puede ser visto en la Figura \ref{fig:workflow}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\linewidth]{img/integrationworkflow.png}
-\caption{El workflow de integración de pruebas}
+\caption{El \textit{workflow} de integración de pruebas}
 \label{fig:workflow}
 \end{figure}
  
 
 \subsection{Etapa de Desarrollo}
 
-Como su nombre lo indica, durante la etapa de desarrollo se diseñan, implementan y validan las pruebas y visualizaciones que serán parte del sistema en el futuro próximo; la etapa de desarrollo ocurre en un entorno de desarrollo que se configura para ser lo más parecido posible al entorno de producción y así evitar potenciales inconsistencias que devengan en errores al momento del despliegue. 
+Durante la etapa de desarrollo se diseñan, implementan y validan las pruebas y visualizaciones que serán parte del sistema en el futuro próximo. La etapa de desarrollo ocurre en un entorno de desarrollo que se configura para ser lo más parecido posible al entorno de producción y así evitar potenciales inconsistencias que produzcan en errores al momento del despliegue. 
 
-Para desarrollar código fácilmente en distintos entornos se usa un repositorio de código git, los cambios hechos en el entorno de desarrollo pueden ser descargados en el entorno de producción y aplicados al servidor web, los trabajadores celery y la base de datos; todos los componentes deben compartir la misma versión del código antes de ir a producción para evitar comportamientos inesperados durante su interacción.
+Para desarrollar código fácilmente en distintos entornos se usa un repositorio de código git\footnote{git https://git-scm.com/}. Los cambios hechos en el entorno de desarrollo pueden ser descargados en el entorno de producción y aplicados al servidor web, los trabajadores celery y la base de datos. Todos los componentes deben compartir la misma versión del código antes de ir a producción para evitar comportamientos inesperados durante su interacción.
 
 Cuando se desea desarrollar una prueba, el primer paso es entender y describir los requisitos de la prueba, para facilitar el entendimiento de esta sección usaremos como ejemplo el diseño una prueba que determine la pérdida de paquetes usando el comando ping en modo flood, es decir, que ping generará y enviará paquetes tan rápido como pueda hasta pasar una cierta cantidad de paquetes y se determinará cuantos se perdieron durante la prueba, el módulo de pruebas solo debe encargarse de iniciar el comando y obtener los datos del número de paquetes envíados y el número de paquetes recibidos a partir de la salida.
 
