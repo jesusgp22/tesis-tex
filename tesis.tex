@@ -237,9 +237,9 @@ bookmarks=true, citecolor=blue}%, draft=true}
 
 Con el objetivo de proveer alternativas para el acceso a Internet a bajo costo se han popularizado despliegues de redes alternativos tales como las Redes Comunitarias\cite{gaia-alternative2015}. Estas redes consisten en arreglos interconectados de nodos mantenidos por la comunidad y para la comunidad, los interesados en formar parte de la red ofrecen su hardware y extienden la red, la cual crece de forma orgánica y descentralizada. A pesar de que estos despliegues sean de bajo costo, descentralizadas, e incluso caóticos, los usuarios esperan una mínima calidad de servicio y velocidad de respuesta que les permita aprovechar tanto los servicios tradiciones de Internet así como servicios locales disponibles solo para los usuarios de la red comunitaria\cite{Octopus2015}. Tener un sistema de monitoreo de redes de bajo impacto sobre los recursos de red y de hardware disponibles y que ofrezca información sobre la red en tiempo real es crucial para ayudar a los interesados a detectar problemas y asegurar la calidad de servicio que los usuarios esperan.
 
-Existen dos estrategias de monitoreo de redes: monitoreo activo o \textit{benchmarking} que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red, y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El benchmarking tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red. Ejemplos de herramientas de benchmarking son \textit{ping}, \textit{iperf} y \textit{traceroute}.
+Existen dos estrategias de monitoreo de redes: monitoreo activo o \textit{benchmarking} que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red, y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El \textit{benchmarking} tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red. Ejemplos de herramientas de \textit{benchmarking} son \textit{ping}, \textit{iperf} y \textit{traceroute}.
 
-El monitoreo pasivo tiene la ventaja de que nos puede dar una idea del uso de la red, sin embargo, para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso. Ejemplos de herramientas de monitoreo pasivo son \textit{tcpdump}\footnote{tcpdump: http://www.tcpdump.org/} y \textit{wireshark}\footnote{Wireshark: https://www.wireshark.org/}; en ambos casos hay que resaltar que es difícil tener una imagen completa de la realidad de la red.
+El monitoreo pasivo nos puede dar una idea del uso de la red, sin embargo, para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso. Ejemplos de herramientas de monitoreo pasivo son \textit{tcpdump}\footnote{tcpdump: http://www.tcpdump.org/} y \textit{wireshark}\footnote{Wireshark: https://www.wireshark.org/}. En ambos casos hay que resaltar que es difícil tener una imagen completa del estado de la red.
 
 Uno de los trabajos más importantes en el área de monitoreo de redes es el Protocolo Simple de Administración de Red o SNMP (del inglés \textit{Simple Network Management Protocol}). Este emergió como una de las primeras soluciones al problema de manejo de redes y se ha convertido en la solución más ampliamente aceptada  debido a su diseño modular e independiente de productos o redes específicas. Así como plantea Kurose y Ross\cite{Kurose:13}, SNMP consiste de (1) un administrador de red, (2) una serie de dispositivos remotos monitoreados, (3) bases de información de administración (MIBs) en estos dispositivos, (4) agentes remotos que reportan la información de las MIBs al administrador de red y toman acciones si les indica, y, (5) un protocolo de comunicación entre los dispositivos.
 
@@ -2363,8 +2363,11 @@ La planificación genérica de pruebas provee una interfaz única que permite a los
 
 Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato json y el momento de la planificación.
 
-Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
+%Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
 
+Es posible ejecutar pruebas según dos esquemas de planificación. Primero, \textbf{pruebas periódicas} que son ejecutadas en intervalos regulares, y {\textbf{pruebas de una sola ejecucion}. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos de la evolución de una variable a través del tiempo (Ver Sección \ref{pruebasimplementadas}). Otras pruebas, como capturas de tráfico de la red, requieren ser ejecutadas en momentos específicos para asegurar que se obtengan los datos deseados.
+	
+	
 %, selecciona el esquema de planificación que va a elegir: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas
 
 %Octopus Head filtra entre el conjunto de pruebas para determinar aquellas que están disponibles para su monitor. Por ahora, el sistema filtra las pruebas según el esquema de planificación. En un trabajo futuro este filtro se podría extender para tomar en cuenta el sistema operativo del dispositivo host y así se podrían implementar pruebas específicas para monitores ejecutándose en distintos sistemas operativos. 
@@ -2373,11 +2376,11 @@ Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódi
 
 Cuando el usuario selecciona una prueba, el sistema crea un formulario partir de la lista de parámetros. Los parámetros de las pruebas pueden ser "globales" de forma tal que se apliquen a todos los enlaces monitoreados o "específicos" de forma tal que se puedan establecer por enlace. Por ejemplo, la prueba de httping tiene parámetros globales como el \textit{timeout} y parámetros específicos a los enlaces como \textit{path} y \textit{port}.
 
-Los formularios en Django se modelan a través de la clase \textit{Form} que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario. Cuando deseamos crear un nuevo formulario debemos crear una subclase de \textit{Form} e incluir todos los campos que serán parte del formulario y cualquier validación especifica a dichos campos.
-
 \subsection{Formulario de Parámetros de la Prueba}
 
-Ya que cada prueba tiene una lista de parámetros especifica que ademas puede depender de los enlaces de un monitor TPS, es necesario crear formularios de forma dinámica. Para esto, python ofrece características de meta-programación que permiten crear clases en tiempo de ejecucion. En este caso, definimos una función capaz de generar subclases de la clase \textit{Form} y que tengan como atributos los campos que serán parte del formulario.
+Los formularios en Django se modelan a través de la clase \textit{Form} que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario. Cuando deseamos crear un nuevo formulario debemos crear una subclase de \textit{Form} e incluir todos los campos que serán parte del formulario y cualquier validación especifica a dichos campos.
+
+Ya que cada prueba tiene una lista de parámetros específica que además puede depender de los enlaces de un monitor TPS, es necesario crear formularios de forma dinámica. Para esto, python ofrece características de meta-programación que permiten crear clases en tiempo de ejecucion. En este caso, definimos una función capaz de generar subclases de la clase \textit{Form} y que tengan como atributos los campos que serán parte del formulario.
 
 El Algoritmo \ref{alg:formgen} muestra la estructura básica para agregar campos al formulario según el tipo de datos de los parámetros, sin embargo cada parámetro también incluye datos para determinar si el campo es obligatorio, incluir textos de ayuda y proveer valores por omisión.
 
@@ -2445,15 +2448,17 @@ El mecanismo general de recolección de datos se ha explicado detalladamente en l
 
 \subsection{Almacén de datos}
 
-Los resultados de las pruebas generalmente consisten de una marca de tiempo, un enlace relacionado y uno o mas valores conteniendo los datos obtenidos de las pruebas. Desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente cientos de millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en cualquier formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
+Se le da el nombre de almacén de datos al conjunto de tablas relacionadas donde se guardan los resultados de un prueba. En este trabajo la mayoría de los almacenes de datos consisten de una sola tabla donde se guarda una marca de tiempo, el enlace relacionado, y uno o mas valores conteniendo los resultados obtenidos para las métricas observadas. Ya que los resultados de cada prueba poseen una estructura particular, es necesario agregar a la estructura de la base de datos tablas ajustadas a las características particulares de cada prueba y optimizadas para facilitar y acelerar el computo de las visualizaciones relacionadas. %Desafortunadamente no hay forma de guardar datos de esta manera "semi-estructurada" en bases de datos estructuradas por lo que sería necesario definir dos tablas, una para guardar la marca de tiempo de la traza y el tipo de prueba y otra para guardar la lista de datos relacionados a esa prueba, sin embargo esto sería prohibitivamente ineficiente ya que habría que hacer varios joins en tablas de potencialmente cientos de millones de entradas solo para obtener los datos relacionados a una traza, igualmente se podría estar tentado a usar una tabla con el timestamp y un campo text para guardar datos en cualquier formato (como json), pero de nuevo esto sería ineficiente en términos de espacio de almacenamiento y no se podrían aprovechar las características del manejador de bases de datos para calcular promedios, máximos, mínimos o filtrar trazas por columnas específicas.
 
-Estos argumentos evidencian la necesidad de definir modelos específicos diseñados para ajustarse a las necesidades de cada prueba y optimizados para facilitar y acelerar el cálculo de las visualizaciones relacionadas a las pruebas, como ya se vio con el calculo de mapas de calor para las datos de ping y httping.
+%Estos argumentos evidencian la necesidad de definir modelos específicos diseñados para ajustarse a las necesidades de cada prueba y optimizados para facilitar y acelerar el cálculo de las visualizaciones relacionadas a las pruebas, como ya se vio con el calculo de mapas de calor para las datos de ping y httping.
 
-Al diseñar el almacén de datos el desarrollador debe tomar en cuenta las características de los resultados de las pruebas, por ejemplo, muchas pruebas podrían ajustarse fácilmente al formato de una marca de tiempo seguida por un conjunto definido de valores obtenidos para ese instante, sin embargo, los resultados de las pruebas podrían tener cualquier otra estructura o estar compuestas de datos no-esturcturados; por ejemplo, traceroute tiene como resultado una lista de \textit{n} saltos para alcanzar el host destino y cada salto a su vez está compuesto de \textit{m} sondas.
+El desarrollador tiene la libertad de elegir cualquier estructura que vea conveniente para almacenar los datos de las pruebas. Ya que Django maneja la base de datos a través de un ORM (ver Sección \ref{sub:orm}), definir almacenes de datos consiste en declarar un conjunto de clases y las relaciones entre ellas. Django se encargará de determinar los cambios realizados a la estructura de la base de datos y construir las tablas necesarias o asentar cambios realizados a tablas existentes.
+
+%por lo que deberá tomar en cuenta  por ejemplo, traceroute tiene como resultado una lista de \textit{n} saltos para alcanzar el host destino y cada salto a su vez está compuesto de \textit{m} sondas.
  
 %una primera aproximación podría ser guardar las marcas de tiempo y un identificador de la prueba en una tabla y en otra tabla guardar las sondas con su número de salto, host, ip, rtt y el id de la prueba relacionada, pero preferimos guardar en la base de datos el número de saltos total y un booleano indicando si se pudo alcanzar el host objetivo y guardar los datos de las sondas en un campo text ya que en ningún m
 
-Django incluye un poderoso ORM que puede ayudar a construir y mantener cualquier modelo de base de datos estructurada, los cambios hechos al modelo son registrados por archivos de migración que pueden ser creados en el entorno de desarrollo y luego aplicados fácilmente en el entorno de producción con un comando de migración, de esta manera crear y agregar nuevas columnas e indices a los almacenes de datos es sencillo y rápido.
+%Django incluye un poderoso ORM que puede ayudar a construir y mantener bases de datos estructuradas, los cambios hechos a la estructura son registrados por archivos de migración que pueden ser creados en el entorno de desarrollo y luego aplicados fácilmente en el entorno de producción con un comando de migración, de esta manera crear y agregar nuevas tablas, columnas e indices es posible.
 
 \subsection{Procesamiento de archivos de trazas}
 
@@ -2482,35 +2487,37 @@ Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la 
 
 El \textit{parser} debe manejar archivos dañados o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba. Por ejemplo, no tendría sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un \textit{host} o valores imposiblemente altos. Introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
 
-En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json. Luego el \textit{parser} puede leer el archivo y mapear los diccionarios a objetos e introducirlos en la tabla correspondiente a la prueba en la base de datos. Esto se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf (ver Sección \ref{pruebasimplementadas})
+En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json. Luego el \textit{parser} puede leer el archivo, mapear los diccionarios a objetos, e introducirlos en la tabla correspondiente a la prueba en la base de datos. Esto se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf (ver Sección \ref{pruebasimplementadas}), por ejemplo, para la prueba ping un objeto JSON como \verb|{"time": 1454013808, "rtt": 154, "icmp": 4}| podría decodificarse como un diccionario que a su vez se puede pasar como argumento al constructor de la clase \textit{TracePing}.
 
 \section{Visualización genérica de datos}
 
-Después de haber recolectado y almacenado los datos de las pruebas el último paso y el objetivo final del sistema de monitoreo es la visualización de los datos. Las visualizaciones son cargadas y desplegadas a través de una interfaz genérica que incluye un formulario para seleccionar las opciones y los datos a visualizar, herramientas como re-computo de visualizaciones (para incluir los datos mas recientes en visualizaciones que estén obsoletas) , creación de enlaces directos para compartir, y opciones para ver en una nueva pestaña.
+Después de haber recolectado y almacenado los datos de las pruebas, el último paso y objetivo final del sistema de monitoreo es la visualización de los datos. Las visualizaciones son cargadas y desplegadas a través de una interfaz genérica que incluye un formulario para ajustar los parámetros de la visualización y una barra de herramientas para realizar acciones como re-computar, crear enlaces directos o ver en una nueva pestaña.
 
-Las visualizaciones, al igual que las pruebas, se guardan en su propia tabla en la base de datos; esta tabla lleva el nombre de \textit{ResultView} (ver Tabla \ref{table:db-visualization}), y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear URLs legibles y desplegar el formulario apropiado cuando se genera la gráfica. Los tipos de visualizaciones incluidos en el sistema se pueden ver en la Tabla \ref{tab:visual-types}
+Las visualizaciones, al igual que las pruebas, se guardan en su propia tabla en la base de datos; esta tabla lleva el nombre de \textit{ResultView} (ver Tabla \ref{table:db-visualization}), y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear URLs legibles y desplegar el formulario apropiado cuando se genera la gráfica. 
 
-\begin{table}[h]
-	\begin{tabular}{p{2.5cm}|p{12cm}}
-		tipo        & descripción                                                                                                                                                                               \\ \hline
-		heatmap     & Mapa de calor, útil para mostrar mostrar la densidad o concentración de una variable sobre un plano 2D.                                                       \\ \hline
-		bar chart   & Gráfica de barras, útil para mostrar las proporciones entre un conjunto de valores.                                                                                                       \\ \hline
-		line chart  & Gráfica lineal, útil para mostrar la evolución de una variable con respecto a otra.                                                                                                       \\ \hline
-		scatter chart     & Gráfica de puntos, generalmente usada para mostrar los valores de un conjunto de muestras sobre un plano 2D                                                                               \\ \hline
-		map         & Cualquier tipo de mapa útil para mostrar información geográfica.                                                                                                                          \\ \hline
-		network     & Gráfica de red, útil para mostrar la relación entre distintas entidades.                                                                                                                  \\ \hline
-		table       & Tabla, útil para mostrar todo tipo de información.                                            
-		\\ \hline
-		pie chart   & Gráfica de pie, útil para mostrar la proporción entre dos variables                                                                                                                       \\ \hline
-		stock chart & Gráfica de stock, útil para mostrar la evolución de una variable y conjuntos especialmente grandes de datos.                                                                              \\ \hline
-		csv         & \textit{Comma separated values} un tipo de archivo popularmente usado para analizar conjuntos de datos estructurados, podría ser usado para permitir análisis de datos externos a octopus \\ 
-		json        & Formato json, podría usarse en versiones futuras para permitir implementar visualizaciones en otras plataformas o con otras herramientas.                                                 \\ \hline
-		other       & Cualquier tipo de visualización que no quepa en las categorías anteriores.                                                                                                                \\
-	\end{tabular}
-	\caption{Tipos de visualizaciones soportadas por el sistema}
-	\label{tab:visual-types}
-	\
-\end{table}
+Entre los tipos de visualizaciones incluidos en el framework están los mapas de calor, gráficas de barras, mapas geográficos, tablas, gráficas lineales y logarítmicas, gráficos de área, entre otros. 
+
+%\begin{table}[h]
+%	\begin{tabular}{p{2.5cm}|p{12cm}}
+%		tipo        & descripción                                                                                                                                                                               \\ \hline
+%		heatmap     & Mapa de calor, útil para mostrar mostrar la densidad o concentración de una variable sobre un plano 2D.                                                       \\ \hline
+%		bar chart   & Gráfica de barras, útil para mostrar las proporciones entre un conjunto de valores.                                                                                                       \\ \hline
+%		line chart  & Gráfica lineal, útil para mostrar la evolución de una variable con respecto a otra.                                                                                                       \\ \hline
+%		scatter chart     & Gráfica de puntos, generalmente usada para mostrar los valores de un conjunto de muestras sobre un plano 2D                                                                               \\ \hline
+%		map         & Cualquier tipo de mapa útil para mostrar información geográfica.                                                                                                                          \\ \hline
+%		network     & Gráfica de red, útil para mostrar la relación entre distintas entidades.                                                                                                                  \\ \hline
+%		table       & Tabla, útil para mostrar todo tipo de información.                                            
+%		\\ \hline
+%		pie chart   & Gráfica de pie, útil para mostrar la proporción entre dos variables                                                                                                                       \\ \hline
+%		stock chart & Gráfica de stock, útil para mostrar la evolución de una variable y conjuntos especialmente grandes de datos.                                                                              \\ \hline
+%		csv         & \textit{Comma separated values} un tipo de archivo popularmente usado para analizar conjuntos de datos estructurados, podría ser usado para permitir análisis de datos externos a octopus \\ 
+%		json        & Formato json, podría usarse en versiones futuras para permitir implementar visualizaciones en otras plataformas o con otras herramientas.                                                 \\ \hline
+%		other       & Cualquier tipo de visualización que no quepa en las categorías anteriores.                                                                                                                \\
+%	\end{tabular}
+%	\caption{Tipos de visualizaciones soportadas por el sistema}
+%	\label{tab:visual-types}
+%	\
+%\end{table}
 
 \subsection{Construcción de URLs genéricos}
 
@@ -2520,9 +2527,11 @@ Para generar el \textit{slug} correspondiente a la visualización, sobrescribimos
 
 \subsection{Interfaz de visualización}
 
-Cuando un usuario selecciona una visualización de la lista de visualizaciones disponibles para su monitor, el servidor elije el formulario correspondiente, cada visualización tiene distintos parámetros de configuración. Por ejemplo, algunas pueden pedir al usuario que introduzca un tiempo inicial y un tiempo final para filtrar los datos, otras podrían tener opciones para seleccionar un mes específico, o un período de tiempo desde el momento actual como "últimas 24 horas" o "la semana pasada". Algunas visualizaciones toman en cuenta los datos de todos los tentáculos de un monitor, otras piden seleccionar primero un tentáculo específico. Como hemos visto en varias oportunidades antes, los formularios no son mas que clases que podemos importar con el método definido en el Algoritmo \ref{alg:loadsync}, para esto la tabla \textit{ResultView} guarda una referencia a la clase del formulario en la columna \textit{form\_class}.
+Cuando un usuario selecciona una visualización de la lista de visualizaciones disponibles para su monitor, el servidor elije el formulario correspondiente, cada visualización tiene distintos parámetros de configuración. Por ejemplo, algunas pueden pedir al usuario que introduzca un tiempo inicial y un tiempo final para filtrar los datos, otras podrían tener opciones para seleccionar un mes específico, o un período de tiempo desde el momento actual como "últimas 24 horas" o "la semana pasada". Algunas visualizaciones toman en cuenta los datos de todos los tentáculos de un monitor, otras piden seleccionar primero un tentáculo específico.
 
-Ya que los formularios de las visualizaciones generalmente son similares entre sí, el framework incluye algunos formularios que pueden ser reutilizados o extendidos para lograr cualquier comportamiento deseado. Todos los formularios de visualizaciones heredan de un formulario base llamado \textit{BaseResultForm}, este tiene como atributo el identificador del monitor con la finalidad de facilitar la construcción de formularios ajustados al monitor. Por ejemplo, la clase \textit{LinkSelectionForm} crea un menú para seleccionar de entre la lista de enlaces del monitor, todos los formularios predefinidos pueden ser vistos en la tabla \ref{table:formularios}
+Ya que los formularios de las visualizaciones generalmente son similares entre sí, el framework incluye algunos formularios que pueden ser reutilizados o extendidos para lograr cualquier comportamiento deseado. Todos los formularios de visualizaciones heredan de un formulario base llamado \textit{BaseResultForm}, este tiene como atributo el identificador del monitor con la finalidad de facilitar la construcción de formularios ajustados al monitor. Por ejemplo, la clase \textit{LinkSelectionForm} crea un menú para seleccionar de entre la lista de enlaces del monitor, todos los formularios predefinidos pueden ser vistos en la tabla \ref{table:formularios}.
+
+Los formularios no son mas que clases que podemos importar con el método definido en el Algoritmo \ref{alg:loadsync}, la tabla \textit{ResultView} guarda una referencia a la clase del formulario en la columna \textit{form\_class}.
 
 \begin{table}[h!]
 	\centering
@@ -2668,7 +2677,7 @@ parameters:
          log.error(str(e))
 \end{lstlisting}
 
-Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicacion web. Para esto, comenzamos con incluir en el modelo de la base de datos la tabla que alojará las trazas de esta prueba, para esto definimos la clase \textit{TracePaketLoss}, esta consiste de un marca de tiempo (\textit{time}), el identificador de enlace (\textit{link}), el número de paquetes enviados (\textit{sent\_packets}), el número de paquetes recibidos (\textit{recieved\_packets}), el porcentaje de pérdida de paquetes (\textit{percentage}) y un índice que indexa las columnas \textit{time} , \textit{link} y \textit{percentage}. A continuación se muestra la definición de dicha clase:
+Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicacion web. El primer paso es definir el almacén de datos que alojará las trazas de esta prueba. Para esto, declaramos la clase \textit{TracePaketLoss}, esta consiste de un marca de tiempo (\textit{time}), el identificador de enlace (\textit{link}), el número de paquetes enviados (\textit{sent\_packets}), el número de paquetes recibidos (\textit{recieved\_packets}), el porcentaje de pérdida de paquetes (\textit{percentage}) y un índice que indexa las columnas \textit{time} , \textit{link} y \textit{percentage}. A continuación se muestra la definición de dicha clase:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
@@ -2691,9 +2700,9 @@ class TracegPaketLoss(models.Model):
 
 \end{lstlisting}
 
-Cuando hacemos cambios al modelo de la base de datos en el código de la aplicacion, debemos crear archivos llamados \textit{migrations} que describen los cambios que deben realizarse sobre la estructura de la base de datos. Para crear \textit{migrations}, Django crea un archivo de migración inicial que luego compara con el modelo de la base de datos y así descubre los cambios que se han hecho, para realizar esta operación, Django incluye el comando \textit{makemigrations}, las migraciones son guardadas en un paquete y conforman una especie de "historial" que puede ser aplicado a la base de datos en el entorno de producción.
+Cuando hacemos cambios a la estructura de la base de datos en el código de la aplicacion, debemos crear archivos llamados \textit{migrations} que describen dichos cambios y permiten asentarlos en la base de datos fácilmente a través de un comando. Para crear \textit{migrations}, Django incluye el comando \textit{makemigrations}, la primera vez que se ejecuta este comando, se crea una migración inicial que describe la estructura completa de la base de datos. Llamadas posteriores a \textit{makemigrations} calcularán las diferencias a partir del estado anterior, conformando un historial de cambios que luego pueden ser aplicados en el entorno de producción.
 
-El siguiente paso es crear el \textit{parser} del archivo de trazas, puesto que el archivo de trazas viene en formato csv es muy sencillo separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, esta función se puede observar a continuación:
+El siguiente paso es crear el \textit{parser} del archivo de trazas, puesto que el archivo de trazas viene en formato CSV es muy sencillo separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, esta función se puede observar a continuación:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
@@ -2743,9 +2752,9 @@ def generate_packetloss_sample_stock(parameters):
 
 \end{lstlisting}
 
-Habiendo definido todas las clases y funciones necesarias, solo falta introducir en la base de datos los registros necesarios para que el sistema sepa de la nueva prueba y donde buscar las funciones correspondientes cuando necesite importarlas. Para esto, podemos usar archivos llamados \textit{fixtures} que permiten definir los registros que queremos introducir a la base de datos en formato JSON y luego introducirlos a la base de datos en el entorno de producción con el comando \textit{loaddata}.
+Habiendo definido todas las clases y funciones necesarias, solo falta introducir en la base de datos los registros necesarios para que el sistema sepa de la nueva prueba y donde buscar las funciones correspondientes cuando necesite importarlas. Para esto, usamos archivos llamados \textit{fixtures} que permiten definir los registros que queremos introducir a la base de datos en formato JSON y luego insertarlos en el entorno de producción con el comando \textit{loaddata}.
 
-El \textit{fixture} incluirá entonces, la entrada para la prueba, las entradas para los parámetros de la prueba y la visualización. A continuación se puede ver el \textit{fixture} para la prueba de \textit{packet loss}:
+El \textit{fixture} incluirá entonces, un registro para la prueba, los registros para los parámetros de la prueba y la visualización. A continuación se puede ver el \textit{fixture} para la prueba de pérdida de paquetes:
 
 \begin{lstlisting}[basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 [
@@ -2804,11 +2813,11 @@ Para actualizar el servidor web y los trabajadores basta con reemplazar el códig
 
 En la Sección \ref{sub:servidorweb} se dijo que la aplicacion web Django no se encarga de servir los archivos estáticos al cliente, es por esto que estos deben ser copiados a la carpeta correspondiente ya sea en el propio servidor web o en un servidor externo, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
 
-Finalmente, se reinician los componentes que lo requieran, en otras palabras el servidor web y los trabajadores de modo que estos puedan importar el nuevo código, los demás micro-servicios como broker de mensajería, planificador y backend de resultados no requieren ser reiniciados durante los despliegues. 
+Finalmente, se reinician los componentes que lo requieran de modo que estos puedan importar y ejecutar el nuevo código. Solo es necesario reiniciar el servidor web y los trabajadores, los demás micro-servicios como \textit{broker} de mensajería, planificador y \textit{backend} de resultados no requieren ser reiniciados pues son indiferentes al código de la aplicación.
 
 %Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicacion para forzar a apache a releer todo el código antes de levantar la aplicacion. 
 
-Los trabajadores pueden ser reiniciados de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX http://supervisord.org/}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo \textit{broadcast} para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina \textit{host} del trabajador previamente. En futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
+%Los trabajadores pueden ser reiniciados de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX http://supervisord.org/}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo \textit{broadcast} para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina \textit{host} del trabajador previamente. En futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
 
 \chapter{Conclusiones y Recomendaciones}
 
