@@ -2322,7 +2322,7 @@ Mientras es posible obtener información de los TPD sin necesidad de tener privil
 
 \chapter{Framework de integración de pruebas} \label{cap:framework}
 
-A pesar de que Octopus Monitor incluye un conjunto de pruebas como ping, httping, traceroute y iperf que proveen datos sobre latencia, rendimiento, disponibilidad y alcanzabilidad de los enlaces y servicios monitoreados, una de sus características mas importantes es la facilidad de implementación de nuevas pruebas. 
+A pesar de que Octopus Monitor incluye un conjunto de pruebas como ping, httping, traceroute y Iperf que proveen datos sobre latencia, rendimiento, disponibilidad y alcanzabilidad de los enlaces y servicios monitoreados, una de sus características mas importantes es la facilidad de implementación de nuevas pruebas. 
 
 El framework de integración de pruebas le ahorra al desarrollador la repetición de las tareas comunes a todas las pruebas como definición de URLs, formularios de parámetros, lógica de las vistas o escritura de plantillas. Gracias a esto, el desarrollador se puede concentrar en escribir solo el código especifico a cada prueba particular facilitando y acelerando la expansión de la aplicación.
 
@@ -2331,13 +2331,13 @@ Para entender los requisitos que resultarán en los distintos componentes que ser
 \begin{enumerate}
 	\item{El usuario selecciona una prueba de la lista de pruebas disponibles para el monitor.}
 	\item{La aplicación web despliega un formulario donde el usuario puede planificar la ejecución de la prueba seleccionada y establecer sus parámetros.}
-	\item{La aplicacion web sube un mensaje a la carpeta monitor de red con los detalles de la prueba planificada.}
-	\item{El monitor es notificado del nuevo mensaje, lee su contenido y prepara la prueba para su ejecucion}
+	\item{La aplicación web sube un mensaje a la carpeta monitor de red con los detalles de la prueba planificada.}
+	\item{El monitor es notificado del nuevo mensaje, lee su contenido y prepara la prueba para su ejecución}
 	\item{El monitor ejecuta la prueba y guarda los resultados en un archivo de trazas temporal}
 	\item{El monitor sube los archivos generados a la nube para su almacenamiento a largo plazo}
 	\item{La aplicacion web inicia una rutina de sincronización para descargar los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
 	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles y selecciona los datos y las opciones a través de un formulario.}
-	\item{El servidor busca la visualización solicitada en el caché, si no la encuentra, llama a la función correspondiente para computarla, la introduce en el cache para futuras consultas y la muestra al usuario.}
+	\item{El servidor busca la visualización solicitada en el caché, si no la encuentra, llama a la función correspondiente para computarla, la introduce en el caché para futuras consultas y la muestra al usuario.}
 \end{enumerate}
 
 A partir de este flujo podemos inferir los siguientes requisitos:
@@ -2355,7 +2355,7 @@ A partir de este flujo podemos inferir los siguientes requisitos:
 			\item{Definiciones de las visualizaciones disponibles para los datos de cada prueba.}
 			\item{Un formulario de configuración para cada visualización.}
 			\item{Una función para computar cada visualización.}
-			\item{Un mecanismo de caching genérico.}
+			\item{Un mecanismo de \textit{caching} genérico.}
 			\item{Una plantilla para dibujar cada visualización.}
 	\end{itemize}
 \end{enumerate}
@@ -2364,7 +2364,7 @@ A partir de este flujo podemos inferir los siguientes requisitos:
 
 La planificación genérica de pruebas provee una interfaz única que permite a los usuarios agregar pruebas a ejecutar para sus monitores remotos. Como se explicó en la Sección \ref{sub:basededatos} mantenemos en la base de datos dos tablas que describen las pruebas que son parte del sistema, la tabla \textit{Test} que incluye los detalles básicos de cada prueba como su nombre, descripción y nombre de módulo y la tabla \textit{Parameter} que incluye el nombre, tipo, valor por omisión, ámbito y otros detalles de los parámetros. Una prueba puede ser vista como una agregación de sus parámetros.
 
-Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, ademas de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato json y el momento de la planificación.
+Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, además de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato JSON y el momento de la planificación.
 
 %Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
 
@@ -2490,7 +2490,7 @@ Es responsabilidad del desarrollador tanto escribir la ruta correctamente en la 
 
 El \textit{parser} debe manejar archivos dañados o mal formados evitando propagar excepciones al mecanismo general de sincronización y debe imponer las reglas de negocio específicas a la prueba. Por ejemplo, no tendría sentido introducir a la base de datos valores negativos para el número de saltos para alcanzar un \textit{host} o valores imposiblemente altos. Introducir valores espurios a la base de datos resultará en visualizaciones inesperadas o erróneas. 
 
-En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato json. Luego el \textit{parser} puede leer el archivo, mapear los diccionarios a objetos, e introducirlos en la tabla correspondiente a la prueba en la base de datos. Esto se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y iperf (ver Sección \ref{pruebasimplementadas}), por ejemplo, para la prueba ping un objeto JSON como \verb|{"time": 1454013808, "rtt": 154, "icmp": 4}| podría decodificarse como un diccionario que a su vez se puede pasar como argumento al constructor de la clase \textit{TracePing}.
+En un trabajo futuro se podría incluir un esquema de archivos de trazas genéricos en los cuales cada línea del archivo representa una traza y cada traza viene dada por un diccionario en formato JSON. Luego el \textit{parser} puede leer el archivo, mapear los diccionarios a objetos, e introducirlos en la tabla correspondiente a la prueba en la base de datos. Esto se podría ajustar perfectamente a pruebas ya implementadas como las de ping, httping y Iperf (ver Sección \ref{pruebasimplementadas}), por ejemplo, para la prueba ping un objeto JSON como \verb|{"time": 1454013808, "rtt": 154, "icmp": 4}| podría decodificarse como un diccionario que a su vez se puede pasar como argumento al constructor de la clase \textit{TracePing}.
 
 \section{Visualización genérica de datos}
 
@@ -2498,7 +2498,7 @@ Después de haber recolectado y almacenado los datos de las pruebas, el último pa
 
 Las visualizaciones, al igual que las pruebas, se guardan en su propia tabla en la base de datos; esta tabla lleva el nombre de \textit{ResultView} (ver Tabla \ref{table:db-visualization}), y sirve para ayudar al cargador genérico de visualizaciones tanto a computar gráficas como crear URLs legibles y desplegar el formulario apropiado cuando se genera la gráfica. 
 
-Entre los tipos de visualizaciones incluidos en el framework están los mapas de calor, gráficas de barras, mapas geográficos, tablas, gráficas lineales y logarítmicas, gráficos de área, entre otros. 
+Entre los tipos de visualizaciones incluidos en el \textit{framework} están los mapas de calor, gráficas de barras, mapas geográficos, tablas, gráficas lineales y logarítmicas, gráficos de área, entre otros. 
 
 %\begin{table}[h]
 %	\begin{tabular}{p{2.5cm}|p{12cm}}
@@ -2524,9 +2524,9 @@ Entre los tipos de visualizaciones incluidos en el framework están los mapas de 
 
 \subsection{Construcción de URLs genéricos}
 
-En el contexto del desarrollo de un framework en el tope de una aplicacion web, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una vista específica. En la mayoría de los casos sencillamente incluimos el identificador del objeto, por ejemplo, la dirección "/monitor/2/" identifica de forma única la página del monitor con ID 2. Podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre. A este tipo de cadenas de caracteres se les da el nombre de \textit{slug}\footnote{los \textit{slugs} se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII}. Cuando deseamos ver una visualización específica en vez de visitar un url como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
+En el contexto del desarrollo de un \textit{framework} en el tope de una aplicacion web, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una vista específica. En la mayoría de los casos sencillamente incluimos el identificador del objeto en el URL, por ejemplo, la dirección "/monitor/2/" identifica de forma única la página del monitor con ID 2. Podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre. A este tipo de cadenas de caracteres se les da el nombre de \textit{slug}\footnote{los \textit{slugs} se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII}. Cuando deseamos ver una visualización específica en vez de visitar un URL como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
 
-Para generar el \textit{slug} correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}. Ya que solo deseamos generar el slug la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma la cadena de caracteres en un slug válido, los \textit{slugs} pueden ser de hasta 50 caracteres, así que el si el slug es muy largo debe ser cortado. Finalmente debemos asegurarnos de que  sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo slug y si se encuentra anexamos al final un guión y un número, esto se repite hasta hallar un slug único de hasta 50 caracteres.
+Para generar el \textit{slug} correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}. Ya que solo deseamos generar el \textit{slug} la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma el nombre de la visualización en un \textit{slug} válido. Finalmente debemos asegurarnos de que el nuevo \textit{slug} sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo \textit{slug} y si se encuentra anexamos al final un guión y un número, en caso de que este \textit{slug} también exista se repite el proceso incrementando el número hasta hallar un \textit{slug} único.
 
 \subsection{Interfaz de visualización}
 
@@ -2575,7 +2575,7 @@ Se puede decir que una visualización existe en el caché cuando los parámetros de
 
 %, revisar esta condición traería una complejidad innecesaria ya que habría que guardar una arreglo de la lista de parámetros y compararlos cada vez que se solicita una visualización, esto sería lento y contra-propósito ya que habría que mantener tablas en memoria y hacer búsquedas sobre ellas. 
 
-Cuando una búsqueda en el caché no obtiene resultados, entonces el sistema pasa a computar la gráfica, para esto, se guarda una referencia a la función que computa la visualización en la base de datos, y esta se carga dinámicamente como ya se vió en el Algoritmo \ref{alg:loadsync}. Las funciones de cómputo de visualizaciones se guardan dentro del paquete \textit{visual}, en un módulo con el nombre $<test>\_visual.py$ donde test es el nombre de módulo de la prueba a la que pertenece dicha visualización.
+Cuando una búsqueda en el caché no obtiene resultados, entonces el sistema pasa a computar la gráfica, para esto, se guarda una referencia a la función que computa la visualización en la base de datos, y esta se carga dinámicamente como ya se vio en el Algoritmo \ref{alg:loadsync}. Las funciones de cómputo de visualizaciones se guardan dentro del paquete \textit{visual}, en un módulo con el nombre $<test>\_visual.py$ donde test es el nombre de módulo de la prueba a la que pertenece dicha visualización.
 
 El único requisito para las funciones de computo es retornar una cadena de caracteres válida en formato HTML (sin embargo los formatos CSV y JSON también son soportados). En caso de retornar algún otro tipo objeto (o retornar nulo) el usuario verá la representación en \textit{unicode} de dicho objeto en la Interfaz de Visualización.
 
@@ -2600,14 +2600,14 @@ Para simplificar la tarea de escribir código repetitivo, se ha incluido un conju
 	\centering
 	
 	\begin{tabular}{l|p{10cm}}
-		Plantilla                        & Descripcion                                                                                                               \\ \hline
+		Plantilla                        & Descripción                                                                                                               \\ \hline
 		base-visual.html                             & Plantilla base para todas las visualizaciones                                                                             \\
 		base-highcharts.html                   & Plantilla base para todas las visualizaciones con HighCharts                                                              \\
-		base-highstock.html                    & Plantilla base para todas las visualizaciones con HighStock (submódulo de Hihcharts para dibujar stockcharts)            \\
+		base-highstock.html                    & Plantilla base para todas las visualizaciones con HighStock (módulo de Hihcharts para dibujar \textit{stockcharts})            \\
 		base-googlemaps.html                   & Plantilla base para visualizaciones con Google Maps.                                                                      \\
 		generic-heatmap.html                  & Plantilla base para mapas de calor de tipo $<$hora,tiempo,valor$>$\\
-		generic-stock.html              & Plantilla base para Stockcharts de tipo $tiempo,valor$                                                  \\
-		generic-stock-multi.html & Plantilla base para Stockcharts de tipo \textless tiempo,valor\textgreater   con múltiples series.                             \\
+		generic-stock.html              & Plantilla base para \textit{stockcharts} de tipo $tiempo,valor$                                                  \\
+		generic-stock-multi.html & Plantilla base para \textit{stockcharts} de tipo \textless tiempo,valor\textgreater   con múltiples series.                             \\
 		generic-line.html                & Plantilla base para gráficas de linea de tipo \textless time,value\textgreater                                             \\
 		generic-line-multi.html   & Plantilla base para gráficas de linea de tipo \textless time,value\textgreater con múltiples series,                      
 	\end{tabular}
@@ -2680,7 +2680,7 @@ parameters:
          log.error(str(e))
 \end{lstlisting}
 
-Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicacion web. El primer paso es definir el almacén de datos que alojará las trazas de esta prueba. Para esto, declaramos la clase \textit{TracePaketLoss}, esta consiste de un marca de tiempo (\textit{time}), el identificador de enlace (\textit{link}), el número de paquetes enviados (\textit{sent\_packets}), el número de paquetes recibidos (\textit{recieved\_packets}), el porcentaje de pérdida de paquetes (\textit{percentage}) y un índice que indexa las columnas \textit{time} , \textit{link} y \textit{percentage}. A continuación se muestra la definición de dicha clase:
+Tras tener definido el módulo de prueba y el formato del archivo de trazas, pasamos a desarrollar el código que estará del lado de la aplicación web. El primer paso es definir el almacén de datos que alojará las trazas de esta prueba. Para esto, declaramos la clase \textit{TracePaketLoss}, esta consiste de un marca de tiempo (\textit{time}), el identificador de enlace (\textit{link}), el número de paquetes enviados (\textit{sent\_packets}), el número de paquetes recibidos (\textit{recieved\_packets}), el porcentaje de pérdida de paquetes (\textit{percentage}) y un índice que indexa las columnas \textit{time} , \textit{link} y \textit{percentage}. A continuación se muestra la definición de dicha clase:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
@@ -2886,12 +2886,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea visitar la página principal del sistema.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario escribe el URL del sitio y presional enter. \\
+			& 1 & El usuario escribe el URL del sitio y presiona \textit{enter}. \\
 			& 2 & El servidor retorna la página principal. \\
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si el servicio no está disponible el usuario ve un mensaje de error 503. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
 			
 		\end{tabular}
 	}
@@ -2906,17 +2906,17 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ingresar al sistema.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla principal del sistema.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario hace click en el enlace de login. \\
-			& 2 & El servidor muestra el formulario de login. \\
+			& 1 & El usuario hace click en el enlace de \textit{login}. \\
+			& 2 & El servidor muestra el formulario de \textit{login}. \\
 			& 3 & El usuario ingresa sus credenciales. \\
-			& 4 & El usuario hace click en el botón login. \\
+			& 4 & El usuario hace click en el botón \textit{login}. \\
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si las credenciales son incorrectas el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Usuario autenticado y Pantalla "Home".}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Usuario autenticado y Pantalla "Home".}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -2929,7 +2929,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea registrarse para ingresar al sistema.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{pantalla principal del sistema.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{pantalla principal del sistema.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace de registro. \\
@@ -2937,13 +2937,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 3 & El usuario ingresa su nombre de usuario \\
 			& 4 & El usuario ingresa su contraseña\\
 			& 5 & El usuario ingresa su correo electrónico \\
-			& 6 & El usuario hace click en el botón submit \\
+			& 6 & El usuario hace click en el botón \textit{submit} \\
 			& 7 & El servidor envía un correo electrónico de confirmación \\
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 7 & Si el nombre de usuario o correo electronico son incorrectos el servidor informa del error. \\
+			& 7 & Si el nombre de usuario o correo electrónico son incorrectos el servidor informa del error. \\
 			& 8 & Si las contraseñas no coinciden el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{usuario registrado y correo enviado.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{usuario registrado y correo enviado.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -2956,7 +2956,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea confirmar su cuenta.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Correo de confirmación enviado (UN-03).}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Correo de confirmación enviado (UN-03).}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace de confirmación \\
@@ -2964,7 +2964,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si el código de confirmación está vencido la activación falla. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Cuenta de usuario activa y Pantalla de Login.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Cuenta de usuario activa y Pantalla de \textit{Login}.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -2977,10 +2977,10 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario ha olvidado su contraseña y desea recuperarla.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de login.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de \textit{login}.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 1 & El usuario hace click en "forgot password" \\
+			& 1 & El usuario hace click en "\textit{forgot password}" \\
 			& 2 & El usuario ingresa su correo electrónico\\
 			& 3 & El servidor envía un correo electrónico de recuperación de contraseña\\
 			& 4 & El usuario hace click en el enlace de recuperación\\
@@ -2988,7 +2988,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 6 & Si las contraseñas no coinciden el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Contraseña restablecida.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Contraseña restablecida.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3004,7 +3004,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea cambiar su contraseña.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "cambiar contraseña" \\
@@ -3014,7 +3014,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 6 & Si las contraseñas no coinciden el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Contraseña actualizada.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Contraseña actualizada.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3028,7 +3028,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea vincular su cuenta de Dropbox con Octopus Monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de cuenta de usuario.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "vincular cuenta de Dropbox" \\
@@ -3038,13 +3038,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El usuario da permisos a la aplicacion de Octopus Monitor\\
 			& 6 & Dropbox muestra un código al usuario\\
 			& 7 & El usuario ingresa el código en el formulario\\
-			& 8 & El servidor envía el codigo a Dropbox\\
+			& 8 & El servidor envía el código a Dropbox\\
 			& 9 & Dropbox retorna el código de acceso del usuario\\
 			& 10 & El servidor actualiza el perfil del usuario\\
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si el usuario no da permisos a la aplicacion el flujo termina. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Cuenta de Dropbox vinculada.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Cuenta de Dropbox vinculada.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3057,12 +3057,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la lista de sus monitores.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla "Home".}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla "Home".}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "monitores" en el menú lateral \\
 			& 2 & El servidor retorna la lista de los monitores\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3075,7 +3075,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea crear un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el boton de agregar monitor \\
@@ -3087,7 +3087,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El usuario hace click en "next"\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 2 & Si los datos no son validos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de instrucciones de instalación del monitor.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de instrucciones de instalación del monitor.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3100,11 +3100,11 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver los detalles de un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace "view" de un monitor \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3117,7 +3117,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar los detalles de un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el boton "edit" del monitor \\
@@ -3126,7 +3126,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El usuario hace click en el botón "done" \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son validos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3139,7 +3139,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el boton "delete" del monitor \\
@@ -3148,7 +3148,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El servidor elimina el monitor y todos las entradas relacionadas en el base de datos \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si el usuario no confirma el flujo termina. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de monitores.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3161,11 +3161,11 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la lista de tentáculos para un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace "tentaculos" del sub-menu lateral del monitor \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Tentáculos.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de Tentáculos.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3178,7 +3178,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea registrar un tentáculo.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "register tentacle" \\
@@ -3187,7 +3187,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El usuario hace click en "submit" \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3200,7 +3200,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar un tentáculo.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el ícono de lapiz del tentáculo en la lista. \\
@@ -3209,7 +3209,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El usuario hace click en "submit" \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3222,7 +3222,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar la localización un tentáculo.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el ícono del marcador de mapa del tentáculo en la lista. \\
@@ -3231,7 +3231,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El usuario hace click en "submit" \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de tentáculos.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3244,13 +3244,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el plan de plan de monitoreo.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "tests" en el menú lateral de navegación. \\
 			& 2 & El servidor envía un menú para seleccionar el tipo de prueba a observar\\
 			& 3 & El usuario selecciona un tipo de prueba y hace click en "view test plan" \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Plan de Monitoreo para una prueba.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de Plan de Monitoreo para una prueba.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3263,7 +3263,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba de tipo periódico.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "schedule periodic tests". \\
@@ -3277,7 +3277,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si la fechas son inválidas o el intervalo no es un número el servidor informa del error. \\
 			& 6 & Si alguno de los parámetros es invalido el servidor informa del error\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3290,7 +3290,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea planificar una prueba para un momento específico.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de plan de Monitoreo.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "schedule periodic tests". \\
@@ -3303,7 +3303,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 8 & El servidor guarda la prueba y sube un mensaje al buzón del monitor\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3316,7 +3316,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea modificar los parámetros de una prueba planificada.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario edita los campos que desea cambiar o redefinir. \\
@@ -3324,7 +3324,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 3 & El servidor guarda la prueba y sube un mensaje al buzón del monitor\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3337,12 +3337,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea habilitar o deshabilitar una prueba.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace enable/disable test. \\
 			& 2 & El servidor cambia el estado de la prueba y sube un mensaje al buzón del monitor\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de detalles de la prueba.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3355,14 +3355,14 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver una visualización de datos para un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "results" en el menú lateral de navegación. \\
 			& 2 & El servidor filtra las visualizaciones según las pruebas que se han activo para el monitor y envía la lista\\
 			& 3 & El usuario busca una visualización en la lista y hace click sobre el enlace correspondiente\\
 			
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3375,7 +3375,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea computar una visualización.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario introduce los parámetros de configuración de la visualización en el formulario. \\
@@ -3387,7 +3387,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 7 & El navegador enmarca la visualización en la interfaz\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3402,7 +3402,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea computar una visualización para incluir nuevos datos sin pasar por el caché.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario introduce los parámetros de configuración de la visualización en el formulario. \\
@@ -3414,7 +3414,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 7 & El navegador enmarca la visualización en la interfaz\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3427,12 +3427,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver el enlace directo de una visualización para compartir.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "View direct link"\\
 			& 2 & El navegador muestra el enlace directo de la visualización\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de visualización de resultados.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3445,12 +3445,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea ver la visualización a tamaño completo en una nueva pestaña.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{UA-17, UA-18.}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace "View in new tab"\\
 			& 2 & El navegador abre una nueva pestaña con el URL de la visualización\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3463,12 +3463,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario ver el horario de sincronización y la información sobre las últimas sincronizaciones.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del monitor}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el enlace "Sync" en el sub-menú del monitor \\
 			& 2 & El servidor devuelve la Pantalla de sincronización\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3481,13 +3481,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea sincronizar un monitor inmediatamente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el boton "Sync now" \\
 			& 2 & El servidor encola la sincronizacion del monitor\\
 			& 3 & El servidor devuelve la pantalla de sincronización con un mensaje indicando al usuario que espere.\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3500,7 +3500,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea definir el horario de sincronización de un monitor.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona un esquema de sincronización \\
@@ -3511,7 +3511,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El planificador detecta los cambios y ajusta el tiempo de la próxima sincronización del monitor\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de sincronización}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3524,7 +3524,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea crear  un nuevo reporte.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de reportes}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de reportes}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "Crear Reporte" \\
@@ -3533,7 +3533,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El usuario introduce el cuerpo del reporte\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3546,7 +3546,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar un reporte existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en el botón "editar"\\
@@ -3555,7 +3555,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 4 & El servidor guarda los cambios\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 2 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3568,7 +3568,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea hacer un reporte público o privado.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en el botón "Public" o "Private"\\
@@ -3578,7 +3578,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El servidor guarda los cambios\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 2 & Si el servidor no responde se alerta al usuario. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3591,7 +3591,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea agregar una visualización a un reporte.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en el botón "Add Result"\\
@@ -3603,7 +3603,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 7 & El servidor agrega la visualización al reporte\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si los datos introducidos son inválidos el servidor alerta el problema. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de Visualización}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3616,7 +3616,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea editar los comentarios de una visualización en un reporte.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en los comentarios del reporte\\
@@ -3627,7 +3627,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El navegador actualiza la interfaz\\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos introducidos son inválidos el servidor alerta el problema. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3640,13 +3640,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar una visualización en un reporte.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en el enlace "remove" correspondiente a la visualización\\
 			& 2 & El servidor actualiza el reporte \\
 			& 3 & El servidor envía el reporte sin la visualización eliminada\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3659,13 +3659,13 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El usuario desea eliminar una visualización en un reporte.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla del reporte}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hacer click en el enlace "remove" correspondiente a la visualización\\
 			& 2 & El servidor actualiza el reporte \\
 			& 3 & El servidor envía el reporte sin la visualización eliminada\\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del Reporte}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3691,7 +3691,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si las credenciales son incorrectas el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Usuario autenticado y Pantalla de Administración.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Usuario autenticado y Pantalla de Administración.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3704,12 +3704,12 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea seleccionar un modelo de la lista de modelos del sistema.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración del sistema}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración del sistema}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click al enlace del modelo en la lista. \\
 			& 2 & El servidor muestra la página del modelo. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla del modelo.}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla del modelo.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3722,7 +3722,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea crear una prueba nueva.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "add test".\\
@@ -3732,7 +3732,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El servidor guarda la prueba. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3745,7 +3745,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea editar una prueba existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona una prueba de la lista.\\
@@ -3755,7 +3755,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El servidor guarda los cambios. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3768,7 +3768,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea agregar un parámetro a una prueba.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en el botón "add parameter".\\
@@ -3779,7 +3779,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El servidor guarda el parámetro. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3792,7 +3792,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea editar un parámetro de una prueba existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona un parámetro de la lista.\\
@@ -3802,7 +3802,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El servidor guarda el parámetro. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3815,7 +3815,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea eliminar un parámetro de una prueba existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona un parámetro de la lista.\\
@@ -3826,7 +3826,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El servidor eliminar el parámetro. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si el usuario no confirma la eliminación no se elimina el parámetro. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3839,7 +3839,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea crear una nueva visualización.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario hace click en "crear visualización".\\
@@ -3850,7 +3850,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El servidor guarda la visualización. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3863,7 +3863,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea editar una visualización existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona una visualización de la lista.\\
@@ -3873,7 +3873,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 5 & El servidor guarda la visualización. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 3 & Si los datos no son válidos el servidor informa del error. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -3886,7 +3886,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			\hline
 			% Linea de descripción 
 			\textbf{\textit{Descripción}} & \multicolumn{2}{p{10cm}}{El administrador desea eliminar una visualización existente.}\\
-			\textbf{\textit{Precondicion}} & \multicolumn{2}{p{10cm}}{AD-02}\\
+			\textbf{\textit{Precondición}} & \multicolumn{2}{p{10cm}}{AD-02}\\
 			% Linea de Secuencia normal
 			\multirow{2}{*}{\textbf{\textit{Secuencia normal}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 1 & El usuario selecciona una visualización de la lista.\\
@@ -3897,7 +3897,7 @@ También sería posible la implementación de nuevos esquemas de sincronizacion con
 			& 6 & El servidor eliminar la visualización. \\
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
 			& 5 & Si el usuario no confirma la eliminación no se elimina el parámetro. \\
-			\textbf{\textit{Postcondicion}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
+			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Pantalla de administración}\\
 		\end{tabular}
 	\end{center}
 \end{table}
