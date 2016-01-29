@@ -1939,7 +1939,7 @@ Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como
 
 \chapter{Tentáculos}
 
-En el marco de este trabajo hemos definido una analogía sencilla que compara un enlace en una red a un tentáculo de un pulpo, a cada extremo del tentáculo se encuentran los agentes relevantes al sistema de monitoreo: monitores de red que hemos llamado \textit{Tentacle Probe Source} ya que estos generan sondas y funciones como los puntos activos del monitoreo y los \textit{Tentacle Probe Destination} que son los nodos de interés a monitorear. Cada tentáculo está compuesto ademas por una cantidad variable de nodos intermedios como enrutadores y proxies que establecen la comunicación entre el TPS y cada TPD.
+En el marco de este trabajo hemos definido una analogía sencilla que compara un enlace en una red a un tentáculo de un pulpo, a cada extremo del tentáculo se encuentran los agentes relevantes al sistema de monitoreo: monitores de red que hemos llamado Tentacle Probe Source ya que estos generan sondas y funciones como los puntos activos del monitoreo y los Tentacle Probe Destination que son los nodos de interés a monitorear. Cada tentáculo está compuesto ademas por una cantidad variable de nodos intermedios como enrutadores o \textit{proxies} que establecen la comunicación entre el TPS y cada TPD.
 
 \section{Diseño del Monitor}
 
@@ -1949,7 +1949,7 @@ El diseño del monitor esta sujeto a los siguientes baremos:
 	\item{\textbf{Estabilidad:} ya que el monitor podría dejarse desatendido es esencial que sea estable, si el monitor no se está ejecutando el usuario no obtendrá los resultados esperados en la aplicación web.}
 	\item{\textbf{Flexibilidad:} el monitor debe ser capaz de cargar nuevas pruebas en tiempo de ejecución, esto es especialmente importante ya que no desea interrumpir otras pruebas que se estén ejecutando.}
 	\item{\textbf{Planificación precisa:} es importante que las pruebas se ejecuten en el momento adecuado, siguiendo de manera fiel el plan de monitoreo.}
-	\item{\textbf{Ejecutable en equipos de bajo costo:} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del host.}
+	\item{\textbf{Ejecutable en equipos de bajo costo:} el monitor debe incluir el código mínimo para su funcionamiento, tener un uso eficiente de memoria y evitar desbordar la memoria secundaria del \textit{host}.}
 	\item{\textbf{Configuración remota:} el monitor debe implementar algún protocolo para actualizar su plan de monitoreo a partir de cambios hechos en la aplicación web.}
 	\item{\textbf{Bitácora:} ya que el monitor se ejecuta como un proceso daemon, se desea tener una bitácora donde se puedan leer mensajes sobre los eventos relevantes durante la ejecución.}
 \end{itemize}
@@ -1958,11 +1958,11 @@ El diseño del monitor esta sujeto a los siguientes baremos:
 
 Tentacle Probe Source (TPS) es un monitor de red ligero, diseñado para ajustarse a las limitaciones de sistemas de bajo costo y con la intensión de ser desplegado en las redes que se desea monitorear y ser dejado desatendido durante periodos arbitrarios de tiempo. Su misión es ejecutar pruebas periódicas siguiendo el plan de monitoreo definido por el usuario con el objetivo de recoger datos sobre las métricas relevantes a la red a monitorear, los resultados de las pruebas son guardados temporalmente en la memoria del dispositivo y se suben a la nube regularmente. La frecuencia en que se suben los datos a la nube depende de la cantidad de memoria disponible en el dispositivo, la cantidad de datos generados por el monitoreo, y el ancho de banda disponible.
 
-Uno de los objetivos principales del monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. Como ya se mencionó, el comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre los monitores Tentacle Probe Source y Octopus Head ocurre a través de la nube, Octopus Head transfiere el plan de monitoreo a través de mensajes individuales que especifican cambios tales como replanificación de pruebas, cambios a los parámetros de ejecución, e incluir nuevos enlaces a monitorear.
+Uno de los objetivos principales del monitor es ejecutar las pruebas en el momento preciso dado por el plan de monitoreo, ya que el posterior análisis de los datos por parte de Octopus Head exige que las muestras se tomen con un patrón regular y conocido, para esto, un planificador que asegura la ejecución precisa de las pruebas es central en la arquitectura del monitor. El comportamiento del monitor viene dado por un plan de monitoreo, este es definido por el usuario en Octopus Head, toda la comunicación entre los monitores Tentacle Probe Source y Octopus Head ocurre a través de la nube, Octopus Head transfiere el plan de monitoreo a través de mensajes individuales que especifican cambios tales como re-planificación de pruebas, cambios a los parámetros de ejecución, e incluir nuevos enlaces a monitorear.
 
 \subsection{Arquitectura}
 
-Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Probe Source tiene una arquitectura basada en la biblioteca APScheduler(ver \ref{apscheduler}), esta posee componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de aplicaciones que requieran controlar finamente el momento de ejecucion de ciertas rutinas. Cada uno de los componentes de APScheduler puede ser reemplazados fácilmente ya que comparten una interfaz común.
+Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Probe Source tiene una arquitectura basada en la biblioteca APScheduler(ver \ref{apscheduler}), esta posee componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de aplicaciones que requieran controlar finamente el momento de ejecucion de ciertas rutinas. Cada uno de los componentes de APScheduler pueden ser reemplazados fácilmente ya que comparten una interfaz común.
 
 \begin{figure}[h]
 	\centering
@@ -1980,17 +1980,17 @@ Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle 
 	\label{fig:tentacle-activity}
 \end{figure}
 
-La ejecución del monitor comienza en el cliente, el cliente es el encargado de instanciar el proceso daemon, a este proceso lo llamaremos daemonización y se explicará en la Seccion ; para asegurarse de no ejecutar múltiples instancias del monitor TPS se revisa un archivo \verb|.pid|, si el archivo existiera, significa que el monitor ya se está ejecutando y el cliente informaría del error al usuario.
+La ejecución del monitor comienza en el cliente, el cliente es el encargado de instanciar el proceso daemon, a este proceso lo llamaremos daemonización y se explicará en la Seccion \ref{daemonizacion}; para asegurarse de no ejecutar múltiples instancias del monitor TPS se revisa un archivo \verb|.pid|, si el archivo existiera, significa que el monitor ya se está ejecutando y el cliente informaría del error al usuario.
 
 Después de que el proceso está daemonizado, comienza la fase de inicialización. Para esto se crea el planificador y se cargan las tareas del almacén de tareas, importando el código de las pruebas a ejecutar. A este punto las pruebas están planificadas tentativamente y cargadas en memoria pero solo serán ejecutadas después de que se inicie el planificador.
 
-Al iniciar el planificador, éste pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. El planificador no ejecuta las tareas sino que se las manda al ejecutor. Cuando una tarea se ha completado, el ejecutor envía un mensaje al planificador, de esta manera el planificador puede conocer el estado de las tareas y evitar que una misma tarea ocupe mas de un hilo de ejecucion en caso de que esté tardando mas de lo normal o esté bloqueada.
+Al iniciar el planificador, éste pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. El planificador no ejecuta las tareas sino que se las envía al ejecutor. Cuando una tarea se ha completado, el ejecutor envía un mensaje al planificador, de esta manera el planificador puede conocer el estado de las tareas y evitar que una misma tarea ocupe mas de un hilo de ejecucion en caso de que esté tardando mas de lo normal o esté bloqueada.
 
 Mientras tanto, el hilo principal se conecta a la nube usando el API de Dropbox que posee un método para notificar a los clientes sobre cambios a una carpeta en tiempo real. El método llamado \textit{Longpoll Delta} consiste en abrir una conexión HTTP con un alto valor de \textit{timeout} (entre 30 y 120 segundos), si ocurre un cambio en la carpeta, el servidor de Dropbox responde de inmediato indicando que ocurrieron cambios y el monitor procederá a manejar este evento (descargando los archivos nuevos y aplicando los cambios al plan de monitoreo). En caso contrario, una vez expirado el temporizador, Dropbox responde indicando que no ocurrieron cambios y el monitor repite el proceso. 
 
 Los eventos relevantes al monitor son los siguientes: (1) una prueba se ha agregado al plan de monitoreo y debe cargarse a memoria y planificarse, (2) una prueba se ha eliminado y debe ser eliminada del plan de monitoreo, (3) el intervalo entre pruebas ha cambiado y debe replanificarse la próxima ejecución, (4) los parámetros de una prueba han cambiado, (5) se ha agregado un nuevo enlace a monitorear, (6) se ha eliminado o desactivado un enlace monitoreado.
 
-El monitor solo puede detenerse a través de una señal del sistema operativo (SIGTERM), el cliente utiliza el archivo \verb|pid| para determinar el identificador del proceso y enviar la señal. El manejador de excepciones del monitor entonces inicia una secuencia de apagado, deteniendo las pruebas, apagando el planificador y desbloqueado el archivo \verb|.pid|.
+El monitor solo puede detenerse a través de una señal del sistema operativo, el cliente utiliza el archivo \verb|pid| para determinar el identificador del proceso y enviar la señal. El manejador de excepciones del monitor entonces inicia una secuencia de apagado, deteniendo las pruebas, apagando el planificador y desbloqueado el archivo \verb|.pid|.
 
 Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activity}.
 
@@ -1999,16 +1999,16 @@ Esta secuencia de actividades puede verse en la figura \ref{fig:tentacle-activit
 
 En esta sección se explican a detalle los componentes que forman parte de la arquitectura del monitor.
 
-\subsubsection{Cliente}
+\subsubsection{Cliente} \label{daemonizacion}
 
 El cliente de TPS es el programa encargado de iniciar o detener la ejecución del monitor en modo daemon y funge como interfaz entre el usuario y monitor.
 
-La tarea principal del cliente consiste en daemonizar el monitor, Según Finney  \cite{pep3143}, el proceso para formar un daemon con comportamiento correcto son los siguientes : 
+La tarea principal del cliente consiste en daemonizar el monitor, Según Finney \cite{pep3143}, el proceso para formar un daemon con comportamiento correcto son los siguientes : 
 \begin{enumerate}
 	\item{Disociar el programa del terminal}
 	\item{Convertirse en un líder de sesión}
 	\item{Convertirse en un líder de grupo de procesos}
-	\item{Ejecutarse como una tarea de fondo haciendo fork y luego dejando que el programa "padre" finalice inmediatamente, de este modo el proceso "hijo" queda huérfano, este proceso se repite una vez mas para convertir el programa en un líder de sesión.}
+	\item{Ejecutarse como una tarea de fondo haciendo \textit{fork} y luego dejando que el programa "padre" finalice inmediatamente, de este modo el proceso "hijo" queda huérfano, este proceso se repite una vez mas para convertir el programa en un líder de sesión.}
 	\item{Establecer el directorio raíz (/) como el directorio de trabajo (\textit{working directory}) del programa}
 	\item{Cerrar todos los descriptores de archivos}
 	\item{Redirigir los flujos estándar (stdout, stderr, stdin) a un archivo de bitácora, o a /dev/null}
@@ -2025,8 +2025,8 @@ $ python tentacle.py start --no-daemon
 	\centering
 	\begin{tabular}{p{2cm}p{13cm}}
 		\rowcolor{light-gray} Comando & Descripción \\ 
-		\hline start & Inicia el monitor como un proceso daemon, falla si el archivo .pid ya existe (el monitor se esta ejecutando) \\ 
-		\hline stop & Detiene el monitor enviando la señal SIGTERM al proceso daemon, falla si el archivo pid no existe (el monitor no se esta ejecutando) \\  
+		\hline start & Inicia el monitor como un proceso daemon, falla si el archivo \verb|.pid| ya existe (el monitor se esta ejecutando) \\ 
+		\hline stop & Detiene el monitor enviando la señal SIGTERM al proceso daemon, falla si el archivo \verb|.pid| no existe (el monitor no se esta ejecutando) \\  
 		\hline restart & Detiene e inicia el monitor \\ 
 		\hline jobs & Muestra las tareas pendientes en el planificador (plan de monitoreo) \\ 
 		\hline 
@@ -2041,8 +2041,8 @@ El hilo principal de ejecución es el punto de partida desde el momento en que el
 
 El hilo principal consiste en un bucle de ejecución que ejecuta el siguiente algoritmo:
 \begin{enumerate}
-	\item{Llama al método \textit{Delta} de Dropbox sobre la carpeta que hace las veces de buzón de mensajes del monitor sin usar un cursor (ver Sección \ref{sub:Recolector}), este llamado retorna como lista de entradas delta todos los archivos que hay en la carpeta, de esta manera, el monitor puede leer los mensajes que hayan sido colocados en la carpeta mientras no se estaba ejecutando, luego guarda el cursor retornado por el método delta y lo usa en llamadas sucesivas.}
-	\item{Toma la lista de entradas delta obtenida de cada llamada a \textit{Longpoll Delta} y descarga archivo por archivo, leyendo su contenido, a partir del nombre y contenido del mensaje pueden ocurrir los siguientes escenarios:}
+	\item{Llama al método \textit{Delta} de Dropbox sobre la carpeta que hace las veces de buzón de mensajes del monitor sin usar un cursor (ver Sección \ref{sub:Recolector}), este llamado retorna como lista de entradas delta todos los archivos que hay en la carpeta, de esta manera, el monitor puede leer los mensajes que hayan sido dejados en la carpeta mientras no se estaba ejecutando. Luego guarda el cursor retornado por el método delta para ser usado en llamadas sucesivas.}
+	\item{Toma la lista de entradas delta obtenida de cada llamada a \textit{Delta} y descarga archivo por archivo, leyendo su contenido, a partir del nombre y contenido del mensaje pueden ocurrir los siguientes escenarios:}
 	\begin{itemize}
 		\item{Se ignora y elimina el mensaje en los siguientes casos:}
 		\begin{itemize}
@@ -2072,31 +2072,30 @@ El diagrama de secuencia del hilo principal del monitor puede ser observado en l
 
 Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite retrasar la ejecución de código python a instantes específicos en el futuro; el planificador se puede ejecutar como un subproceso de modo que otro hilo puede encargarse de mantener el estado de planificador actualizado, indicando cuando se deban agregar, re-planificar o eliminar pruebas.
 
-El planificador está compuesto de de gatillos para determinar el tiempo de ejecucion de las pruebas, ejecutores, y almacenes de tareas que guardan el estado del planificador, todos estos componentes son altamente configurables y se pueden extender o reusar para obtener cualquier comportamiento deseado. A continuación se explica su funcionamiento y como se usaron en el marco de este trabajo.
+El planificador está compuesto de gatillos para determinar el tiempo de ejecucion de las pruebas, ejecutores, y almacenes de tareas que guardan el estado del planificador, todos estos componentes son configurables y se pueden extender o reusar para obtener cualquier comportamiento deseado. A continuación se explica su funcionamiento y como se usaron en el marco de este trabajo.
 
 \begin{itemize}
-\item{\textbf{Gatillos (Triggers)}
+\item{\textbf{Gatillos}
 
 Los gatillos contienen la lógica para determinar en que momento se debe ejecutar una tarea, la biblioteca APScheduler incluye varios gatillos predefinidos de los cuales dos se han usado para el desarrollo de esta aplicación: 
 
 \begin{itemize}
 	\item{\textbf{Gatillo por intervalos:} ejecuta pruebas en intervalos regulares, opcionalmente se pueden suministrar fechas finales e iniciales de modo que las pruebas solo se ejecuten durante un período especifico, después de la fecha final el planificador elimina la prueba automáticamente.}
-	\item{\textbf{Gatillo por fecha:} ejecuta la prueba en una fecha especifica dada, una sola vez, útil para ejecutar pruebas que usen muchos recursos de red como benchmarks o capturas de tráfico de la red.}
+	\item{\textbf{Gatillo por fecha:} ejecuta la prueba en una fecha especifica dada, una sola vez, útil para ejecutar pruebas que usen muchos recursos de red como \textit{benchmarks} o capturas de tráfico de la red.}
 \end{itemize}
 }
 
-
-\item{\textbf{Ejecutores (Executors)}
+\item{\textbf{Ejecutores}
 
 El ejecutor es el ente encargado de llevar a cabo la ejecución de las tareas, en nuestro caso se ha hecho uso de un grupo de subprocesos (\textit{thread pool}), la cantidad de hilos en el grupo esta dado por el número de pruebas que estaremos ejecutando de modo que siempre se tenga al menos un hilo disponible cuando se inicia una prueba. 
 
-El ejecutor comunica el estado de ejecución de las tareas al planificador, de modo que se pueden implementar limites de concurrencia tales que una tarea solo pueda ser ejecutada simultáneamente un cierto número de veces. En este trabajo solo puede ser ejecutada una prueba del mismo tipo a la vez, en otras palabras la concurrencia máxima es uno.
+El ejecutor comunica el estado de ejecución de las tareas al planificador, de modo que se pueden implementar limites de concurrencia de forma tal que una tarea solo pueda ser ejecutada simultáneamente un cierto número de veces. En este trabajo solo puede ser ejecutada una prueba del mismo tipo a la vez, en otras palabras la concurrencia máxima es uno.
 }
-\item{\textbf{Almacén de tareas (Job store)}
+\item{\textbf{Almacén de tareas}
 
 El almacén de tareas guarda las tareas planificadas, el comportamiento por omisión es guardar las tareas en memoria, pero existen distintos tipos de almacenes como Redis \cite{RedisWebsite} y bases de datos. Hemos usado la clase SQLAlchemyJobStore que permite guardar tareas en una base de datos ligera como Sqlite\footnote{Sqlite: https://www.sqlite.org/} y así asegurar la persistencia de los datos de la aplicación en caso de interrupciones o reinicios.
 
-El almacén de tareas debe guardar toda la información necesaria para recrear las tareas, en otras palabras debe guardar el gatillo, la ruta del ejecutable de la prueba, el arreglo de parámetros y el tiempo de la última ejecución. La estructura de la base de datos es muy sencilla: se guarda el identificador de la tarea como clave, el tiempo de la última ejecución (timestamp) y los datos de la ruta del ejecutable y los parámetros se serializan y se guardan en un campo BLOB.
+El almacén de tareas debe guardar toda la información necesaria para recrear las tareas, en otras palabras debe guardar el gatillo, la ruta del ejecutable de la prueba, el arreglo de parámetros y el tiempo de la última ejecución. La estructura de la base de datos es muy sencilla: se guarda el identificador de la tarea como clave, el tiempo de la última ejecución (\textit{timestamp}) y los datos de la ruta del ejecutable y los parámetros se serializan y se guardan en un campo BLOB.
 }
 \end{itemize}
 
@@ -2104,7 +2103,7 @@ El almacén de tareas debe guardar toda la información necesaria para recrear las
 
 El almacenamiento compartido se encarga de alojar los resultados de las pruebas en archivos de trazas, por cada prueba que se esté ejecutando se crea una carpeta donde se alojan sus respectivos archivos.
 
-El costo de alojar archivos en la nube no depende del número de archivos sino del espacio total de disco en uso, sin embargo, Dropbox impone un limite de peticiones diarias por usuario por lo que debemos intentar minimizar la cantidad de peticiones que realizamos. Para reducir el número de archivos en el almacenamiento compartido se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese período se anexan al archivo correspondiente. 
+El costo de alojar archivos en la nube no depende del número de archivos sino del espacio total de disco en uso, sin embargo, Dropbox impone un limite de peticiones diarias por usuario, por lo que debemos intentar minimizar la cantidad de peticiones que realizamos. Para reducir el número de archivos en el almacenamiento compartido se crea para cada enlace un archivo por hora y todas las trazas que se generen en ese período se anexan al archivo correspondiente.
 
 \subsection{Pruebas Implementadas} \label{pruebasimplementadas}
 
@@ -2112,16 +2111,16 @@ Gracias a la arquitectura del TPS, implementar una prueba es tan sencillo como c
 \begin{enumerate}
 	\item{Se leen los argumentos de la función, en caso de que el argumento de la función sea un diccionario se valida que tenga las claves y valores esperados.}
 	\item{Se obtienen los enlaces a monitorear y los parámetros globales leyendo el archivo de configuración del monitor}
-	\item{Se ejecuta un comando externo como \textit{ping} o \textit{traceroute} o se usa una biblioteca python para evaluar alguna métrica de cada enlace monitoreado. Esto puede hacerse en paralelo en caso de que el tiempo sea crítico o en secuencia en caso de tratarse de una operación costosa en términos de recursos de la red.}
-	\item{(Opcional) si se ejecuta un comando externo se hace un parsing para extraer los resultados relevantes de la salida del programa y convertirlos a tipos de datos python.}
-	\item{Se guardan los resultados en un archivo de trazas; generalmente el resultado de una prueba está representado por una linea en el archivo de trazas, sin embargo el desarrollador tiene libertad de elegir el formato que utilice para generar archivos de trazas.}
+	\item{Se ejecuta un comando externo como ping o traceroute o se usa código Python para evaluar alguna métrica de cada enlace monitoreado. Esto puede hacerse en paralelo en caso de que el tiempo sea crítico o en secuencia en caso de tratarse de una operación costosa en términos de recursos de la red o procesamiento.}
+	\item{(Opcional) si se ejecuta un comando externo se hace un \textit{parsing} para extraer los resultados relevantes de la salida del programa y convertirlos a tipos de datos Python.}
+	\item{Se guardan los resultados en un archivo de trazas; generalmente el resultado de una prueba está representado por una linea en el archivo de trazas, sin embargo, el desarrollador tiene libertad de elegir el formato que desee para generar archivos de trazas.}
 \end{enumerate}
 
-Durante el desarrollo de este trabajo se han implementaron \textit{wrappers} para los programas \textit{ping}, \textit{traceroute} e \textit{iperf} y se desarrolló una prueba para determinar el estado de servidores a través del protocolo HTTP.
+Durante el desarrollo de este trabajo se han implementaron \textit{wrappers} para los programas ping, traceroute e iperf y se desarrolló una prueba para determinar el estado de servidores a través del protocolo HTTP.
 
 \subsubsection{Ping}
 
-Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como ya se menciono en la sección \ref{sub:ping} ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo. La prueba consiste en instanciar un hilo por cada enlace monitoreado y ejecutar el comando ping. La prueba se realiza en paralelo para asegurar que la diferencia entre el tiempo de inicio esperado de la prueba y su tiempo ejecucion efectivo sea mínimo.
+Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como se menciono en la sección \ref{sub:ping}, ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo. La prueba consiste en instanciar un hilo por cada enlace monitoreado y ejecutar el comando ping. La prueba se realiza en paralelo para asegurar que la diferencia entre el tiempo de inicio esperado de la prueba y su tiempo ejecucion efectivo sea mínimo.
 
 El comando se ejecuta con la opción -D para que ping imprima cada resultado de latencia con una marca de tiempo entre corchetes. La cantidad de sondas ICMP, el tiempo entre sondas y el \textit{timeout} se especifican con las opciones -c, -i y -W respectivamente. A continuación se puede ver un ejemplo de una llamada al comando ping:
 
@@ -2129,7 +2128,7 @@ El comando se ejecuta con la opción -D para que ping imprima cada resultado de l
 $ping 150.185.138.59 -D -c 10 -i 1 -W 2
 \end{verbatim}
 
-El último paso consiste en tomar la salida del comando ping y extraer los datos que se guardarán en el archivo de trazas, como se puede ver en la figura  \ref{fig:ping-out}, cada linea que comienza con un \textit{timestamp} entre corchetes representa el resultado obtenido para una sonda, luego es sencillo obtener el valor del RTT realizando operaciones sobre cadenas de caracteres, esto puede verse en el siguiente segmento de código:
+Finalmente, se toma la salida del comando ping y se extraen los datos que se guardarán en el archivo de trazas, como se puede ver en la figura  \ref{fig:ping-out}, cada linea que comienza con un \textit{timestamp} entre corchetes representa el resultado obtenido para una sonda, luego es sencillo obtener el valor del RTT realizando operaciones sobre cadenas de caracteres, esto puede verse en el siguiente segmento de código:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 rtt = []
@@ -2141,7 +2140,7 @@ for line in lines:
 rtt = median(rtt)
 \end{lstlisting}
 
-Independientemente del número de sondas que se envíen elegiremos solo la mediana como valor de la latencia para esa prueba. Si para una prueba no se obtiene ninguna respuesta entonces guardamos una traza con rtt=-1 indicando que el enlace está inactivo o el nodo está rechazando las sondas.
+Independientemente del número de sondas que se envíen elegiremos solo la mediana como valor de la latencia para esa prueba. Si para una prueba no se obtiene ninguna respuesta entonces guardamos una traza con RTT=-1 indicando que el enlace está inactivo o el nodo está rechazando las sondas.
 
 \begin{figure}[h!]
 	\centering
@@ -2155,8 +2154,8 @@ Independientemente del número de sondas que se envíen elegiremos solo la mediana
 	\label{table:ping-parameters}
 	\begin{tabular}{r|p{2cm}|p{9cm}}
 		\rowcolor{light-gray} 
-		Parametro              &  Tipo & Descripcion                                                                \\ \hline
-		Numero de sondas       & Entero                      & Número de sondas icmp a enviar.                                            \\ \hline
+		Parámetro              &  Tipo & Descripción                                                                \\ \hline
+		Numero de sondas       & Entero                      & Número de sondas ICMP a enviar.                                            \\ \hline
 		Timeout                & Float                       & Tiempo en segundos a esperar por una respuesta antes de asumir una sonda como perdida. \\ \hline
 		Intervalo entre sondas & Float                       & Tiempo en segundos entre el envío de cada sonda individual.                           
 	\end{tabular}
@@ -2182,7 +2181,7 @@ if path_name in kwargs:
 response = requests.head(url,timeout=timeout) 
 \end{lstlisting}
 
-La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba httping,
+La tabla \ref{table:httping-parameters} muestra los parámetros de la prueba httping.
 
 \begin{table}[h!]
 	\centering
@@ -2203,7 +2202,7 @@ Esta prueba es útil para monitorear todo tipo de servidores web y posee la venta
 
 Esta prueba ejecuta el comando traceroute para obtener la ruta entre un par de nodos a través de una red IP, llamamos ruta a una secuencia de saltos (\textit{hops}) que hace un paquete al atravesar un enrutador. 
 
-El comando traceroute imprime la ruta como una lista ordenada donde cada linea representa un salto, con su dirección IP, nombre de dominio y latencia, dependiendo del número de sondas que se estén enviando por salto pueden existir casos en que se obtenga respuesta de mas de una dirección IP. Este comportamiento se puede ver en la figura \ref{fig:traceroute-out} en el salto 9 se observa que obtenemos una respuesta de la dirección IP 154.54.31.230 y dos de la 154.54.47.154.
+El comando traceroute imprime la ruta como una lista ordenada donde cada linea representa un salto, con su dirección IP, nombre de dominio y latencia, dependiendo del número de sondas que se estén enviando por salto pueden existir casos en que se obtenga respuesta de mas de una dirección IP. Este comportamiento se puede ver en la figura \ref{fig:traceroute-out}, en el salto 9 se observa que obtenemos una respuesta de la dirección IP 154.54.31.230 y dos respuestas de la 154.54.47.154.
 
 \begin{figure}[h]
 	\centering
@@ -2213,7 +2212,7 @@ El comando traceroute imprime la ruta como una lista ordenada donde cada linea r
 \end{figure}
 
 
-A partir de la salida de traceroute se debe obtener una estructura de datos que facilite el análisis de la ruta, para esto se usó el modulo tracerouteparser.py\footnote{tracerouteparser.py esta disponible a través del proyecto Netalyzr: http://netalyzr.icsi.berkeley.edu}. Este módulo crea un archivo json extrayendo la información de la cabecera (IP destino y nombre de dominio), y crea una una lista de los saltos. Cada salto es a su vez una lista de sondas, cada sonda tiene dirección IP, nombre de dominio, RTT y anotaciones. Este archivo json luego puede ser leído por Octopus Head para iterar fácilmente sobre los saltos y leer la información de cada sonda específica.
+A partir de la salida de traceroute se debe obtener una estructura de datos que facilite el análisis de la ruta, para esto se usó el modulo tracerouteparser.py\footnote{tracerouteparser.py esta disponible a través del proyecto Netalyzr: http://netalyzr.icsi.berkeley.edu}. Este módulo crea un archivo JSON extrayendo la información de la cabecera (IP destino y nombre de dominio), y crea una una lista de los saltos. Cada salto es a su vez una lista de sondas, cada sonda tiene dirección IP, nombre de dominio, RTT y anotaciones. Este archivo JSON luego puede ser leído por Octopus Head para iterar fácilmente sobre los saltos y leer la información de cada sonda específica.
 
 El formato provisto por Netalyzer está compuesto de la siguiente manera:
 
@@ -2247,7 +2246,7 @@ El formato provisto por Netalyzer está compuesto de la siguiente manera:
 ]
 \end{lstlisting}
 
-Cada vez que se realiza una prueba con traceroute se anexa al archivo de trazas correspondiente una entrada con la marca de tiempo de inicio de la prueba, un carácter de separación y luego una cadena en el formato json antes mostrado. 
+Cada vez que se realiza una prueba con traceroute se anexa al archivo de trazas correspondiente una entrada con la marca de tiempo de inicio de la prueba, un carácter de separación y luego una cadena en el formato JSON antes mostrado. 
 
 Las parámetros de esta prueba son los siguientes:
 
@@ -2255,11 +2254,11 @@ Las parámetros de esta prueba son los siguientes:
 	\centering
 	\begin{tabular}{r|p{2cm}|p{9cm}}
 		\rowcolor{light-gray} 
-		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
+		Parámetro        & {\color[HTML]{333333} Tipo} & Descripción                                                           \\ \hline
 		Numero de sondas & Entero                      & Número de sondas a enviar por cada valor de TTL.                      \\ \hline
-		TTL Maximo       & Entero                      & Numero maximo de saltos antes de asumir que el nodo no es alcanzable. \\
+		TTL Máximo       & Entero                      & Numero máximo de saltos antes de asumir que el nodo no es alcanzable. \\
 	\end{tabular}
-	\caption{Parametros de la prueba con traceroute}
+	\caption{Parámetros de la prueba con traceroute}
 	\label{tab:traceroute-params}
 \end{table}
 
@@ -2267,13 +2266,13 @@ Las parámetros de esta prueba son los siguientes:
 
 La prueba de \textit{throughput} con Iperf hace mediciones de ancho de banda entre un par de nodos usando el programa Iperf. Ya que Iperf es un programa de tipo cliente-servidor, el usuario que realiza el monitoreo debe asegurarse de mantener una instancia de Iperf en modo servidor en el TPD, en otras palabras es un requisito para esta prueba que el usuario tenga acceso o cuente con la colaboración explicita de los TPD.
 
-El comando Iperf se puede ejecutar en modo servidor lo cual le permite conectarse a un puerto y esperar conexiones para ejecutar pruebas de throughput, el comando para iniciar Iperf en el TPD en modo daemon es el siguiente:
+El comando Iperf se puede ejecutar en modo servidor lo cual le permite conectarse a un puerto y esperar conexiones para ejecutar pruebas de \textit{throughput}, el comando para iniciar Iperf en el TPD en modo daemon es el siguiente:
 
 \begin{verbatim}
 $iperf -s -D
 \end{verbatim}
 
-A diferencia de las pruebas como las de ping o httping que solo envían unas pocas sondas ICMP o peticiones \textit{HTTP HEAD}, Iperf utiliza una gran cantidad de recursos de red intentando inundar el enlace y obtener el mayor throughput posible, por lo tanto, el usuario debe asegurarse de no interferir constantemente el rendimiento de la red planificando demasiadas ejecuciones de esta prueba. Aunado a esto, cada ejecucion del comando Iperf se realiza secuencialmente, de esta manera, se evita que los distintos enlaces monitoreados tengan que compartir los recursos de red y se generen cuellos de botella en el TPS.
+A diferencia de las pruebas como las de ping o httping que solo envían unas pocas sondas ICMP o peticiones \textit{HTTP HEAD}, Iperf utiliza una gran cantidad de recursos de red intentando inundar el enlace y obtener el mayor \textit{throughput} posible, por lo tanto, el usuario debe asegurarse de no interferir constantemente el rendimiento de la red planificando demasiadas ejecuciones de esta prueba. Aunado a esto, cada ejecucion del comando Iperf se realiza secuencialmente, de esta manera, se evita que los distintos enlaces monitoreados tengan que compartir los recursos de red y se generen cuellos de botella en el TPS.
 
 Ademas de las consideraciones de recursos de red consumidos, cada prueba con Iperf debe calibrarse apropiadamente para obtener un valor de \textit{throughput} óptimo, por lo tanto, la mayoría de los parámetros de esta prueba son específicos a cada enlace. A continuación se puede ver la construcción del comando Iperf para un enlace:
 
@@ -2304,14 +2303,14 @@ for link in links.values():
 	\centering
 	\begin{tabular}{r|p{2cm}|p{9cm}}
 		\rowcolor{light-gray} 
-		Parametro        & {\color[HTML]{333333} Tipo} & Descripcion                                                           \\ \hline
+		Parámetro        & {\color[HTML]{333333} Tipo} & Descripción                                                           \\ \hline
 		Probar este enlace & Booleano                      & Determina si se debe o no ejecutar la prueba para un enlace especifico.                      \\ \hline
 		Tiempo de transmisión       & Entero                      & Numero de segundos para transmitir datos durante la prueba. \\ \hline
-		Bytes a enviar      & String                      & Cantidad de bytes a enviar durante la prueba, se puede especificar si el numero es en bytes o megabytes usando las letras B o M respectivamente, este parámetro se ignora si se establece el parametro anterior.. \\ \hline
+		Bytes a enviar      & String                      & Cantidad de bytes a enviar durante la prueba, se puede especificar si el numero es en bytes o megabytes usando las letras B o M respectivamente, este parámetro se ignora si se establece el parámetro anterior.. \\ \hline
 		Numero de flujos       & Entero                      & Numero de flujos TCP simultáneos a usar durante la prueba. \\ \hline
 		Puerto       & Entero                      & Especifica el puerto en que el servidor está escuchando en el TPS. \\
 	\end{tabular}
-	\caption{Parametros de la prueba con iperf}
+	\caption{Parámetros de la prueba con iperf}
 	\label{tab:traceroute-params}
 \end{table}
 
