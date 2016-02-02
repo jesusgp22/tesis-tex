@@ -9,7 +9,9 @@
 \usepackage{float}
 \usepackage{placeins}
 \usepackage{color}
-\usepackage[colorlinks]{hyperref}
+%\usepackage[colorlinks]{hyperref}
+\usepackage{hyperref}
+
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{multirow}
 \usepackage{colortbl}
@@ -34,6 +36,7 @@
 % Las siguientes son propiedades del pdf, mï¿½s no cambian nada dentro del
 % texto de la monografï¿½a
 \hypersetup{pdftitle={Propuesta de Tesis},
+hidelinks,
 pdfauthor={Jesús Gómez},
 pdfsubject={Propuesta de Proyecto de Grado}, % se deja igual (se cambia para el proyecto de grado)
 pdfkeywords={ Monitoreo de redes, Calidad de servicio, Big Data, Benchmarking, Cloud}, pdfstartview=FitH,
@@ -235,9 +238,9 @@ bookmarks=true, citecolor=blue}%, draft=true}
 
 \chapter{Introducción}
 
-Con el objetivo de proveer alternativas para el acceso a Internet a bajo costo se han popularizado despliegues de redes alternativos tales como las Redes Comunitarias\cite{gaia-alternative2015}. Estas redes consisten en arreglos interconectados de nodos mantenidos por la comunidad y para la comunidad, los interesados en formar parte de la red ofrecen su hardware y extienden la red, la cual crece de forma orgánica y descentralizada. A pesar de que estos despliegues sean de bajo costo, descentralizadas, e incluso caóticos, los usuarios esperan una mínima calidad de servicio y velocidad de respuesta que les permita aprovechar tanto los servicios tradiciones de Internet así como servicios locales disponibles solo para los usuarios de la red comunitaria\cite{Octopus2015}. Tener un sistema de monitoreo de redes de bajo impacto sobre los recursos de red y de hardware disponibles y que ofrezca información sobre la red en tiempo real es crucial para ayudar a los interesados a detectar problemas y asegurar la calidad de servicio que los usuarios esperan.
+Con el objetivo de proveer alternativas para el acceso a Internet a bajo costo se han popularizado despliegues de redes alternativos tales como las Redes Comunitarias\cite{gaia-alternative2015}. Estas redes consisten en arreglos interconectados de nodos mantenidos por la comunidad y para la comunidad, los interesados en formar parte de la red ofrecen su hardware y extienden la red, la cual crece de forma orgánica y descentralizada. A pesar de que estos despliegues sean de bajo costo, descentralizados, e incluso caóticos, los usuarios esperan una mínima calidad de servicio y velocidad de respuesta que les permita aprovechar tanto los servicios tradiciones de Internet así como servicios locales disponibles solo para los usuarios de la red comunitaria\cite{Octopus2015}. Tener un sistema de monitoreo de redes de bajo impacto sobre los recursos de red y de hardware disponibles y que ofrezca información sobre la red en tiempo real es crucial para ayudar a los interesados a detectar problemas y asegurar la calidad de servicio que los usuarios esperan.
 
-Existen dos estrategias de monitoreo de redes: monitoreo activo o \textit{benchmarking} que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red, y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. El \textit{benchmarking} tiene la desventaja de tener que inyectar tráfico lo cual puede entorpecer el funcionamiento normal de la red. Ejemplos de herramientas de \textit{benchmarking} son \textit{ping}, \textit{iperf} y \textit{traceroute}.
+Existen dos estrategias de monitoreo de redes: monitoreo activo o \textit{benchmarking} que consiste en generar tráfico para realizar medidas y comprobar la respuesta de la red, y monitoreo pasivo que consiste en escanear el tráfico de la red en ciertos puntos estratégicos para censar el tráfico en la red. Para llevar a cabo el \textit{benchmarking}, ha de inyectarse tráfico debidamente para conservar el funcionamiento normal de la red. Ejemplos de herramientas de \textit{benchmarking} son \textit{ping}, \textit{iperf} y \textit{traceroute}.
 
 El monitoreo pasivo nos puede dar una idea del uso de la red, sin embargo, para mayor efectividad debe realizarse en nodos intermedios a los que muchas veces no tenemos acceso. Ejemplos de herramientas de monitoreo pasivo son \textit{tcpdump}\footnote{tcpdump: http://www.tcpdump.org/} y \textit{wireshark}\footnote{Wireshark: https://www.wireshark.org/}. En ambos casos hay que resaltar que es difícil tener una imagen completa del estado de la red.
 
@@ -250,7 +253,7 @@ SNMP no solo ofrece al administrador de red reportes sobre cada uno de los dispo
 
 Las redes en zonas rurales como en el caso de la red de Malawi\cite{Malawi:13}, deben dejarse desatendidas durante largos periodos de tiempo ya que sus nodos son de difícil acceso o es muy costoso tener personal dedicado que se encargue del mantenimiento. Este escenario hace evidente la necesidad de una solución de monitoreo de redes a distancia y de dispositivos de mínimo mantenimiento. Además es atractivo para el centro de monitoreo de la red poder añadir, modificar o eliminar nodos de interés de manera sencilla a la interfaz de monitoreo.
 
-Para intentar solucionar este problema y recolectar información sobre este tipo de redes, se propone un sistema en dos partes: un monitor de red instalado en la estación base (BS) y una aplicación web remota, el monitor en la estación base se conecta a cada uno de los nodos de la red y determina el tiempo de ida y vuelta (RTT por sus siglas en ingles) de forma automatizada en ciertos intervalos de tiempo, guarda los resultados en archivos y los coloca en una carpeta que se sincroniza a través de un servicio en la nube  de tipo PaaS (Plataforma como servicio) con el servidor web, que a su vez escanea la carpeta compartida y actualiza su base de datos que puede usarse para generar gráficas de RTT promedio y determinar tiempos de actividad continuos y porcentaje de disponibilidad de servicio \cite{MalawiNetMonitor:15}.
+Para intentar solucionar este problema y recolectar información sobre este tipo de redes, en \cite{MalawiNetMonitor:15} se propuso un sistema en dos partes: un monitor de red instalado en la estación base (BS) y una aplicación web remota, el monitor en la estación base se conecta a cada uno de los nodos de la red y determina el tiempo de ida y vuelta (RTT por sus siglas en ingles) de forma automatizada en ciertos intervalos de tiempo, guarda los resultados en archivos y los coloca en una carpeta que se sincroniza a través de un servicio en la nube  de tipo PaaS (Plataforma como servicio) con el servidor web, que a su vez escanea la carpeta compartida y actualiza su base de datos que puede usarse para generar gráficas de RTT promedio y determinar tiempos de actividad continuos y porcentaje de disponibilidad de servicio.
 
 
 
@@ -280,7 +283,7 @@ Otro caso de uso interesante corresponde al monitoreo de datos del estado de red
 
 Mantener estas mediciones con las herramientas existentes se vuelve una tarea compleja mientras crece el número de nodos a monitorear pues la cantidad de datos aumenta a través del tiempo. Sumado a esto, solo podemos capturar información a partir de los nodos extremos de la red.
 
-En este trabajo, proponemos la construcción de un sistema de monitoreo de redes a bajo costo, configurable, y tolerante a fallas en las redes a monitorear. El sistema se manejará a través de una aplicacion web que permitirá a usuarios autenticados manejar agentes de red remotos, para ejecutar pruebas planificadas y recoger datos de los enlaces de interés. La transferencia de datos entre la aplicacion web y los monitores remotos se realizará a través de la nube. A este sistema le hemos dado el nombre de Octopus Monitor\ref{Octopus2015}
+En este trabajo, proponemos la construcción de un sistema de monitoreo de redes a bajo costo, configurable, y tolerante a fallas en las redes a monitorear. El sistema se manejará a través de una aplicacion web que permitirá a usuarios autenticados manejar agentes de red remotos, para ejecutar pruebas planificadas y recoger datos de los enlaces de interés. La transferencia de datos entre la aplicacion web y los monitores remotos se realizará a través de la nube. A este sistema le hemos dado el nombre de Octopus Monitor\cite{Octopus2015}.
 
 %A pesar de que Malawinet Network Monitor podría ofrecer estadísticas de tiempo de ida y vuelta (RTT) y disponibilidad de un enlace solo a partir de las trazas capturadas con Ping, se desea además implementar un marco de trabajo que permita agregar nuevas pruebas automatizadas que ayuden a obtener una imagen más completa de la red.
   
@@ -320,7 +323,7 @@ Se realizaron cuatro ciclos, el primero correspondió a la realización de un moni
 
 El segundo ciclo consistió en permitir el monitoreo de una cantidad arbitraria de monitores remotos permitiendo a múltiples usuarios manejar sus monitores remotos desde el servicio web y obtener las visualizaciones.
 
-El tercer ciclo correspondió en diseñar e integrar una prueba con otras herramientas (traceroute, iperf, etc) para conseguir puntos comunes y generar un enfoque de integración sencillo de los \textit{wrappers} futuros a las aplicaciones. (ej. Lidiar con aplicaciones que requieren enfoque cliente solo [ping] o cliente-servidor [iperf]).
+El tercer ciclo correspondió en diseñar e integrar una prueba con otras herramientas (traceroute, iperf, etc) para conseguir puntos comunes y generar un enfoque de integración sencillo de los \textit{wrappers} futuros a las aplicaciones. (ej. Lidiar con aplicaciones que requieren enfoque cliente como ping o cliente-servidor como iperf).
 
 El cuarto ciclo consistió en hacer análisis del rendimiento del sistema y hacer las optimizaciones necesarias para ofrecer una calidad de servicio apropiada, determinar costos, limitaciones y requisitos mínimos para implementar en plataformas de bajo costo.
 
@@ -599,7 +602,7 @@ Mysql es un sistema manejador de bases de datos relacionales (RDBMS por sus sigl
 
 El Mapeo Objeto-Relacional (ORM por sus siglas en ingles) es un método para interactuar con bases de datos relaciones desde el paradigma de la programación orientada a objetos, de esta manera es posible aprovechar conceptos como herencia y polimorfismo.
 
-Según Ambler\cite{ScottORM}, la mayoría de las aplicaciones modernas usan lenguajes orientados a objetos como Java o C\# para construir aplicaciones y bases de datos estructuradas para almacenar datos, por lo tanto, es útil tener una interfaz que transforme los datos entre estos tipos de incompatibles. 
+Según Ambler\cite{ScottORM}, la mayoría de las aplicaciones modernas usan lenguajes orientados a objetos como Java o C\# para construir aplicaciones y bases de datos estructuradas para almacenar datos, por lo tanto, es útil tener una interfaz que transforme los datos entre estos tipos incompatibles.
 
 El uso de un ORM simplifica enormemente el manejo de la estructura de datos subyacente ya que permite al programador manejar los datos a un mayor nivel de abstracción como si fueran objetos, sin necesidad de generar manualmente las consultas SQL, además ésta capa de abstracción permite desacoplar el código de la aplicación de los detalles específicos de cada RDBMS.
 
@@ -699,7 +702,7 @@ A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una
 
 La mayoría de los sistemas disponibles a través de aplicaciones web o para dispositivos móviles tales como DSL Reports\cite{DSLReports}, ThinkBroadband\cite{ThinkBroadband}, y SpeedTest\cite{SPEEDTEST}, permiten a usuarios determinar el RTT y rendimiento de su servicio de Internet al hacer pruebas contra uno o mas servidores de medición. Estos servicios ofrecen la ventaja de ser gratuitos, sencillos de usar y no requieren la instalación de \textit{software} o \textit{hardware} adicional. Sin embargo, solo dan al usuario una idea limitada del estado de su red, pues los resultados obtenidos dependerán sustancialmente del servidor elegido para realizar la prueba. 
 
-Otras aplicaciones similares ademas de hacer mediciones de latencia y rendimiento, ofrecen algún valor agregado al usuario, por ejemplo, NetRadar\cite{sonntag2013netradar}, está orientado al análisis de calidad de servicio de proveedores de servicio de telefonía e Internet inalámbrico y Netalyzer\cite{Netalyzr} se especializa en la identificación de problemas en la conexión a Internet como presencia de \textit{proxies}, protocolos bloqueados, errores en los DNS, etc.
+Otras aplicaciones similares ademas de hacer mediciones de latencia y rendimiento, ofrecen algún valor agregado al usuario, por ejemplo, NetRadar\cite{sonntag2013netradar}, está orientado al análisis de calidad de servicio de proveedores de servicio de telefonía e Internet inalámbrico y Netalyzer\cite{kreibich2010netalyzr} se especializa en la identificación de problemas en la conexión a Internet como presencia de \textit{proxies}, protocolos bloqueados, errores en los DNS, etc.
 
 El enfoque de los sistemas de \textit{benchmarking} nombrados hasta ahora ofrece información útil y es suficiente para la mayoría de los usuarios, sin embargo, se necesita tener una infraestructura costosa, con la capacidad suficiente para atender las pruebas realizadas por todos los usuarios, sin que la carga del sistema afecte los resultados de las pruebas negativamente. Los costos de mantener esta infraestructura se justifican por el aprovechamiento de los datos recolectados, ya sea haciéndolos públicos, por motivos de investigación o para venderlos a terceros.
 
@@ -711,7 +714,7 @@ Por otra parte servicios con modelos de negocios mixtos o de pago como Pingdom\c
 
 En este trabajo, hacemos énfasis en el control sobre el uso de recursos del monitoreo. El usuario puede configurar la frecuencia y tipos de pruebas que se estarán ejecutando. Ademas, como se trata de una solución auto-gerenciada, el usuario tiene la libertad de desplegar agentes de monitoreo fácilmente gracias a que usamos una solución de \textit{software} que puede ser instalada incluso en una amplia gama de dispositivos.
 
-\section{Resumen del Estado del Arte}
+\subsection{Caracterización del Estado del Arte}
 En esta sección resumimos las características de estos sistemas a través de los siguientes parámetros:
 
 \begin{enumerate}
@@ -1775,7 +1778,7 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 			\State $\textit{traces} \gets \textit{days[key]} $
 			\State $\textit{length} \gets \text{length of} \textit{ traces}$
 			\For{\textit{i} \textbf{en} \Call{Range}{1,length}}
-				\If{traces[i][1]>0}
+				\If{traces[i][1]$>$0}
 					\State $delta\_seconds \gets traces[i][0] - traces[i-1][0]$
 					\State $active\_period \gets active\_period + delta\_seconds$
 					\If{active\_period $>$ 3600} \Comment{El día es activo}
