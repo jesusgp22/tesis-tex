@@ -271,7 +271,7 @@ Netradar\cite{sonntag2013netradar} es un sistema orientado a la evaluación de la
 
 Project Bismark\cite{sundaresan2014bismark} es un proyecto de monitoreo de redes con el objetivo de investigar el rendimiento de redes en hogares, el software de Bismark se instala en enrutadores y realiza mediciones regulares (benchmarks) y capturas del tráfico de la red. Los usuarios de Bismark pueden observar los datos sobre la latencia, ancho de banda y uso de la red a través de un panel de control disponible en linea.
 
-Ripe Atlas\cite{ripe2010ripe} es otro proyecto de monitoreo de redes con el objetivo de obtener un mayor entendimiento del estado de Internet en tiempo real. Ripe Atlas recolecta datos a partir de mediciones realizadas en dispositivos especializados llamados \textit{probes} y \textit{anchors}. Los \textit{probes} realizan mediciones para determinar la conectividad y alcanzabilidad con respecto a ciertos nodos de interés como servidores DNS o \textit{anchors}. Los \textit{anchors} son \textit{probes} extendidos que ademas de ejecutar pruebas sirven como referencias regionales para la realización de mediciones. Los usuarios que colaboran alojando cualquiera de estos dispositivos pueden aprovechar toda la red de medición para realizar sus propias pruebas y observar todos los resultados obtenidos.
+Ripe Atlas\cite{ripe2010ripe} es otro proyecto de monitoreo de redes con el objetivo de obtener un mayor entendimiento del estado de Internet en tiempo real. Ripe Atlas recolecta datos a partir de mediciones realizadas en dispositivos especializados llamados \textit{probes} y \textit{anchors}. Los \textit{probes} realizan mediciones para determinar la conectividad y alcanzabilidad con respecto a ciertos nodos de interés como servidores DNS o \textit{anchors}. Los \textit{anchors} son \textit{probes} extendidos que además de ejecutar pruebas sirven como referencias regionales para la realización de mediciones. Los usuarios que colaboran alojando cualquiera de estos dispositivos pueden aprovechar toda la red de medición para realizar sus propias pruebas y observar todos los resultados obtenidos.
 
 Tanto Netradar como Project Bismark y Ripe Atlas dependen de la colaboración de numerosos usuarios para la recolección masiva de datos. A mayor número de colaboradores es posible hacer análisis mas completos y detallados sobre el estado y calidad del servicio de Internet a nivel mundial. A cambio de su colaboración, los usuarios obtienen información valiosa sobre su propia red y pueden consultar los resultados públicos y comparar su rendimiento con respecto al total de datos disponibles.
 
@@ -283,7 +283,7 @@ Otro caso de uso interesante corresponde al monitoreo de datos del estado de red
 
 Mantener estas mediciones con las herramientas existentes se vuelve una tarea compleja mientras crece el número de nodos a monitorear pues la cantidad de datos aumenta a través del tiempo. Sumado a esto, solo podemos capturar información a partir de los nodos extremos de la red.
 
-En este trabajo, proponemos la construcción de un sistema de monitoreo de redes a bajo costo, configurable, y tolerante a fallas en las redes a monitorear. El sistema se manejará a través de una aplicacion web que permitirá a usuarios autenticados manejar agentes de red remotos, para ejecutar pruebas planificadas y recoger datos de los enlaces de interés. La transferencia de datos entre la aplicacion web y los monitores remotos se realizará a través de la nube. A este sistema le hemos dado el nombre de Octopus Monitor\cite{Octopus2015}.
+En este trabajo, proponemos la construcción de un sistema de monitoreo de redes a bajo costo, configurable, y tolerante a fallas en las redes a monitorear. El sistema se manejará a través de una aplicación web que permitirá a usuarios autenticados manejar agentes de red remotos, para ejecutar pruebas planificadas y recoger datos de los enlaces de interés. La transferencia de datos entre la aplicación web y los monitores remotos se realizará a través de la nube. A este sistema le hemos dado el nombre de Octopus Monitor\cite{Octopus2015}.
 
 %A pesar de que Malawinet Network Monitor podría ofrecer estadísticas de tiempo de ida y vuelta (RTT) y disponibilidad de un enlace solo a partir de las trazas capturadas con Ping, se desea además implementar un marco de trabajo que permita agregar nuevas pruebas automatizadas que ayuden a obtener una imagen más completa de la red.
   
@@ -329,7 +329,7 @@ El cuarto ciclo consistió en hacer análisis del rendimiento del sistema y hacer 
 
 \section{Alcance}
 
-El alcance de este trabajo remite al diseño y detalles de implementación tanto de una aplicacion web que funge como plataforma central de coordinación del monitoreo, y un agente monitor de redes ligero y robusto que pueda ser controlado remotamente. Se diseñó un sistema flexible y un esquema de coordinación entre sus distintos entes a través de la nube.
+El alcance de este trabajo remite al diseño y detalles de implementación tanto de una aplicación web que funge como plataforma central de coordinación del monitoreo, y un agente monitor de redes ligero y robusto que pueda ser controlado remotamente. Se diseñó un sistema flexible y un esquema de coordinación entre sus distintos entes a través de la nube.
 
 \section{Estructura del Documento}
 
@@ -339,7 +339,7 @@ Capítulo 1. Introducción, este capítulo consiste de los antecedentes relevantes 
 
 Capítulo 2. Marco Teórico, define brevemente los conceptos y herramientas usados durante el desarrollo de este trabajo y que son esenciales para su comprensión; tales como conceptos de alto nivel de monitoreo de redes, métricas de la calidad de un enlace, visualización de datos y los y sistemas de software usados para su implementación.
 
-Capítulo 3. Aplicacion Web, contiene el diseño general del sistema de monitoreo, así como la arquitectura de la aplicacion web, sus sub-sistemas, componentes relevantes, casos de uso y finalmente análisis de rendimiento. 
+Capítulo 3. Aplicación Web, contiene el diseño general del sistema de monitoreo, así como la arquitectura de la aplicación web, sus sub-sistemas, componentes relevantes, casos de uso y finalmente análisis de rendimiento. 
 
 Capitulo 4. Monitor de Red, explica el diseño del monitor de red remoto, su arquitectura, componentes y los módulos de prueba implementados.
 
@@ -511,7 +511,7 @@ Hay una variedad de métodos apropiados para visualizar distintos conjuntos de da
 \label{fig:crimespotting}
 \end{figure}
 
-En la figura \ref{fig:crimespotting} se observa una visualización de los periodos de actividad continua como segmentos de linea verde y los periodos de inactividad como segmentos de linea roja, es posible hacer \textit{zoom} para observar los periodos a mayor detalle y revisar el tiempo exacto del inicio del periodo pasando el puntero sobre un punto, la concentración de puntos de distintos colores da una idea rápida de la estabilidad del enlace.
+En la figura \ref{fig:crimespotting} se observa una visualización de los periodos de actividad continua como segmentos de linea verde y los periodos de inactividad como segmentos de linea roja, es posible hacer \textit{zoom} para observar los periodos a mayor detalle y revisar el tiempo exacto del inicio del período pasando el puntero sobre un punto, la concentración de puntos de distintos colores da una idea rápida de la estabilidad del enlace.
 
 \section{Computación en la nube}
 
@@ -523,7 +523,7 @@ La computación en la nube se caracteriza por ofrecer métodos de pago flexibles q
 
 Almacenamiento como servicio permite tanto a aplicaciones como a usuarios almacenar sus datos en discos remotos y acceder a ellos en cualquier momento y lugar\cite{wu2010cloud}. El Almacenamiento como servicio permite a aplicaciones escalar mas allá de las limitaciones de su infraestructura, y abarata los costos de desarrollo y mantenimiento de la infraestructura necesaria.
 
-Los sistemas de almacenamiento de datos en la nube deben cumplir ciertos requisitos de disponibilidad, rendimiento, seguridad, replicación, y consistencia de los datos que hacen de estos sistemas una opción atractiva el mantenimiento de los datos de una aplicacion a largo plazo.
+Los sistemas de almacenamiento de datos en la nube deben cumplir ciertos requisitos de disponibilidad, rendimiento, seguridad, replicación, y consistencia de los datos que hacen de estos sistemas una opción atractiva el mantenimiento de los datos de una aplicación a largo plazo.
 
 \subsection{Plataforma como Servicio (PaaS)}
 
@@ -565,7 +565,7 @@ Cuando Django recibe una petición ésta pasa por un despachador de URLs (\textit{
 
 Las respuestas generadas por Django pueden ser tanto paginas HTML con CSS y JavaScript pensadas para la interacción con el usuario así como respuestas en formato JSON o XML para la construcciones de APIs que pueden ser usados para la comunicación maquina-maquina, esto es especialmente útil cuando se desea desarrollar aplicaciones en otras plataformas como Android\footnote{Android: https://www.android.com/} o iOS\footnote{iOS: http://www.apple.com/es/ios/} que compartan el mismo \textit{backend}.
 
-Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, ademas es de código abierto, gratuito y cuenta con una extensa comunidad de colaboradores y amplia documentación. 
+Django ha demostrado ser escalable y flexible, se sabe de instancias de Django atendiendo ráfagas de cincuenta mil peticiones por segundo, además es de código abierto, gratuito y cuenta con una extensa comunidad de colaboradores y amplia documentación. 
 
 \subsection{Celery}\label{sub:celery}
 
@@ -633,7 +633,7 @@ Un API (\textit{Aplication Programming Interface}) o interfaz de programación de
 
 El API de Dropbox permite realizar peticiones (como subir o descargar archivos, listar directorios o crear carpetas) sobre el espacio de almacenamiento de un usuario, el usuario debe previamente dar permiso a la aplicación para que esta pueda hacer cambios a su nombre, el usuario puede elegir denegar el acceso a la aplicación en todo momento y existen distintos tipos de esquemas de acceso donde una aplicación solo tiene acceso a un conjunto limitado de directorios dentro del espacio de almacenamiento del usuario.
 
-El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones en un periodo corto de tiempo, sin embargo el límite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
+El API de Dropbox impone ciertos límites de peticiones por usuario para impedir que una aplicación realice una cantidad excesiva de peticiones en un período corto de tiempo, sin embargo el límite se considera lo suficientemente alto como para no entorpecer la inmensa mayoría de los casos de uso.
 
 \subsection{Diseño web adaptable}
 
@@ -652,7 +652,7 @@ Otra heurística en la creación de sitios web adaptables es escalar o esconder el
 \label{fig:responsive}
 \end{figure}
 
-El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que ademas se ofrece una experiencia similar independientemente del dispositivo con el que se esté visitando.
+El diseño web adaptable no solo facilita el desarrollo de sitios web ahorrando a los desarrolladores y diseñadores el costo de construir múltiples versiones de un mismo sitio web sino que además se ofrece una experiencia similar independientemente del dispositivo con el que se esté visitando.
 
 \subsection{Highcharts}
 
@@ -668,7 +668,7 @@ Google Maps es un servicio de mapas web el cual ofrece distintos tipos de mapas 
 
 Los mapas de Google Maps son dinámicos, permitiendo al usuario desplazarse, hacer \textit{zoom} y cambiar el tipo de mapa a voluntad, Google Maps funciona dividendo el espacio mostrado en sectores que son descargados individualmente, de manera que cuando el usuario desplaza el mapa solo es necesario descargar los nuevos sectores desde los servidores de Google Maps.
 
-Google Maps es una de las herramientas mas populares para dibujar mapas web ya que ofrece un API gratuito y fácil de usar que permite enmarcar mapas en cualquier sitio web con solo algunas líneas, ademas los mapas de Google son de alta calidad y se mantienen constantemente actualizados.
+Google Maps es una de las herramientas mas populares para dibujar mapas web ya que ofrece un API gratuito y fácil de usar que permite enmarcar mapas en cualquier sitio web con solo algunas líneas, además los mapas de Google son de alta calidad y se mantienen constantemente actualizados.
 
 \subsection{Geo-localización IP}
 
@@ -690,9 +690,9 @@ APScheduler (\textit{Advanced Python Scheduler}) es una biblioteca Python para r
 
 Su arquitectura consta de los siguientes componentes:
 \begin{itemize}
-	\item Gatillos para determinar el momento de ejecucion de las tareas (por fecha, por intervalos de tiempo, o tipo \textit{crontab}).
+	\item Gatillos para determinar el momento de ejecución de las tareas (por fecha, por intervalos de tiempo, o tipo \textit{crontab}).
 	\item Almacenes de tareas para alojar los datos de las tareas.
-	\item Ejecutores para controlar la ejecucion de las tareas.
+	\item Ejecutores para controlar la ejecución de las tareas.
 	\item Planificadores que unen los componentes antes descritos y se encargan de ejecutar la lógica e iniciar las tareas en el momento planificado. 
 \end{itemize}
 
@@ -702,7 +702,7 @@ A pesar de que el monitoreo de redes no es un nuevo campo de estudio, existe una
 
 La mayoría de los sistemas disponibles a través de aplicaciones web o para dispositivos móviles tales como DSL Reports\cite{DSLReports}, ThinkBroadband\cite{ThinkBroadband}, y SpeedTest\cite{SPEEDTEST}, permiten a usuarios determinar el RTT y rendimiento de su servicio de Internet al hacer pruebas contra uno o mas servidores de medición. Estos servicios ofrecen la ventaja de ser gratuitos, sencillos de usar y no requieren la instalación de \textit{software} o \textit{hardware} adicional. Sin embargo, solo dan al usuario una idea limitada del estado de su red, pues los resultados obtenidos dependerán sustancialmente del servidor elegido para realizar la prueba. 
 
-Otras aplicaciones similares ademas de hacer mediciones de latencia y rendimiento, ofrecen algún valor agregado al usuario, por ejemplo, NetRadar\cite{sonntag2013netradar}, está orientado al análisis de calidad de servicio de proveedores de servicio de telefonía e Internet inalámbrico y Netalyzer\cite{kreibich2010netalyzr} se especializa en la identificación de problemas en la conexión a Internet como presencia de \textit{proxies}, protocolos bloqueados, errores en los DNS, etc.
+Otras aplicaciones similares además de hacer mediciones de latencia y rendimiento, ofrecen algún valor agregado al usuario, por ejemplo, NetRadar\cite{sonntag2013netradar}, está orientado al análisis de calidad de servicio de proveedores de servicio de telefonía e Internet inalámbrico y Netalyzer\cite{kreibich2010netalyzr} se especializa en la identificación de problemas en la conexión a Internet como presencia de \textit{proxies}, protocolos bloqueados, errores en los DNS, etc.
 
 El enfoque de los sistemas de \textit{benchmarking} nombrados hasta ahora ofrece información útil y es suficiente para la mayoría de los usuarios, sin embargo, se necesita tener una infraestructura costosa, con la capacidad suficiente para atender las pruebas realizadas por todos los usuarios, sin que la carga del sistema afecte los resultados de las pruebas negativamente. Los costos de mantener esta infraestructura se justifican por el aprovechamiento de los datos recolectados, ya sea haciéndolos públicos, por motivos de investigación o para venderlos a terceros.
 
@@ -712,7 +712,7 @@ Project Bismark\cite{sundaresan2014bismark} es un proyecto orientado a la invest
 
 Por otra parte servicios con modelos de negocios mixtos o de pago como Pingdom\cite{PINGDOM} y UptimeRobot\cite{UPTIMEROBOT} ofrecen un servicio de monitoreo automatizado de la disponibilidad y tiempo de respuesta de servicios web. Estos sistemas funcionan realizando mediciones regulares para determinar el estado del servicio y determinan tiempo de respuesta y eventos relevantes tales como interrupciones de servicio o mensajes de error en las respuestas obtenidas. Estos sistemas son sencillos de usar ya que solo es necesario especificar el URL o dirección IP del servicio a monitorear, pero, las características mas atractivas como alertas automáticas o el ajuste de la frecuencia de las mediciones no son gratuitas, la batería de pruebas está limitada al protocolo HTTP y solo es posible monitear un número limitado de \textit{hosts}.
 
-En este trabajo, hacemos énfasis en el control sobre el uso de recursos del monitoreo. El usuario puede configurar la frecuencia y tipos de pruebas que se estarán ejecutando. Ademas, como se trata de una solución auto-gerenciada, el usuario tiene la libertad de desplegar agentes de monitoreo fácilmente gracias a que usamos una solución de \textit{software} que puede ser instalada incluso en una amplia gama de dispositivos.
+En este trabajo, hacemos énfasis en el control sobre el uso de recursos del monitoreo. El usuario puede configurar la frecuencia y tipos de pruebas que se estarán ejecutando. Además, como se trata de una solución auto-gerenciada, el usuario tiene la libertad de desplegar agentes de monitoreo fácilmente gracias a que usamos una solución de \textit{software} que puede ser instalada incluso en una amplia gama de dispositivos.
 
 \subsection{Caracterización del Estado del Arte}
 En esta sección resumimos las características de estos sistemas a través de los siguientes parámetros:
@@ -801,9 +801,9 @@ El sistema de monitoreo de redes "Octopus Monitor" consiste de cuatro elementos 
 	\label{fig:octopusmon}
 \end{figure}
 
-En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicacion web, los tentáculos están conformados por monitores de red Tentacle Probe Sorce, nodos Tentacle Probe Destination, y una cantidad variable de nodos intermedios entre ellos, en otras palabras, los tentáculos conforman los enlaces de interés a a monitorear. Se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
+En la Figura \ref{fig:octopusmon} se puede ver como hemos usado una analogía sencilla para identificar todos los entes que participan en el sistema, la cabeza del pulpo representa a la aplicación web, los tentáculos están conformados por monitores de red Tentacle Probe Sorce, nodos Tentacle Probe Destination, y una cantidad variable de nodos intermedios entre ellos, en otras palabras, los tentáculos conforman los enlaces de interés a a monitorear. Se desea que usuarios no-técnicos puedan entender fácilmente el esquema del sistema y así puedan monitorear sus redes y servicios.
 
-Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir, el conjunto de pruebas  planificadas para ser ejecutadas por un Tentacle Probe Sorce con el fin de recoger datos relevantes de la red. Es en la aplicacion web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos; toda la comunicación entre la aplicacion web y los monitores de red ocurre a través de la nube, la aplicacion web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de notificaciones la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene al día sobre los cambios realizados al plan de monitoreo y ejecuta fielmente el plan de monitoreo.
+Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir, el conjunto de pruebas  planificadas para ser ejecutadas por un Tentacle Probe Sorce con el fin de recoger datos relevantes de la red. Es en la aplicación web que los usuarios pueden definir (y re-definir) las políticas de monitoreo y sincronización de los datos; toda la comunicación entre la aplicación web y los monitores de red ocurre a través de la nube, la aplicación web publica mensajes destinados a un monitor específico y los monitores a su vez son notificados por el servicio de notificaciones la nube cuando hay nuevos mensajes para ellos, el monitor de red se mantiene al día sobre los cambios realizados al plan de monitoreo y ejecuta fielmente el plan de monitoreo.
 
 \begin{figure}[h]
 	\centering
@@ -812,7 +812,7 @@ Los monitores de red remotos son los que ejecutan el plan de monitoreo, es decir
 	\label{fig:monitor-config}
 \end{figure}
 
-Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario y los monitores, y simplifica el manejo de monitores de red remotos que podrían potencialmente ser abandonados en sitios de difícil acceso. La nube no solo sirve para almacenar datos a bajo costo y a largo plazo, sino que podemos aprovechar sus funcionalidades para mantener cualquier número de monitores actualizados de forma tolerante a fallas sin necesidad de mantener un servicio de notificaciones propio.
+Este esquema asegura que la aplicación web sirva como interfaz entre el usuario y los monitores, y simplifica el manejo de monitores de red remotos que podrían potencialmente ser abandonados en sitios de difícil acceso. La nube no solo sirve para almacenar datos a bajo costo y a largo plazo, sino que podemos aprovechar sus funcionalidades para mantener cualquier número de monitores actualizados de forma tolerante a fallas sin necesidad de mantener un servicio de notificaciones propio.
 
 \begin{figure}[h]
 	\centering
@@ -821,12 +821,12 @@ Este esquema asegura que la aplicacion web sirva como interfaz entre el usuario 
 	\label{fig:visual-workflow}
 \end{figure}
 
-La aplicacion web es también la responsable de desplegar visualizaciones a partir de los datos obtenidos del monitoreo, para esto, los monitores constantemente suben los datos obtenidos del monitoreo y la aplicacion web a su vez recolecta dichos datos y los procesa en un formato que facilite el cálculo de las visualizaciones, a este proceso lo llamamos \textbf{sincronización} y es otra de las tareas esenciales de la aplicacion web. El proceso de sincronización y visualización de datos puede ser visto en la Figura \ref{fig:visual-workflow}.
+La aplicación web es también la responsable de desplegar visualizaciones a partir de los datos obtenidos del monitoreo, para esto, los monitores constantemente suben los datos obtenidos del monitoreo y la aplicación web a su vez recolecta dichos datos y los procesa en un formato que facilite el cálculo de las visualizaciones, a este proceso lo llamamos \textbf{sincronización} y es otra de las tareas esenciales de la aplicación web. El proceso de sincronización y visualización de datos puede ser visto en la Figura \ref{fig:visual-workflow}.
 
 A partir de este diseño, es claro que la aplicación web debe poseer una arquitectura que pueda manejar los recursos disponibles de forma eficiente y así poder ofrecer tanto un servicio web rápido como planificar y ejecutar las tareas de sincronización y cómputo de visualizaciones.
 
 
-\section{Diseño de la aplicacion web}
+\section{Diseño de la aplicación web}
 
 Para el desarrollo de esta aplicación se usó el \textit{framework} de desarrollo web Django que implementa un patrón MVC, ya que nuestra aplicación web se encargará de manejar tareas computacionalmente intensas, o de largo tiempo de ejecución, Django se integró con el sistema de procesamiento de tareas distribuido Celery. Esto no solo con la finalidad de que el servidor web pueda delegar estas tareas y responder rápidamente al usuario, sino también para permitir una mejor escalabilidad del sistema, que entonces podrá responder a un mayor número de peticiones por unidad de tiempo.
 
@@ -835,7 +835,7 @@ Para el desarrollo de esta aplicación se usó el \textit{framework} de desarrollo
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.9\linewidth]{img/octopus-arch-final2.png}
-	\caption{Arquitectura de la aplicacion web.}
+	\caption{Arquitectura de la aplicación web.}
 	\label{fig:webapp-arch}
 \end{figure}
 
@@ -852,11 +852,11 @@ La capa de presentación puede ser extendida para permitir la implementación de d
 
 El servidor web es el punto de entrada a la aplicación, éste responde a las peticiones realizadas desde el \textit{front-end} a través del protocolo HTTP, el enfoque del servidor web es manejar tareas ligeras de la forma mas rápida posible y retornar respuestas para ofrecer al usuario baja latencia en su interacción con el sistema. 
 
-La ejecucion de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas (\ref{sub:procesamiento}), de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice. Esto hace posible manejar un mayor numero de usuarios que visiten el sitio de forma concurrente, igualmente, el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
+La ejecución de tareas largas y pesadas es delegada a la capa de procesamiento asíncrono de tareas (\ref{sub:procesamiento}), de esta manera un solo usuario no ocupa los recursos del servidor web durante mucho tiempo independientemente de la petición que realice. Esto hace posible manejar un mayor numero de usuarios que visiten el sitio de forma concurrente, igualmente, el servidor web no se sobrecarga aunque exista una alta carga de trabajos de fondo como computo de visualizaciones y sincronizaciones.
 
-El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a los datos específicos que pertenecen a cada usuario particular y peticiones de archivos estáticos como CSS, JavaScript, imágenes o archivos HTML pre-definidos que cambien poco o rara vez. A pesar de que la aplicacion web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el \textit{pipeline} de Django (\textit{middlewares}, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar el servidor web en entornos de producción.
+El servidor web debe manejar dos tipos de peticiones: aquellas que requieren respuestas dinámicas ajustadas a los datos específicos que pertenecen a cada usuario particular y peticiones de archivos estáticos como CSS, JavaScript, imágenes o archivos HTML pre-definidos que cambien poco o rara vez. A pesar de que la aplicación web es capaz de manejar ambos tipos de peticiones, cada una de ellas tendrá que pasar por todo el \textit{pipeline} de Django (\textit{middlewares}, resolución de URLs, procesamiento de la vista, etc), esta complejidad es innecesaria cuando se trata de archivos estáticos y va a sobrecargar el servidor web en entornos de producción.
 
-Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como \textit{proxy} entre el \textit{front-end} y la aplicacion web, hay una gran variedad de servidores web ligeros como Ngnix\footnote{Ngnix http://nginx.org/} o Lighttpd \footnote{Lighttpd https://www.lighttpd.net/} diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. La aplicacion web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
+Para manejar eficientemente todo tipo de peticiones, debemos implementar un mecanismo que sea capaz de servir los archivos estáticos rápidamente y que sirva como \textit{proxy} entre el \textit{front-end} y la aplicación web, hay una gran variedad de servidores web ligeros como Ngnix\footnote{Ngnix http://nginx.org/} o Lighttpd \footnote{Lighttpd https://www.lighttpd.net/} diseñados especialmente con este propósito, estos tendrán una sencilla tabla de enrutamiento que decidirá como manejar las peticiones. La aplicación web podrá correr entonces en un proceso separado y solo atenderá peticiones dinámicas, así se asegurará la eficiencia en el uso de los recursos computaciones disponibles.
 
 
 \begin{table}[]
@@ -867,7 +867,7 @@ Para manejar eficientemente todo tipo de peticiones, debemos implementar un meca
 		Ruta & Acción            \\ \hline
 		/static/ & servicio de archivos estático      \\
 		/media/  & servicio de archivos estático      \\
-		/        & re-dirección a la aplicacion web.
+		/        & re-dirección a la aplicación web.
 	\end{tabular}
 	
 		\caption{Tabla de enrutamiento del servidor web}
@@ -881,7 +881,7 @@ Ya que es imposible conocer de antemano el número de tareas que se van a estar e
 
 La inmensa mayoría de las peticiones realizadas por los usuarios serán manejadas directamente por el servidor web, las tareas delegadas a este capa son las siguientes:
 \begin{itemize}
-	\item{\textbf{Conexiones con el servicio de almacenamiento en la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse de largo tiempo de ejecucion ya que es necesario obtener recursos presentes en Internet.}
+	\item{\textbf{Conexiones con el servicio de almacenamiento en la nube:} A pesar de que la mayoría de las tareas que incluyen conexiones con el API de la nube son bastante sencillas, estas tareas pueden considerarse de largo tiempo de ejecución ya que es necesario obtener recursos presentes en Internet.}
 	\item{\textbf{Computo de visualizaciones:} El tiempo y poder de cómputo necesario para generar visualizaciones depende altamente del tipo de visualización y la cantidad de datos involucrados, algunas de ellas como mapas de calor, periodos de actividad continua o días y horas activos pueden tardar en el orden de las decenas de segundos en calcularse y requerir una cantidad extraordinaria de computo especialmente cuando se están visualizando periodos de tiempo de meses o años.}
 	\item{\textbf{Sincronizaciones:} Las sincronizaciones combinan varias sub-tareas altamente costosas: La primera de ellas es descargar los archivos de la nube, esto depende de la cantidad de archivos por descargar y del tamaño de los archivos. La segunda es procesar los archivos para convertirlos a un formato adecuado para pasarlos a la base de datos. La tercera y última es la inserción a la base de datos, la cual depende de los indices de la tabla y la cantidad de datos en la base de datos.}
 \end{itemize}
@@ -890,13 +890,13 @@ El sistema de procesamiento asíncrono de tareas está construido usando Celery (\
 
 \subsubsection{Planificador}
 
-El planificador despacha la ejecucion de tareas según un horario dado, Celery incluye un planificador llamado Beat que se puede configurar fácilmente para usar la base de datos de la aplicacion web a modo de almacén para sus tareas a ejecutar. Beat consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicacion web solo modifica esa tabla y deja que Beat se encargue de iniciar las tareas en el momento adecuado.
+El planificador despacha la ejecución de tareas según un horario dado, Celery incluye un planificador llamado Beat que se puede configurar fácilmente para usar la base de datos de la aplicación web a modo de almacén para sus tareas a ejecutar. Beat consulta constantemente una tabla en la base de datos buscando cambios en las tareas planificadas, la aplicación web solo modifica esa tabla y deja que Beat se encargue de iniciar las tareas en el momento adecuado.
 
-Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecucion basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
+Beat no manda a ejecutar las tareas directamente por un trabajador sino que las inserta a la cola de tareas, es por esto que no es posible asegurar que las tareas se ejecuten justo en el momento planificado, sino que puede existir un retraso variable en la ejecución basado en el tamaño de las colas y la carga de trabajo de los trabajadores.
 
 \subsubsection{Bróker de Mensajería}
 
-El bróker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicacion web y planificador) y los trabajadores que las ejecutan. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo, sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas\cite{Octopus2015}. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecucion de las tareas, ya que ademas es posible establecer prioridades, mandando tareas urgentes rápidamente al tope la cola. 
+El bróker de mensajería es un micro-servicio responsable de pasar mensajes entre los entes que encolan tareas (aplicación web y planificador) y los trabajadores que las ejecutan. Es posible enrutar tareas a trabajadores específicos a través del uso de múltiples colas, por ejemplo, sería posible tener una cola para las tareas de sincronización, y otra cola para el computo de visualizaciones y subscribir un distinto número de trabajadores a cada una de ellas\cite{Octopus2015}. Este sistema asegura una gran granularidad para ejercer control en el orden de ejecución de las tareas, ya que además es posible establecer prioridades, mandando tareas urgentes rápidamente al tope la cola. 
 
 Establecer un esquema apropiado de prioridades y encolamiento es esencial para asegurar un tiempo de espera óptimo, las tareas de cómputo de visualizaciones deben tener una muy baja latencia ya que generalmente el usuario está esperando por una respuesta lo más rápida posible, la subida de mensajes al buzón del monitor puede tener una latencia ligeramente mayor, sin embargo no mayor a unos 10 segundos, por otra parte, las sincronizaciones planificadas pueden tener un mayor tiempo de espera en cola donde 10-60 segundos es aceptable\cite{nielsen1994usability}.
 
@@ -912,7 +912,7 @@ Ya que los trabajadores se pueden estar ejecutando en múltiples máquinas físicas
 
 \subsubsection{Backend de Resultados}
 
-Puesto que Celery es un sistema distribuido sin una autoridad central que conozca el estado de todo el sistema, es necesario tener algún micro-servicio donde los distintos entes puedan consultar el estado de una tarea. El \textit{backend} de resultados puede ser visto como un espacio de memoria compartido donde se guarda el estado y valor de retorno de las tareas que están siendo o fueron ejecutadas por el sistema. El valor de retorno de las tareas se guarda durante un periodo de tiempo y luego se desecha para evitar que el uso de memoria crezca indefinidamente. En este trabajo hemos elegido Redis (\ref{sub:redis}) como \textit{backend} de resultados.
+Puesto que Celery es un sistema distribuido sin una autoridad central que conozca el estado de todo el sistema, es necesario tener algún micro-servicio donde los distintos entes puedan consultar el estado de una tarea. El \textit{backend} de resultados puede ser visto como un espacio de memoria compartido donde se guarda el estado y valor de retorno de las tareas que están siendo o fueron ejecutadas por el sistema. El valor de retorno de las tareas se guarda durante un período de tiempo y luego se desecha para evitar que el uso de memoria crezca indefinidamente. En este trabajo hemos elegido Redis (\ref{sub:redis}) como \textit{backend} de resultados.
 
 El \textit{backend} de resultados no solo permite obtener el valor de retorno de una tarea, también hace posible hacer seguimiento del estado de las tareas e implementar mecanismos que indiquen el progreso de alguna tarea particularmente costosa. Los estados predefinidos se pueden ver en la Tabla \ref{table:task-states}, sin embargo, es posible definir cualquier estado que sea necesario.
 
@@ -938,7 +938,7 @@ La capa de datos incluye todos los sistemas encargados de almacenar o alojar dat
 
 \subsubsection{Base de Datos}
 
-La base de datos es el almacén principal de los datos estructurados de la aplicacion web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parámetros de conexión a Dropbox, y detalles de las pruebas implementadas en el \textit{Framework} de Integración de Pruebas del que se hablará en el Capitulo \ref{cap:framework}.
+La base de datos es el almacén principal de los datos estructurados de la aplicación web, almacena todo tipo de información como preferencias del usuario, datos de los monitores, horario de sincronizaciones, parámetros de conexión a Dropbox, y detalles de las pruebas implementadas en el \textit{Framework} de Integración de Pruebas del que se hablará en el Capitulo \ref{cap:framework}.
 
 El diseño de la base de datos es uno de los pilares fundamentales del diseño del sistema, el correcto diseño e indización de las tablas de la base de datos tiene repercusiones importantes en la escalabilidad y tiempo de respuesta del sistema, el diseño de la base de datos se explica a fondo en la Sección \ref{sub:basededatos}.
 
@@ -950,7 +950,7 @@ Los archivos se guardan en distintos directorios dependiendo del tipo de visuali
 
 \subsubsection{Almacenamiento en la nube}
 
-El almacenamiento en la nube sirve como intermediario entre la aplicacion web OH y los monitores remotos TPS, la nube ofrece muchas ventajas con respecto a la escalabilidad y facilidad de implementación del sistema. Usamos el almacenamiento en la nube para guardar los archivos de trazas generados por los monitores en las redes remotas y también a modo de "buzón" para enviar mensajes a los monitores remotos. 
+El almacenamiento en la nube sirve como intermediario entre la aplicación web OH y los monitores remotos TPS, la nube ofrece muchas ventajas con respecto a la escalabilidad y facilidad de implementación del sistema. Usamos el almacenamiento en la nube para guardar los archivos de trazas generados por los monitores en las redes remotas y también a modo de "buzón" para enviar mensajes a los monitores remotos. 
 
 \subsection{Diseño de la base de datos} \label{sub:basededatos}
 
@@ -964,13 +964,13 @@ El modelo \textit{Monitor} representa un Tentacle Probe Source. Cada usuario pue
 
 Los enlaces monitoreados son un concepto fundamental en el enfoque de monitoreo de este trabajo, cada uno de ellos consiste de un Tentacle Probe Source (modelo \textit{Monitor}) y un Tentacle Probe Destination (un nodo monitoreado) y cualquier número de nodos intermedios entre ellos, para representar esto usamos el modelo \textit{Link} que guarda el IP del Tentacle Probe Destination y otros detalles como posición geográfica, nombre y descripción.
 
-Las pruebas son procedimientos que el usuario puede planificar para que sus TPS ejecuten según una planificación dada, es a esto a lo que llamamos el \textquoteleft plan de monitoreo\textquoteright. Una prueba consiste en cualquier código Python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada. Desde el punto de vista de la aplicacion web una prueba se modela como una agregación de parámetros configurables.
+Las pruebas son procedimientos que el usuario puede planificar para que sus TPS ejecuten según una planificación dada, es a esto a lo que llamamos el \textquoteleft plan de monitoreo\textquoteright. Una prueba consiste en cualquier código Python ejecutable, generalmente con el objetivo de obtener algún dato de la red monitoreada. Desde el punto de vista de la aplicación web una prueba se modela como una agregación de parámetros configurables.
 
 Los resultados de las pruebas (también llamados trazas), se guardan según las características especificas de cada prueba y no existe ningún limitante a la hora de diseñar modelos para los resultados de las pruebas. Sin embargo, las pruebas implementadas hasta ahora tienen en común una marca de tiempo y el enlace relacionado a la prueba. Adicionalmente, sería posible guardar trazas que no estén relacionadas a ningún enlace (por ejemplo, resultados del sondeo de el número de errores en una interfaz del TPS).
 
 El modelo \textit{MonitorTest} relaciona los TPS con las pruebas a ejecutar. Este modo contiene una referencia al TPS que ejecutará, el tipo de prueba, la lista de parámetros, el tiempo inicial y final, el intervalo entre pruebas (si lo hay) y el estado (activa o inactiva). En otras palabras, el conjunto de \textit{MonitorTest} para un TPS conforman su plan de monitoreo.
 
-Ya que el usuario tiene la libertad de modificar el plan de ejecucion en cualquier momento, se guarda un historial de los cambios hechos a las instancias del modelo \textit{MonitorTest}, para esto usamos el modelo \textit{MonitorTestHistory}. De esta manera, es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecucion. 
+Ya que el usuario tiene la libertad de modificar el plan de ejecución en cualquier momento, se guarda un historial de los cambios hechos a las instancias del modelo \textit{MonitorTest}, para esto usamos el modelo \textit{MonitorTestHistory}. De esta manera, es posible reconstruir con que parámetros estaba siendo ejecutada una prueba en cualquier momento especifico, esto no solo con fines informativos para el usuario, sino también puede ser útil para algoritmos de análisis de los datos que necesiten conocer los parámetros de ejecución. 
 
 El objetivo de recoger datos a través de pruebas es poder hacer análisis sobre esos datos para obtener información relevante y sacar conclusiones. El modelo \textit{Visualization} representa cualquier tipo de visualización de resultados, tales como mapas de calor, gráficas de barras, mapas geográficos de la red, etc.
 
@@ -1021,7 +1021,7 @@ La figura \ref{fig:results} muestra las entidades relacionadas a las vistas de r
 
 \subsubsection{Entidades} \label{subsub:entidades}
 
-Las siguientes tablas resumen las entidades y la función de las entidades que forman parte de la aplicacion web.
+Las siguientes tablas resumen las entidades y la función de las entidades que forman parte de la aplicación web.
 
 
 \begin{table}[H]
@@ -1050,7 +1050,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 			\textbf{\textit{Test}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción y tipo de una prueba.}\\
 			\textbf{\textit{Parameter}} & \multicolumn{2}{p{10cm}}{Almacena el nombre, descripción tipo de dato y otros detalles sobre un parámetro relacionado a una prueba.}\\
 			\textbf{\textit{MonitorTest}} & \multicolumn{2}{p{10cm}}{Tabla intermedia entre monitor y test que almacena una prueba planificada para un monitor, así como su tiempo inicial, final, su estado y parámetros.}\\
-			\textbf{\textit{MonitorTestHistory}} & \multicolumn{2}{p{10cm}}{Almacena los cambios realizados a una prueba planificada así como sus parámetros y el periodo en que estos fueron efectivos.}\\
+			\textbf{\textit{MonitorTestHistory}} & \multicolumn{2}{p{10cm}}{Almacena los cambios realizados a una prueba planificada así como sus parámetros y el período en que estos fueron efectivos.}\\
 		\end{tabular}
 	\end{center}
 \end{table}
@@ -1121,7 +1121,7 @@ Las siguientes tablas resumen las entidades y la función de las entidades que fo
 
 Todas las pantallas del sistema fueron creadas bajo el paradigma del diseño web adaptable, es decir que pueden ajustarse a cualquier resolución de pantalla sin reducir la usabilidad o sacrificar la experiencia del usuario, el servidor no tiene que decidir entre un conjunto de plantillas para distintas resoluciones sino que envía al cliente un solo documento HTML y este combina las reglas de presentación de archivos CSS y la lógica en archivos JavaScript para desplegar una pagina web adaptada al dispositivo del usuario.
 
-Ya que una aplicacion web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Se le llama \textit{rendering} al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicacion para generar páginas web personalizadas.
+Ya que una aplicación web está compuesta por decenas de vistas que comparten componentes como barras de navegación, cabeceras, y pies de pagina, Django incluye un micro-lenguaje de plantillas con funcionalidades de herencia e inclusión de plantillas y estructuras de repetición y decisión, esto hace que sea posible tener una taxonomía de plantillas, de manera que solo es necesario escribir los elementos comunes a un conjunto de plantillas una vez y crear nuevas pantallas en el tope de otras. Se le llama \textit{rendering} al proceso de combinar los datos de la base de datos y la petición del usuario, junto con una plantilla predefinida en la aplicación para generar páginas web personalizadas.
 
 Todas las plantillas heredan de una plantilla base, esta incluye la declaración del archivo HTML, la cabecera y define bloques que pueden ser sobrescritos por las plantillas "hijas". Los bloques que define la plantilla base son: \textbf{(1) bloque de título} permite definir el titulo de la pagina, \textbf{(2) bloque de estilo} permite reemplazar o agregar archivos de estilo/JavaScript, \textbf{(3) bloque de modales} permite introducir código antes del cuerpo del documento, \textbf{(4) bloque de contenido} bloque principal para el contenido de la pagina, \textbf{(5) bloque de JavaScript} bloque para incluir archivos y métodos JavaScript. La plantilla base es a su vez heredada por la plantilla "dashboard" que incluye el menú de navegación lateral y a su vez esta es heredada por la plantilla "monitor" que agrega el sub-menú del monitor.
 
@@ -1144,7 +1144,7 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 	
 	\item{\textbf{Pantalla "Home",} esta es la pantalla de bienvenida al sistema para un usuario autenticado, esta muestra algunas estadísticas rápidas del uso del sistema (como número de monitores, tentáculos, pruebas, sincronizaciones ejecutada, etc), así como enlaces a las principales subsecciones de cada monitor. Todas las pantallas a partir de ahora comparten un menú de navegación superior con enlaces al home, y funcionalidades para ver el perfil de usuario y hacer \textit{logout} y un menú de navegación lateral con enlaces a las principales secciones del sistema.}
 	
-	\item{\textbf{Pantalla de selección de monitores,} esta pantalla muestra los monitores del usuario y le permite seleccionar alguno de ellos para dirigirlo a la pantalla del monitor, ademas incluye un botón para crear nuevos monitores.}
+	\item{\textbf{Pantalla de selección de monitores,} esta pantalla muestra los monitores del usuario y le permite seleccionar alguno de ellos para dirigirlo a la pantalla del monitor, además incluye un botón para crear nuevos monitores.}
 	
 	\item{\textbf{Pantalla de creación de monitores,} en esta pantalla se introducen del detalles del monitor a crear como nombre, descripción, dirección IP, sistema operativo del dispositivo \textit{host} y zona horaria del monitor.}
 	
@@ -1170,7 +1170,7 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 \end{figure}
 
 	
-	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecucion de la prueba.}
+	\item{\textbf{Pantalla de planificación de pruebas,} esta pantalla permite agregar pruebas al plan de monitoreo, si se trata de una prueba de una sola vez permite elegir la hora y fecha de ocurrencia, en el caso de pruebas periódicas permite elegir fecha inicial, fecha final e intervalo entre pruebas, en todos los casos se incluye el formulario para fijar los parámetros de ejecución de la prueba.}
 	
 	\item{\textbf{Pantalla de detalles de la prueba,} esta pantalla muestra los parámetros activos de una prueba planificada en un formulario que se puede editar, así como opciones para habilitar o deshabilitar. En el panel lateral se muestra el historial de la prueba, mostrando los períodos en que estuvo inactiva y sus distintos parámetros en períodos de actividad, así como enlaces para volver a activar parámetros anteriores en cualquier punto de la historia.}
 	
@@ -1206,7 +1206,7 @@ A continuación se muestra el diseño de las principales pantallas de la interfaz 
 
 \subsection{Diseño de URLs}
 
-Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseñar URLs que apunten a cada una de ellas de forma ordenada y lógica. Para esto, se ha usado una convención en la que la unidad principal de operación es una colección de objetos, como monitores, o reportes, a continuación se muestran ejemplos de las reglas usadas para diseñar los URLs:
+Ya que la aplicación web consiste de un largo conjunto de vistas, debemos diseñar URLs que apunten a cada una de ellas de forma ordenada y lógica. Para esto, se ha usado una convención en la que la unidad principal de operación es una colección de objetos, como monitores, o reportes, a continuación se muestran ejemplos de las reglas usadas para diseñar los URLs:
 
 \begin{itemize}
 	\item{Operaciones sobre colecciones:
@@ -1251,11 +1251,11 @@ Ya que la aplicacion web consiste de un largo conjunto de vistas, debemos diseña
 
 \section{Componentes}
 
-En esta sección se explican los distintos componentes de software que son parte de la aplicacion web y su funcionalidad.
+En esta sección se explican los distintos componentes de software que son parte de la aplicación web y su funcionalidad.
 
 \subsection{Enlazador de cuentas de Dropbox}
 
-Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicación web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicacion web de realizar estas peticiones. 
+Para realizar todas las tareas relacionadas con el almacenamiento remoto en la nube, la aplicación web hace peticiones a nombre de un usuario de Dropbox, sin embargo primero es necesario realizar un proceso de autenticación que dará permisos a la aplicación web de realizar estas peticiones. 
 
 \begin{algorithm}
 	\caption{Enlazamiento con Dropbox}\label{alg:linking}
@@ -1291,10 +1291,10 @@ Para realizar todas las tareas relacionadas con el almacenamiento remoto en la n
 El proceso de autenticación es un algoritmo a dos pasos que se puede observar en el Algoritmo \ref{alg:linking}:
 
 \begin{enumerate}
-	\item{Si la petición es de tipo GET, entonces la aplicacion web inicia el proceso de enlazado con Dropbox:
+	\item{Si la petición es de tipo GET, entonces la aplicación web inicia el proceso de enlazado con Dropbox:
 		\begin{enumerate}
-			\item La aplicacion web solicita a Dropbox un URL que se usará para que el usuario se autentique con Dropbox y de permisos a Octopus Monitor para hacer cambios en su carpeta.
-			\item La aplicacion web devuelve un formulario con una caja de texto para introducir un código y un enlace con el URL generado en el paso previo.
+			\item La aplicación web solicita a Dropbox un URL que se usará para que el usuario se autentique con Dropbox y de permisos a Octopus Monitor para hacer cambios en su carpeta.
+			\item La aplicación web devuelve un formulario con una caja de texto para introducir un código y un enlace con el URL generado en el paso previo.
 			\item El usuario hace click en el enlace el cual lo lleva al sitio de Dropbox, Dropbox pregunta al usuario si desea dar acceso a Octopus Monitor a su carpeta de Dropbox:
 				\begin{enumerate}
 					\item Si el usuario acepta se genera un \textit{token} único.
@@ -1307,7 +1307,7 @@ El proceso de autenticación es un algoritmo a dos pasos que se puede observar en
 		\begin{enumerate}
 			\item{Si el formulario es válido entonces:
 				\begin{enumerate}
-					\item El servidor llama al método \textit{finish}, este se comunica con Dropbox, valida el \textit{token} y retorna el código de acceso del usuario para nuestra aplicacion.
+					\item El servidor llama al método \textit{finish}, este se comunica con Dropbox, valida el \textit{token} y retorna el código de acceso del usuario para nuestra aplicación.
 					\item Se guarda en la base de datos el código de acceso del usuario.
 					\item El servidor re-direcciona al usuario a una vista indicando que la operación fue exitosa.
 				\end{enumerate}
@@ -1324,7 +1324,7 @@ A partir de este momento tenemos los dos elementos necesarios para hacer peticio
 
 \subsection{Subidor de mensajes} \label{subidordemensajes}
 
-Una de las tareas fundamentales de la aplicacion web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicacion web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada).
+Una de las tareas fundamentales de la aplicación web es mantener a los monitores remotos informados de los cambios hechos al plan de monitoreo por parte de los usuarios, para esto usamos un concepto similar al de un buzón de correo electrónico, la aplicación web sube archivos a modo de mensajes a una carpeta en la nube que hace las veces de buzón, hay dos tipos mensajes: aquellos relacionados a los enlaces monitoreados (nuevo enlace registrado o cambios a un enlace existente) y los relacionados a las pruebas (nueva prueba planificada, cambios a los parámetros, cambios al intervalo entre pruebas, prueba deshabilitada).
 
 Los mensajes que se suben a la nube se escriben en formato JSON, este formato ofrece grandes ventajas para el desarrollo de aplicaciones distribuidas ya que es fácil de codificar del lado del servidor y fácil de decodificar del lado del monitor es mucho mas ligero que otros formatos como XML y al mismo tiempo es legible para seres humanos, todos las funciones que suben archivos a la nube funcionan de forma simular:
 \begin{enumerate}
@@ -1395,7 +1395,7 @@ Los mensajes deben contener la información necesaria para que el monitor pueda r
 
 \subsection{Sincronizador de datos} \label{sub:Recolector}
 
-El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicacion web a su vez recolectar estos archivos e introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de sincronización.
+El objetivo de la realización de pruebas en las redes a monitorear es recolectar una cantidad de datos suficientes para obtener información del estado de la red, si el monitor tiene un plan de monitoreo definido y está realizando pruebas, este dejará en la nube archivos con resultados de forma constante; es trabajo de la aplicación web a su vez recolectar estos archivos e introducirlos a la base de datos en un formato tal que permita generar visualizaciones de la forma mas conveniente posible para el usuario, en el marco de este sistema, a este proceso se le da el nombre de sincronización.
 
 El algoritmo general de sincronización (Algoritmo \ref{alg:sync}), retira de la base de datos el monitor a sincronizar, el \textit{token} de acceso a Dropbox del usuario y las pruebas activas para el monitor, luego para cada prueba llama a una subrutina que descarga los archivos, los procesa y introduce los resultados obtenidos en la base de datos. Finalmente totaliza el número de archivos recolectados, el número de errores (ya sea errores de \textit{parsing} de los archivos o problemas de conexión a Dropbox), guarda en la base de datos el registro de la sincronización, los cursores y actualiza el tiempo de ultima sincronización del monitor.
 
@@ -1494,12 +1494,12 @@ Los parámetros de los mapas de calor son los siguientes:
 \begin{itemize}
 	\item{\textbf{Enlace:} el enlace seleccionado para observar}
 	\item{\textbf{Intervalo de agrupación:} la "granularidad" del mapa de calor, a mayor intervalo de agrupación mas muestras se van a promediar por intervalo. El valor máximo es 60 minutos, lo cual resultará en un mapa de calor con 24 puntos por día, el menor es 10 minutos, lo cual resultará en un mapa de calor con 144 puntos por día.}
-	\item{\textbf{Rango de tiempo:} ajusta el periodo de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o todo el tiempo.}
+	\item{\textbf{Rango de tiempo:} ajusta el período de tiempo seleccionado para mostrar, se puede seleccionar por meses, años o todo el tiempo.}
 \end{itemize}
 
-Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y rango de tiempo seleccionado, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación, sin embargo, cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, y sumas a la base de datos. Si la tabla está apropiadamente indexada el RDBMS puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciéndolos directamente en la aplicacion.
+Para calcular el mapa de calor debemos primero filtrar las muestras por enlace y rango de tiempo seleccionado, luego, estas se deben agrupar según el intervalo de agrupación y sacar el promedio de cada grupo, hay muchas formas de realizar esta operación, sin embargo, cuando se trata de grandes conjuntos de datos esta puede ser una operación costosa por lo que preferimos dejar todos los filtros, ordenamientos, agrupaciones, cálculo de promedios, y sumas a la base de datos. Si la tabla está apropiadamente indexada el RDBMS puede realizar dichos cálculos ordenes de magnitud mas rápido que retirando todos los datos y haciéndolos directamente en la aplicación.
 
-La tabla \textit{TracePing} tiene los campos \textit{time\_60}, \textit{time\_30}, \textit{time\_15}, \textit{time\_20} y \textit{time\_10}, los cuales tienen un valor pre-calculado de tiempo que aloja el periodo de agrupación al que pertenece la muestra. Estas columnas facilitan al RDBMS agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor. Un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
+La tabla \textit{TracePing} tiene los campos \textit{time\_60}, \textit{time\_30}, \textit{time\_15}, \textit{time\_20} y \textit{time\_10}, los cuales tienen un valor pre-calculado de tiempo que aloja el período de agrupación al que pertenece la muestra. Estas columnas facilitan al RDBMS agrupar las muestras en periodos de 60, 30, 20, 15 o 10 minutos respectivamente, mas aún, son guardados en la base de datos tomando en cuenta la zona horaria del monitor, de modo que no es necesario volver a localizar las fechas cuando se está generando el mapa de calor. Un ejemplo de esto puede ser visto en la tabla \ref{tab:time}.
 
 \begin{table}[]
 	\centering
@@ -1527,7 +1527,7 @@ GROUP BY time_n
 
 Donde:
 \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
-	\item{\textbf{n}: es el periodo de agrupación}
+	\item{\textbf{n}: es el período de agrupación}
 	\item{\textbf{x}: es el id del enlace}
 	\item{\textbf{s}: es la fecha inicial}
 	\item{\textbf{f}: es la fecha final}
@@ -1585,7 +1585,7 @@ Donde:
 
 La consulta anterior retorna una marca de tiempo (\textit{timestamp}) que representa la hora de agrupación, el número de muestras observadas ($T_{observadas}$), y el intervalo entre pruebas promedio. Calculamos el promedio ya que el usuario puede cambiar el intervalo entre pruebas en cualquier momento, de modo que una misma hora puede tener muestras tomadas con intervalos distintos. Calculando el promedio, obtendremos el mismo valor de tiempo entre pruebas para una hora en que el usuario no hizo cambios y un valor aproximado para horas en que hubo cambios.
 
-El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora del día, es decir que si se elige un periodo de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es sencillo calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
+El Algoritmo \ref{alg:horasactivas} totaliza el número de horas activas por hora del día, es decir que si se elige un período de n días el algoritmo retorna un arreglo de tamaño 24, donde cada posición del arreglo tendrá un entero entre 0 y n. El algoritmo recorre el arreglo retornado por la consulta SQL verificando la condición para que la hora sea activa, si es activa, suma uno al total para esa hora del día, luego es sencillo calcular el porcentaje de horas activas por hora del día dividiendo entre el número total de días.
 
 \begin{algorithm}[H]
 	\caption{Calculo de horas activas}\label{alg:horasactivas}
@@ -1637,7 +1637,7 @@ Donde:
 	\item{\textbf{f}: es la fecha final}
 \end{itemize}
 
-Tras ejecutar la consulta a la base de datos, se verifica que se tenga al menos una muestra, en caso contrario, a falta de información el período se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un período activo y se marca el inicio del período como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del período activo al tiempo de la traza negativa. Este proceso se repite análogamente para el período inactivo hasta llegar a la última traza. Cada vez que se determina el instante final de un periodo este se añade a la lista de periodos activos o inactivos según corresponda.
+Tras ejecutar la consulta a la base de datos, se verifica que se tenga al menos una muestra, en caso contrario, a falta de información el período se considera totalmente inactivo. En caso contrario, se revisa la primera traza, si es positiva entonces se crea un período activo y se marca el inicio del período como el tiempo inicial, luego se pasa a revisar la siguiente traza hasta que se encuentre una traza no positiva y se marca como el tiempo final del período activo al tiempo de la traza negativa. Este proceso se repite análogamente para el período inactivo hasta llegar a la última traza. Cada vez que se determina el instante final de un período este se añade a la lista de periodos activos o inactivos según corresponda.
 
 Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
 
@@ -1695,9 +1695,9 @@ Todo el proceso se puede observar a detalle en el Algoritmo \ref{alg:continuo}.
 
 \subsubsection{Cálculo de días activos}
 
-A diferencia de las horas activas, definimos a un día como "activo" cuando podemos observar un periodo de actividad continua de al menos una hora durante ese día. El algoritmo para determinar días activos es similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), la diferencia radica en que primero se agrupan las trazas por día y luego se aplica el algoritmo de actividad continua, si se observa un período continuo de al menos una hora, el día se considera activo y se pasa al siguiente día.
+A diferencia de las horas activas, definimos a un día como "activo" cuando podemos observar un período de actividad continua de al menos una hora durante ese día. El algoritmo para determinar días activos es similar al de cálculo de periodos de actividad continua (Algoritmo \ref{alg:continuo}), la diferencia radica en que primero se agrupan las trazas por día y luego se aplica el algoritmo de actividad continua, si se observa un período continuo de al menos una hora, el día se considera activo y se pasa al siguiente día.
 
-Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfico de barras indicando el porcentaje de días activos, también es necesario determinar la cantidad de días totales en el periodo seleccionado por el usuario. Luego cuando se tenga el total de días activos por día de la semana se puede dividir entre los días totales, un ejemplo del resultado deseado como salida del algoritmo de días activos puede ser visto en la Tabla \ref{table:diasactivos}
+Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfico de barras indicando el porcentaje de días activos, también es necesario determinar la cantidad de días totales en el período seleccionado por el usuario. Luego cuando se tenga el total de días activos por día de la semana se puede dividir entre los días totales, un ejemplo del resultado deseado como salida del algoritmo de días activos puede ser visto en la Tabla \ref{table:diasactivos}
 
 \begin{table}[h]
 	\centering
@@ -1714,7 +1714,7 @@ Ya que el algoritmo de días activos es usado generalmente para dibujar un gráfic
 		\label{table:diasactivos}
 \end{table}
 
-Para facilitar la comprensión del algoritmo este se va a separar en tres subrutinas, el Algoritmo \ref{alg:diastotales} corresponde al cálculo de días totales en el periodo, el Algoritmo \ref{alg:separardias} corresponde a la separación de trazas por día y el Algoritmo \ref{alg:diasactivos} corresponde al computo de días activos.
+Para facilitar la comprensión del algoritmo este se va a separar en tres subrutinas, el Algoritmo \ref{alg:diastotales} corresponde al cálculo de días totales en el período, el Algoritmo \ref{alg:separardias} corresponde a la separación de trazas por día y el Algoritmo \ref{alg:diasactivos} corresponde al computo de días activos.
 
 \begin{algorithm}
 	\caption{Calculo de días totales}\label{alg:diastotales}
@@ -1801,9 +1801,9 @@ Para facilitar la comprensión del algoritmo este se va a separar en tres subruti
 
 \section{Pruebas de Rendimiento}
 
-Ya que la aplicacion web está pensada para atender a una cantidad arbitraria de usuarios, deseamos conocer el número máximo de usuarios concurrentes a los que se les puede dar servicio con el hardware disponible. Llevaremos a cabo pruebas de carga en las cuales se simulará un ráfaga de peticiones variable para determinar la cantidad de peticiones concurrentes que el servidor puede manejar antes de que ocurra una degradación de servicio o el servidor sea incapaz de responder a mas peticiones.
+Ya que la aplicación web está pensada para atender a una cantidad arbitraria de usuarios, deseamos conocer el número máximo de usuarios concurrentes a los que se les puede dar servicio con el hardware disponible. Llevaremos a cabo pruebas de carga en las cuales se simulará un ráfaga de peticiones variable para determinar la cantidad de peticiones concurrentes que el servidor puede manejar antes de que ocurra una degradación de servicio o el servidor sea incapaz de responder a mas peticiones.
 
-Consideramos que ocurre una degradación de servicio cuando el tiempo de espera del usuario aumenta mas allá de un umbral máximo, según Nielsen \cite{nielsen1994usability}, existen tres umbrales importantes a la hora de evaluar el tiempo de respuesta de una aplicacion:
+Consideramos que ocurre una degradación de servicio cuando el tiempo de espera del usuario aumenta mas allá de un umbral máximo, según Nielsen \cite{nielsen1994usability}, existen tres umbrales importantes a la hora de evaluar el tiempo de respuesta de una aplicación:
 
 \begin{enumerate}
 	\item{\textbf{0.1 segundo:} Límite en el cual un usuario siente que está manipulando los objetos desde la interfaz de usuario.}
@@ -1811,7 +1811,7 @@ Consideramos que ocurre una degradación de servicio cuando el tiempo de espera d
 	\item{\textbf{10 segundos:} Límite en el cual se pierde la atención del usuario, es buena idea proveer barras de cargas y medios para cancelar la operación cuando se trata de operaciones de larga duración.}
 \end{enumerate}
 
-Para las siguientes pruebas consideraremos las siguientes métricas de rendimiento de la aplicacion web:
+Para las siguientes pruebas consideraremos las siguientes métricas de rendimiento de la aplicación web:
 
 \begin{itemize}
 	\item{Tiempo de respuesta promedio}
@@ -1823,13 +1823,13 @@ Para las siguientes pruebas consideraremos las siguientes métricas de rendimient
 	\item{Rendimiento en términos de bytes por segundo durante la duración de la prueba}
 \end{itemize}
 
-Consideraremos una prueba como exitosa cuando el porcentaje de error sea igual a 0 y el tiempo máximo de espera de una petición no supere los 10.000ms, tomando en cuenta los umbrales definidos por \cite{nielsen1994usability}. Se considerará optima aquella prueba que ademas de cumplir con ser exitosa, tenga el mayor rendimiento en términos de peticiones por segundo (Req/s) entre todas las pruebas realizadas.
+Consideraremos una prueba como exitosa cuando el porcentaje de error sea igual a 0 y el tiempo máximo de espera de una petición no supere los 10.000ms, tomando en cuenta los umbrales definidos por \cite{nielsen1994usability}. Se considerará optima aquella prueba que además de cumplir con ser exitosa, tenga el mayor rendimiento en términos de peticiones por segundo (Req/s) entre todas las pruebas realizadas.
 
-La herramienta elegida para ejecutar las pruebas fue JMeter \cite{JMeter}, esta herramienta permite simular casos de uso específicos de una aplicacion web como ráfagas de peticiones que pueden ser configuradas para seguir cualquier patrón dado. En nuestro caso, Jmeter se usará para generar una ráfaga de peticiones con un intervalo constante entre cada petición durante un tiempo de un minuto. Jmeter provee un componente llamado \textit{Summary Report} que totaliza y promedia los resultados obtenidos de todas las peticiones enviadas del que podemos extraer todas las métricas de interés.
+La herramienta elegida para ejecutar las pruebas fue JMeter \cite{JMeter}, esta herramienta permite simular casos de uso específicos de una aplicación web como ráfagas de peticiones que pueden ser configuradas para seguir cualquier patrón dado. En nuestro caso, Jmeter se usará para generar una ráfaga de peticiones con un intervalo constante entre cada petición durante un tiempo de un minuto. Jmeter provee un componente llamado \textit{Summary Report} que totaliza y promedia los resultados obtenidos de todas las peticiones enviadas del que podemos extraer todas las métricas de interés.
 
 \subsection{Metodología de las pruebas}
 
-Para determinar la carga máxima que la aplicacion web es capaz de soportar en términos de peticiones por minuto, simularemos una ráfaga de peticiones en un intervalo de tiempo de un minuto, variando el número de peticiones hasta obtener un valor óptimo. La metodología a seguir es la siguiente:
+Para determinar la carga máxima que la aplicación web es capaz de soportar en términos de peticiones por minuto, simularemos una ráfaga de peticiones en un intervalo de tiempo de un minuto, variando el número de peticiones hasta obtener un valor óptimo. La metodología a seguir es la siguiente:
 
 \begin{enumerate}
 	\item{Se comenzará ejecutando una primera prueba con un número  prudencialmente bajo de peticiones durante 60 segundos, este número debe preferiblemente ser múltiplo de dos.}
@@ -1888,7 +1888,7 @@ Las características del servidor web se pueden observar en la Tabla \ref{tab:har
 		\label{tab:staticserve}
 	\end{table}
 	
-	\item{\textbf{Páginas dinámicas con Django sobre Apache:} En esta prueba se configuró Apache para ejecutar \textbf{solo} la aplicacion web Django a través del módulo \textit{mod\_wsgi} y no se solicitaron los archivos estáticos vinculados a las páginas visitadas. En la tabla \ref{tab:djangotest} se observa un valor óptimo de 768 peticiones por minuto, para el cual la media y la mediana se mantienen por debajo del umbral de los 0.1 segundos.}
+	\item{\textbf{Páginas dinámicas con Django sobre Apache:} En esta prueba se configuró Apache para ejecutar \textbf{solo} la aplicación web Django a través del módulo \textit{mod\_wsgi} y no se solicitaron los archivos estáticos vinculados a las páginas visitadas. En la tabla \ref{tab:djangotest} se observa un valor óptimo de 768 peticiones por minuto, para el cual la media y la mediana se mantienen por debajo del umbral de los 0.1 segundos.}
 	
 	
 	\begin{table}[h]
@@ -1910,7 +1910,7 @@ Las características del servidor web se pueden observar en la Tabla \ref{tab:har
 		\label{tab:djangotest}
 	\end{table}
 	
-	\item{\textbf{Páginas dinámicas con Django y archivos estáticos sobre el mismo servidor Apache}: en esta prueba se configuró el servidor Apache tal como está descrito en la Sección \ref{sub:servidorweb}, es decir que Apache servirá directamente las peticiones de archivos estáticos y pasará a la aplicacion Django las peticiones dinámicas. En la tabla \ref{tab:djangostatic}} se observa un valor óptimo de 32 peticiones por minuto con una media y mediana por encima del umbral del segundo. 
+	\item{\textbf{Páginas dinámicas con Django y archivos estáticos sobre el mismo servidor Apache}: en esta prueba se configuró el servidor Apache tal como está descrito en la Sección \ref{sub:servidorweb}, es decir que Apache servirá directamente las peticiones de archivos estáticos y pasará a la aplicación Django las peticiones dinámicas. En la tabla \ref{tab:djangostatic}} se observa un valor óptimo de 32 peticiones por minuto con una media y mediana por encima del umbral del segundo. 
 	
 	\begin{table}[h!]
 		\begin{tabular}{|l|l|l|l|l|l|l|l|}
@@ -1942,7 +1942,7 @@ Desde el punto de vista de la velocidad de respuesta del servicio ofrecido, como
 
 \chapter{Tentáculos}
 
-En el marco de este trabajo hemos definido una analogía sencilla que compara un enlace en una red a un tentáculo de un pulpo, a cada extremo del tentáculo se encuentran los agentes relevantes al sistema de monitoreo: monitores de red que hemos llamado Tentacle Probe Source ya que estos generan sondas y funciones como los puntos activos del monitoreo y los Tentacle Probe Destination que son los nodos de interés a monitorear. Cada tentáculo está compuesto ademas por una cantidad variable de nodos intermedios como enrutadores o \textit{proxies} que establecen la comunicación entre el TPS y cada TPD.
+En el marco de este trabajo hemos definido una analogía sencilla que compara un enlace en una red a un tentáculo de un pulpo, a cada extremo del tentáculo se encuentran los agentes relevantes al sistema de monitoreo: monitores de red que hemos llamado Tentacle Probe Source ya que estos generan sondas y funciones como los puntos activos del monitoreo y los Tentacle Probe Destination que son los nodos de interés a monitorear. Cada tentáculo está compuesto además por una cantidad variable de nodos intermedios como enrutadores o \textit{proxies} que establecen la comunicación entre el TPS y cada TPD.
 
 \section{Diseño del Monitor}
 
@@ -1965,7 +1965,7 @@ Uno de los objetivos principales del monitor es ejecutar las pruebas en el momen
 
 \subsection{Arquitectura}
 
-Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Probe Source tiene una arquitectura basada en la biblioteca APScheduler(ver \ref{apscheduler}), esta posee componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de aplicaciones que requieran controlar finamente el momento de ejecucion de ciertas rutinas. Cada uno de los componentes de APScheduler pueden ser reemplazados fácilmente ya que comparten una interfaz común.
+Como se puede observar en la figura \ref{fig:tentacle-components.png}, Tentacle Probe Source tiene una arquitectura basada en la biblioteca APScheduler(ver \ref{apscheduler}), esta posee componentes altamente desacoplados con responsabilidades bien delimitadas para facilitar el desarrollo de aplicaciones que requieran controlar finamente el momento de ejecución de ciertas rutinas. Cada uno de los componentes de APScheduler pueden ser reemplazados fácilmente ya que comparten una interfaz común.
 
 \begin{figure}[h]
 	\centering
@@ -1987,7 +1987,7 @@ La ejecución del monitor comienza en el cliente, el cliente es el encargado de i
 
 Después de que el proceso está daemonizado, comienza la fase de inicialización. Para esto se crea el planificador y se cargan las tareas del almacén de tareas, importando el código de las pruebas a ejecutar. A este punto las pruebas están planificadas tentativamente y cargadas en memoria pero solo serán ejecutadas después de que se inicie el planificador.
 
-Al iniciar el planificador, éste pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. El planificador no ejecuta las tareas sino que se las envía al ejecutor. Cuando una tarea se ha completado, el ejecutor envía un mensaje al planificador, de esta manera el planificador puede conocer el estado de las tareas y evitar que una misma tarea ocupe mas de un hilo de ejecucion en caso de que esté tardando mas de lo normal o esté bloqueada.
+Al iniciar el planificador, éste pasa a ejecutarse como un subproceso y se encarga de iniciar las tareas en el momento preciso. El planificador no ejecuta las tareas sino que se las envía al ejecutor. Cuando una tarea se ha completado, el ejecutor envía un mensaje al planificador, de esta manera el planificador puede conocer el estado de las tareas y evitar que una misma tarea ocupe mas de un hilo de ejecución en caso de que esté tardando mas de lo normal o esté bloqueada.
 
 Mientras tanto, el hilo principal se conecta a la nube usando el API de Dropbox que posee un método para notificar a los clientes sobre cambios a una carpeta en tiempo real. El método llamado \textit{Longpoll Delta} consiste en abrir una conexión HTTP con un alto valor de \textit{timeout} (entre 30 y 120 segundos), si ocurre un cambio en la carpeta, el servidor de Dropbox responde de inmediato indicando que ocurrieron cambios y el monitor procederá a manejar este evento (descargando los archivos nuevos y aplicando los cambios al plan de monitoreo). En caso contrario, una vez expirado el temporizador, Dropbox responde indicando que no ocurrieron cambios y el monitor repite el proceso. 
 
@@ -2075,7 +2075,7 @@ El diagrama de secuencia del hilo principal del monitor puede ser observado en l
 
 Para la implementación del planificador se hizo uso de APScheduler, una biblioteca que permite retrasar la ejecución de código python a instantes específicos en el futuro; el planificador se puede ejecutar como un subproceso de modo que otro hilo puede encargarse de mantener el estado de planificador actualizado, indicando cuando se deban agregar, re-planificar o eliminar pruebas.
 
-El planificador está compuesto de gatillos para determinar el tiempo de ejecucion de las pruebas, ejecutores, y almacenes de tareas que guardan el estado del planificador, todos estos componentes son configurables y se pueden extender o reusar para obtener cualquier comportamiento deseado. A continuación se explica su funcionamiento y como se usaron en el marco de este trabajo.
+El planificador está compuesto de gatillos para determinar el tiempo de ejecución de las pruebas, ejecutores, y almacenes de tareas que guardan el estado del planificador, todos estos componentes son configurables y se pueden extender o reusar para obtener cualquier comportamiento deseado. A continuación se explica su funcionamiento y como se usaron en el marco de este trabajo.
 
 \begin{itemize}
 \item{\textbf{Gatillos}
@@ -2123,7 +2123,7 @@ Durante el desarrollo de este trabajo se han implementaron \textit{wrappers} par
 
 \subsubsection{Ping}
 
-Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como se menciono en la sección \ref{sub:ping}, ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo. La prueba consiste en instanciar un hilo por cada enlace monitoreado y ejecutar el comando ping. La prueba se realiza en paralelo para asegurar que la diferencia entre el tiempo de inicio esperado de la prueba y su tiempo ejecucion efectivo sea mínimo.
+Esta prueba hace uso del comando ping para obtener datos de la latencia en un enlace, como se menciono en la sección \ref{sub:ping}, ping viene incluido en todas las distribuciones de linux por lo que no es necesario instalar ninguna dependencia o programa externo. La prueba consiste en instanciar un hilo por cada enlace monitoreado y ejecutar el comando ping. La prueba se realiza en paralelo para asegurar que la diferencia entre el tiempo de inicio esperado de la prueba y su tiempo ejecución efectivo sea mínimo.
 
 El comando se ejecuta con la opción -D para que ping imprima cada resultado de latencia con una marca de tiempo entre corchetes. La cantidad de sondas ICMP, el tiempo entre sondas y el \textit{timeout} se especifican con las opciones -c, -i y -W respectivamente. A continuación se puede ver un ejemplo de una llamada al comando ping:
 
@@ -2275,9 +2275,9 @@ El comando Iperf se puede ejecutar en modo servidor lo cual le permite conectars
 $iperf -s -D
 \end{verbatim}
 
-A diferencia de las pruebas como las de ping o httping que solo envían unas pocas sondas ICMP o peticiones \textit{HTTP HEAD}, Iperf utiliza una gran cantidad de recursos de red intentando inundar el enlace y obtener el mayor \textit{throughput} posible, por lo tanto, el usuario debe asegurarse de no interferir constantemente el rendimiento de la red planificando demasiadas ejecuciones de esta prueba. Aunado a esto, cada ejecucion del comando Iperf se realiza secuencialmente, de esta manera, se evita que los distintos enlaces monitoreados tengan que compartir los recursos de red y se generen cuellos de botella en el TPS.
+A diferencia de las pruebas como las de ping o httping que solo envían unas pocas sondas ICMP o peticiones \textit{HTTP HEAD}, Iperf utiliza una gran cantidad de recursos de red intentando inundar el enlace y obtener el mayor \textit{throughput} posible, por lo tanto, el usuario debe asegurarse de no interferir constantemente el rendimiento de la red planificando demasiadas ejecuciones de esta prueba. Aunado a esto, cada ejecución del comando Iperf se realiza secuencialmente, de esta manera, se evita que los distintos enlaces monitoreados tengan que compartir los recursos de red y se generen cuellos de botella en el TPS.
 
-Ademas de las consideraciones de recursos de red consumidos, cada prueba con Iperf debe calibrarse apropiadamente para obtener un valor de \textit{throughput} óptimo, por lo tanto, la mayoría de los parámetros de esta prueba son específicos a cada enlace. A continuación se puede ver la construcción del comando Iperf para un enlace:
+Además de las consideraciones de recursos de red consumidos, cada prueba con Iperf debe calibrarse apropiadamente para obtener un valor de \textit{throughput} óptimo, por lo tanto, la mayoría de los parámetros de esta prueba son específicos a cada enlace. A continuación se puede ver la construcción del comando Iperf para un enlace:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false]
 
@@ -2338,7 +2338,7 @@ Para entender los requisitos que resultarán en los distintos componentes que ser
 	\item{El monitor es notificado del nuevo mensaje, lee su contenido y prepara la prueba para su ejecución}
 	\item{El monitor ejecuta la prueba y guarda los resultados en un archivo de trazas temporal}
 	\item{El monitor sube los archivos generados a la nube para su almacenamiento a largo plazo}
-	\item{La aplicacion web inicia una rutina de sincronización para descargar los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
+	\item{La aplicación web inicia una rutina de sincronización para descargar los archivos, los procesa según el formato del archivo y los guarda en la base de datos.}
 	\item{El usuario selecciona una visualización de la lista de visualizaciones disponibles y selecciona los datos y las opciones a través de un formulario.}
 	\item{El servidor busca la visualización solicitada en el caché, si no la encuentra, llama a la función correspondiente para computarla, la introduce en el caché para futuras consultas y la muestra al usuario.}
 \end{enumerate}
@@ -2369,9 +2369,9 @@ La planificación genérica de pruebas provee una interfaz única que permite a los
 
 Las pruebas planificadas para un monitor se guardan en la tabla intermedia \textit{MonitorTest}, además de guardar las claves del monitor y la prueba relacionada, esta tabla guarda los parámetros de ejecución en formato JSON y el momento de la planificación.
 
-%Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecucion. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
+%Es posible ejecutar pruebas según dos esquemas de planificación: pruebas periódicas que son ejecutadas en intervalos regulares y pruebas de una sola ejecución. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos constantemente. Otras pruebas como iperf que usan un gran número de recursos de red pueden ser planificadas para ejecutarse en un momento específico o con un intervalo entre pruebas que el usuario considere lo suficientemente largo.
 
-Es posible ejecutar pruebas según dos esquemas de planificación. Primero, \textbf{pruebas periódicas} que son ejecutadas en intervalos regulares, y {\textbf{pruebas de una sola ejecucion}. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos de la evolución de una variable a través del tiempo (Ver Sección \ref{pruebasimplementadas}). Otras pruebas, como capturas de tráfico de la red, requieren ser ejecutadas en momentos específicos para asegurar que se obtengan los datos deseados.
+Es posible ejecutar pruebas según dos esquemas de planificación. Primero, \textbf{pruebas periódicas} que son ejecutadas en intervalos regulares, y {\textbf{pruebas de una sola ejecución}. Algunas pruebas como las de ping y httping están pensadas para ser ejecutadas de forma periódica y así obtener datos de la evolución de una variable a través del tiempo (Ver Sección \ref{pruebasimplementadas}). Otras pruebas, como capturas de tráfico de la red, requieren ser ejecutadas en momentos específicos para asegurar que se obtengan los datos deseados.
 	
 	
 %, selecciona el esquema de planificación que va a elegir: algunas pruebas solo pueden ser planificadas en intervalos periódicos, otras solo pueden ser planificadas en un tiempo específicos y otras pueden ser planificadas con ambos esquemas
@@ -2386,7 +2386,7 @@ Cuando el usuario selecciona una prueba, el sistema crea un formulario partir de
 
 Los formularios en Django se modelan a través de la clase \textit{Form} que provee todas las funcionalidades necesarias para el despliegue de formularios y validación de datos introducidos por el usuario. Cuando deseamos crear un nuevo formulario debemos crear una subclase de \textit{Form} e incluir todos los campos que serán parte del formulario y cualquier validación especifica a dichos campos.
 
-Ya que cada prueba tiene una lista de parámetros específica que además puede depender de los enlaces de un monitor TPS, es necesario crear formularios de forma dinámica. Para esto, python ofrece características de meta-programación que permiten crear clases en tiempo de ejecucion. En este caso, definimos una función capaz de generar subclases de la clase \textit{Form} y que tengan como atributos los campos que serán parte del formulario.
+Ya que cada prueba tiene una lista de parámetros específica que además puede depender de los enlaces de un monitor TPS, es necesario crear formularios de forma dinámica. Para esto, python ofrece características de meta-programación que permiten crear clases en tiempo de ejecución. En este caso, definimos una función capaz de generar subclases de la clase \textit{Form} y que tengan como atributos los campos que serán parte del formulario.
 
 El Algoritmo \ref{alg:formgen} muestra la estructura básica para agregar campos al formulario según el tipo de datos de los parámetros, sin embargo cada parámetro también incluye datos para determinar si el campo es obligatorio, incluir textos de ayuda y proveer valores por omisión.
 
@@ -2435,7 +2435,7 @@ La clase generada luego es pasada a una plantilla genérica capaz de dibujar cual
 
 \subsection{Formulario de Planificación}
 
-Junto con el formulario de parámetros de la prueba, debemos incluir los campos para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecucion en caso de ser una prueba de una sola ejecución.
+Junto con el formulario de parámetros de la prueba, debemos incluir los campos para introducir las fechas iniciales, finales y intervalo entre pruebas en caso de ser una prueba periódica o el tiempo de ejecución en caso de ser una prueba de una sola ejecución.
 
 La validación de este formulario es usada para asegurar las reglas de negocio del sistema:
 	\begin{enumerate}
@@ -2443,7 +2443,7 @@ La validación de este formulario es usada para asegurar las reglas de negocio de
 		\item{la fecha final no puede ser previa a la fecha inicial.}
 		\item{La fecha inicial no puede ser modificada después de que la prueba ya ha comenzado.}
 		\item{El intervalo entre pruebas no puede ser menor o igual que 0.}
-		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor.} % es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo periodo}
+		\item{Solo puede ser planificada una prueba periódica simultánea del mismo tipo por monitor.} % es posible deshabilitar una prueba y luego planificar otra del mismo tipo para el mismo período}
 	\end{enumerate}
 
 Todas las fechas se validan usando la zona horaria del monitor, para validar la condición 5. se retiran de la base de datos todos los otros \textit{MonitorTest} pertenecientes a dicho monitor y cuya fecha final sea mayor al tiempo actual (es decir, aquellos que se estén ejecutando o se van a ejecutar en el futuro) y se valida que la prueba a insertar en el plan de monitoreo no ocurra de forma concurrente con ninguna otra.
@@ -2470,7 +2470,7 @@ El desarrollador tiene la libertad de elegir cualquier estructura que vea conven
 
 Ya que los requisitos y características de cada prueba son distintas, el desarrollador de las pruebas tiene la libertad de establecer cualquier formato al guardar sus archivos de trazas, es por esto que el sincronizador no tiene una forma "genérica" de procesar dichos archivos. Depende entonces del desarrollador escribir la función o \textit{parser} que tome como entrada un archivo de trazas en el formato establecido para el tipo de prueba y lo transforme en objetos a introducir en la base de datos.
 
-Para elegir la función correcta para procesar un archivo de trazas específico, el mecanismo de sincronización busca en la base de datos la dirección absoluta del método y lo importa. Python incluye funcionalidades para importar módulos en tiempo de ejecucion y pasar métodos a modo de variables (Línea 4, Algoritmo \ref{alg:loadsync}).
+Para elegir la función correcta para procesar un archivo de trazas específico, el mecanismo de sincronización busca en la base de datos la dirección absoluta del método y lo importa. Python incluye funcionalidades para importar módulos en tiempo de ejecución y pasar métodos a modo de variables (Línea 4, Algoritmo \ref{alg:loadsync}).
 
 \begin{algorithm}[h]
 	\caption{Getter de la función de sincronización}\label{alg:loadsync}
@@ -2527,7 +2527,7 @@ Entre los tipos de visualizaciones incluidos en el \textit{framework} están los 
 
 \subsection{Construcción de URLs genéricos}
 
-En el contexto del desarrollo de un \textit{framework} en el tope de una aplicacion web, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una vista específica. En la mayoría de los casos sencillamente incluimos el identificador del objeto en el URL, por ejemplo, la dirección "/monitor/2/" identifica de forma única la página del monitor con ID 2. Podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre. A este tipo de cadenas de caracteres se les da el nombre de \textit{slug}\footnote{los \textit{slugs} se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII}. Cuando deseamos ver una visualización específica en vez de visitar un URL como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
+En el contexto del desarrollo de un \textit{framework} en el tope de una aplicación web, debemos tomar en cuenta que el servidor debe tener una manera de identificar las peticiones y poder relacionarlas a una vista específica. En la mayoría de los casos sencillamente incluimos el identificador del objeto en el URL, por ejemplo, la dirección "/monitor/2/" identifica de forma única la página del monitor con ID 2. Podríamos identificar las visualizaciones de la misma manera, sin embargo, preferimos usar cadenas de caracteres legibles por humanos que identifiquen la visualización por su nombre. A este tipo de cadenas de caracteres se les da el nombre de \textit{slug}\footnote{los \textit{slugs} se construyen reemplazando todos los espacios en el nombre por guiones (-) y los caracteres especiales por sus equivalentes en ASCII}. Cuando deseamos ver una visualización específica en vez de visitar un URL como "/monitor/2/view/1" se visita un URL legible como "/monitor/2/view/average-rtt-heatmap".
 
 Para generar el \textit{slug} correspondiente a la visualización, sobrescribimos el método \textit{save} de la clase \textit{ResultView}. Ya que solo deseamos generar el \textit{slug} la primera vez que se guarda el registro, revisamos si el id es nulo (solo se le asigna el id a un objeto después de que es guardado por primera vez). Django incluye un método llamado \textit{slugify} que transforma el nombre de la visualización en un \textit{slug} válido. Finalmente debemos asegurarnos de que el nuevo \textit{slug} sea único, para esto buscamos en la base de datos otro \textit{ResultView} con el mismo \textit{slug} y si se encuentra anexamos al final un guión y un número, en caso de que este \textit{slug} también exista se repite el proceso incrementando el número hasta hallar un \textit{slug} único.
 
@@ -2548,8 +2548,8 @@ Los formularios no son mas que clases que podemos importar con el método definid
 		BaseResultForm      & Form              & Formulario base para todas las visualizaciones                               \\
 		LinkSelectionForm   & BaseResultForm    & Formulario para seleccionar enlace de un monitor                             \\
 		SampleForm          & LinkSelectionForm & Formulario para seleccionar un número de muestras a graficar                 \\
-		DateRangeForm       & BaseResultForm    & Formulario para seleccionar un periodo de tiempo a graficar                  \\
-		ElapsedForm         & BaseResultForm    & Formulario para seleccionar un periodo de tiempo a partir del momento actual \\
+		DateRangeForm       & BaseResultForm    & Formulario para seleccionar un período de tiempo a graficar                  \\
+		ElapsedForm         & BaseResultForm    & Formulario para seleccionar un período de tiempo a partir del momento actual \\
 		LinkMultiselectForm & BaseResultForm    & Formulario para seleccionar un conjunto de enlaces de un monitor            
 	\end{tabular}
 	\caption{Formularios predefinidos}
@@ -2593,7 +2593,7 @@ El desarrollador debe seguir una serie de pautas al escribir plantillas para vis
 	\item{La plantilla debe ajustarse responsivamente al ancho de la pantalla.}
 	\item{Siempre se deben usar HighCharts o Google Maps sobre otras bibliotecas que tengas las mismas funcionalidades o similares.}
 	\item{Las visualizaciones deben estar preferiblemente sobre fondo blanco.}
-	\item{En caso de que no se encontraran datos para el periodo seleccionado, se debe mostrar un mensaje de alerta en vez de una visualización en blanco.}
+	\item{En caso de que no se encontraran datos para el período seleccionado, se debe mostrar un mensaje de alerta en vez de una visualización en blanco.}
 	\item{Se deben usar las hojas de estilo de Bootstrap al dibujar visualizaciones que estén compuestas de elementos HTML.}
 \end{itemize}
 
@@ -2638,7 +2638,7 @@ Para desarrollar código fácilmente en distintos entornos se usa un repositorio d
 
 Cuando se desea desarrollar una prueba, el primer paso es entender y describir los requisitos de la prueba, para facilitar el entendimiento de esta sección usaremos como ejemplo el diseño una prueba que determine la pérdida de paquetes usando el comando ping en modo \textit{flood} (inundación). Para eso haremos que ping envíe paquetes tan rápido como pueda hasta pasar una cierta cantidad de paquetes luego determinaremos cuantos se perdieron durante la prueba.
 
-El módulo de prueba se muestra a continuación, cada ejecucion de la prueba anexa una linea en formato  $<$marca de tiempo,paquetes enviados, paquetes recibidos$>$ al archivo de trazas correspondiente:
+El módulo de prueba se muestra a continuación, cada ejecución de la prueba anexa una linea en formato  $<$marca de tiempo,paquetes enviados, paquetes recibidos$>$ al archivo de trazas correspondiente:
 
 \begin{lstlisting}[language=Python,basicstyle=\small\sffamily,numbers=left,numberstyle=\tiny,frame=tb,columns=fullflexible,showstringspaces=false] 
 
@@ -2706,7 +2706,7 @@ class TracegPaketLoss(models.Model):
 
 \end{lstlisting}
 
-Cuando hacemos cambios a la estructura de la base de datos en el código de la aplicacion, debemos crear archivos llamados \textit{migrations} que describen dichos cambios y permiten asentarlos en la base de datos fácilmente a través de un comando. Para crear \textit{migrations}, Django incluye el comando \textit{makemigrations}, la primera vez que se ejecuta este comando, se crea una migración inicial que describe la estructura completa de la base de datos. Llamadas posteriores a \textit{makemigrations} calcularán las diferencias a partir del estado anterior, conformando un historial de cambios que luego pueden ser aplicados en el entorno de producción.
+Cuando hacemos cambios a la estructura de la base de datos en el código de la aplicación, debemos crear archivos llamados \textit{migrations} que describen dichos cambios y permiten asentarlos en la base de datos fácilmente a través de un comando. Para crear \textit{migrations}, Django incluye el comando \textit{makemigrations}, la primera vez que se ejecuta este comando, se crea una migración inicial que describe la estructura completa de la base de datos. Llamadas posteriores a \textit{makemigrations} calcularán las diferencias a partir del estado anterior, conformando un historial de cambios que luego pueden ser aplicados en el entorno de producción.
 
 El siguiente paso es crear el \textit{parser} del archivo de trazas, puesto que el archivo de trazas viene en formato CSV es muy sencillo separar cada linea por el carácter ',', convertir las cadenas de caracteres en sus tipos de dato correspondiente y guardar cada traza en la base de datos, esta función se puede observar a continuación:
 
@@ -2813,15 +2813,15 @@ El \textit{fixture} incluirá entonces, un registro para la prueba, los registros
 
 En la etapa de despliegue se aplicarán, en el entorno de producción, todos los cambios realizados en la etapa de desarrollo. Esta etapa consiste en una serie de pasos intencionalmente simples y rápidos para evitar largas interrupciones de servicio mientras que estos son aplicados. Después de que finaliza la etapa de despliegue la nueva prueba estará disponible para que los usuarios la incluyan a sus monitores. 
 
-La etapa de despliegue comienza descargando la última versión del código del repositorio y parando el servidor web para evitar cualquier petición durante este periodo, es buena idea planificar los despliegues para momentos de baja carga del servidor, y notificar a los usuarios del sistema.
+La etapa de despliegue comienza descargando la última versión del código del repositorio y parando el servidor web para evitar cualquier petición durante este período, es buena idea planificar los despliegues para momentos de baja carga del servidor, y notificar a los usuarios del sistema.
 
 Para actualizar el servidor web y los trabajadores basta con reemplazar el código que estos ejecutan, sin embargo, para actualizar la base de datos se hace uso de archivos de migraciones que se crean en la etapa de desarrollo. las migraciones pueden ser aplicadas con el comando \textit{migrate}, para saber cual fue la última migración aplicada Django mantiene una tabla para llevar cuenta del estado de la base de datos, así es posible saber cuales de las migraciones deben ser aplicadas. Se debe tener especial cuidado al ejecutar migraciones, algunas migraciones incluyen operaciones costosas como agregar indices a tablas existentes o actualizar todas las entradas de una tabla, también es importante tomar en cuenta que las migraciones no incurran en conflictos con datos contenidos en la base de datos, por ejemplo, aplicar una restricción de unicidad sobre una columna con valores repetidos.
 
-En la Sección \ref{sub:servidorweb} se dijo que la aplicacion web Django no se encarga de servir los archivos estáticos al cliente, es por esto que estos deben ser copiados a la carpeta correspondiente ya sea en el propio servidor web o en un servidor externo, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
+En la Sección \ref{sub:servidorweb} se dijo que la aplicación web Django no se encarga de servir los archivos estáticos al cliente, es por esto que estos deben ser copiados a la carpeta correspondiente ya sea en el propio servidor web o en un servidor externo, para esto Django incluye el comando \textit{collectstatic} que busca en cada paquete los archivos estáticos y los copia a dicho directorio.
 
 Finalmente, se reinician los componentes que lo requieran de modo que estos puedan importar y ejecutar el nuevo código. Solo es necesario reiniciar el servidor web y los trabajadores, los demás micro-servicios como \textit{broker} de mensajería, planificador y \textit{backend} de resultados no requieren ser reiniciados pues son indiferentes al código de la aplicación.
 
-%Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicacion para forzar a apache a releer todo el código antes de levantar la aplicacion. 
+%Reiniciar el servidor web es trivial usando los comandos \textit{start, stop, restart}, sin embargo es buena idea borrar todos los archivos .pyc del código de la aplicación para forzar a apache a releer todo el código antes de levantar la aplicación. 
 
 %Los trabajadores pueden ser reiniciados de distintas maneras dependiendo de la configuración elegida, por ejemplo, es posible usar un programa como \textit{supervisord\footnote{Supervisord es un programa que permite monitorear y controlar conjuntos de procesos en sistemas UNIX http://supervisord.org/}} para que monitoree los trabajadores y se asegure de que se mantengan en linea todo el tiempo, sin embargo, también es posible enviarles mensajes a todos los trabajadores en modo \textit{broadcast} para que se reinicien a sí mismos, esto puede facilitar despliegues en que se tienen trabajadores distribuidos en distintas máquinas, siempre y cuando se descargue la última versión del código en la maquina \textit{host} del trabajador previamente. En futuras versiones el trabajador podría ser capaz de aceptar un comando para actualizarse y reiniciarse a si mismo.
 
@@ -2834,38 +2834,38 @@ Durante el desarrollo de este trabajo, construimos un sistema de monitoreo de re
 Los logros mas relevantes desde un punto de vista computacional se nombran a continuación: 
 
 \begin{itemize}
-	\item{Se desarrolló una aplicacion web que permite a usuarios autenticados manejar de forma remota sus monitores de red, recolectar los datos obtenidos y finalmente observar los datos obtenidos a partir del monitoreo.}
-	\item{Construimos un monitor de red con la cantidad de código mínimo para planificar tareas de monitoreo periódico de acuerdo al plan definido en la aplicacion web. El monitor escrito en python es ligero e ideal para desplegar en dispositivos de bajo costo (ver Capitulo \ref{cap:monitor}).}
-	\item{Establecimos un esquema de sincronización a costo cero entre la aplicacion web y el monitor a través del uso de cuotas de almacenamiento en la nube y peticiones gratuitas al API de Dropbox.}
-	\item{Para la aplicación web se diseñó una arquitectura a cuatro capas capaz de manejar eficientemente las distintas tareas de la aplicacion web, esta arquitectura permite escalar cada uno de sus componentes tanto como sea necesario facilitando el manejo de mayores cargas de trabajo y usuarios.}
-	\item{Para la aplicacion web se se diseño e implementó una interfaz sencilla y fácil de usar que se ajusta de manera fluida a la resolución de pantalla de cualquier dispositivo.}
-	\item{Se desarrolló un framework para integrar fácilmente nuevas pruebas y visualizaciones al sistema, se encontraron los puntos comunes y las tareas repetitivas relacionadas con la implementación y despliegue de nuevas pruebas en un sistema en fase de producción (ver Capítulo \ref{cap:framework}).}
-	\item{Se desarrolló una batería de pruebas para que fueran parte del sistema, así como para determinar los requisitos y pormenores del framework de integración de pruebas:}
+	\item{Se desarrolló una aplicación web que permite a usuarios autenticados manejar de forma remota sus monitores de red, recolectar datos y finalmente observar y explorar los datos obtenidos a partir del monitoreo.}
+	\item{Construimos un monitor de red con la cantidad de código mínimo para planificar tareas de monitoreo periódico de acuerdo al plan de monitoreo definido en la aplicación web. El monitor escrito en Python es ligero e ideal para desplegar en dispositivos de bajo costo (ver Capitulo \ref{cap:monitor}).}
+	\item{Establecimos un esquema de sincronización a costo cero y tolerante a fallas entre la aplicación web y el monitor a través del uso de cuotas de almacenamiento en la nube y peticiones gratuitas al API de Dropbox.}
+	\item{Para la aplicación web se diseñó una arquitectura a cuatro capas capaz de manejar eficientemente las distintas tareas de la aplicación web, esta arquitectura permite escalar cada uno de sus componentes tanto como sea necesario facilitando el manejo de mayores cargas de trabajo y usuarios.}
+	\item{Para la aplicación web se diseñó e implementó una interfaz sencilla y fácil de usar que se ajusta de manera fluida a la resolución de pantalla de cualquier dispositivo.}
+	\item{Se desarrolló un \textit{framework} para integrar fácilmente nuevas pruebas y visualizaciones al sistema. Se encontraron los puntos comunes y las tareas repetitivas relacionadas con la implementación y despliegue de nuevas pruebas en un sistema en fase de producción (ver Capítulo \ref{cap:framework}).}
+	\item{Se desarrolló una batería de pruebas para que fueran parte del sistema, así como para determinar los requisitos y pormenores del \textit{framework} de integración de pruebas:}
 	\begin{itemize}
-		\item{\textbf{Prueba de ping:} fue la primera prueba implementada y se usa para determinar la latencia y disponibilidad de los enlaces, esta prueba se usó para inferir congestión en la red y periodos de actividad e inactividad.}
-		\item{\textbf{Prueba de Httping:} similar a la prueba anterior, se usa para determinar el tiempo de respuesta usando peticiones HTTP.}
-		\item{\textbf{Prueba de Traceroute:} se usó para determinar la alcanzabilidad de un nodo a través de un enlace y inferir detalles como congestión a nivel de nodos intermedios. Su implementación ayudó a inferir los requisitos de pruebas con resultados no estructurados.}
-		\item{\textbf{Prueba con Iperf:} se usó para determinar el rendimiento de los enlaces así como para determinar los requisitos del sistema cuando fuera necesaria la colaboración de los nodos monitoreados.}
+		\item{\textbf{Prueba de Ping:} fue la primera prueba implementada y se usa para determinar la latencia y disponibilidad de los enlaces, esta prueba se usó para inferir congestión en la red y periodos de actividad e inactividad.}
+		\item{\textbf{Prueba de Httping:} similar a la prueba anterior, se usa para determinar el tiempo de respuesta de servidores web usando peticiones HTTP.}
+		\item{\textbf{Prueba de Traceroute:} se usó para determinar la alcanzabilidad de un nodo a través de un enlace e inferir detalles como congestión a nivel de nodos intermedios. Su implementación ayudó a determinar los requisitos de pruebas con resultados no estructurados.}
+		\item{\textbf{Prueba con Iperf:} se usó para obtener datos del \textit{throughput} de los enlaces, así como para determinar los requisitos del sistema cuando fuera necesaria la colaboración de los nodos monitoreados (enfoque cliente-servidor).}
 		
 	\end{itemize}
-	\item{Varios métodos de visualización de datos fueron conceptualizados e implementados y probaron ser una manera intuitiva de inferir hechos sobre el comportamiento y estado de la red, un ejemplo de esto fueron los mapas de calor de latencia que muestran al mismo tiempo patrones de congestión como áreas con colores calientes (rojos y amarillos) y ademas muestran periodos de inactividad como espacios en blanco.}
+	\item{Varios métodos de visualización de datos fueron conceptualizados e implementados y probaron ser una manera intuitiva de inferir hechos sobre el comportamiento y estado de la red. Un ejemplo de esto, fueron los mapas de calor de latencia que muestran al mismo tiempo patrones de congestión como áreas con colores calientes (rojos y amarillos), y además muestran periodos de inactividad como espacios en blanco.}
 \end{itemize}
 
-Ademas del diseño y desarrollo del sistema, también se ejecutaron pruebas para determinar el rendimiento, estabilidad y escalabilidad tanto de la aplicacion web como del monitores en escenarios reales de producción incluidos casos de uso de la vida real.
+Además del diseño y desarrollo del sistema, también se ejecutaron pruebas para determinar el rendimiento, estabilidad y escalabilidad tanto de la aplicación web como de los monitores en escenarios reales de producción incluidos casos de uso de la vida real.
 
 Un monitor de pruebas fue desplegado para probar algunos servicios críticos de REDULA tales como ula.ve, saber.ula.ve y un servidor de RESIDE. Este monitor de pruebas se mantuvo conectado a la nube y recolectando datos constantemente durante periodos de semanas y meses y no mostró problemas de rendimiento o estabilidad.
 
-La aplicacion web fue desplegada en un servidor de pruebas, la integración y prueba constante de nuevas características en este entorno de producción fue crucial en el desarrollo del \textit{workflow} de integración de pruebas, la aplicacion web está disponible en el siguiente URL: http://www.octopusmon.it/octopusmonitor. 
+La aplicación web fue desplegada en un servidor de pruebas, la integración y prueba constante de nuevas características en este entorno de producción fue crucial en el desarrollo del \textit{workflow} de integración de pruebas, la aplicación web está disponible en el siguiente URL: http://www.octopusmon.it/octopusmonitor. 
 
-El esquema de sincronización de datos a través de la nube usando el API de Dropbox probó ser una manera confiable de transferir datos entre los monitores y la aplicacion web, a pesar de que existe un límite de peticiones diarias que puede hacerse al API por usuario, este nunca fue alcanzado incluso con las máximas frecuencias de sincronización; se observó un máximo de 3602 peticiones por día, cada monitor conectado a la nube usará unas 3000 peticiones diarias. Al momento de escribir este documento, se han sincronizado mas de 1161533 trazas usando este mecanismo, cada una de ellas representando el resultado de la ejecucion de una prueba.
+El esquema de sincronización de datos a través de la nube usando el API de Dropbox probó ser una manera confiable de transferir datos entre los monitores y la aplicación web. A pesar de que existe un límite de peticiones diarias que puede hacerse al API por usuario, este nunca fue alcanzado incluso con las máximas frecuencias de sincronización; se observó un máximo de 3602 peticiones por día, cada monitor conectado a la nube usará unas 3000 peticiones diarias. Al momento de escribir este documento, se han sincronizado mas de 1161533 trazas usando este mecanismo, cada una de ellas representando el resultado de la ejecución de una prueba.
 
-Se realizaron pruebas de rendimiento al sistema para aproximar la cantidad de usuarios concurrentes que este sería capaz de atender en el hardware disponible, descubrimos que la aplicacion web sería capaz de atender 768 peticiones \textbf{dinámicas} por minuto lo que equivale a 1105920 por día, sin embargo solo sería capaz de atender 32 peticiones con minuto dado que estas incluyan la descarga de archivos estáticos, por lo tanto concluimos que para asegurar la escalabilidad del sistema es conveniente delegar esta tarea a otro servidor o un servicio de entrega de contenidos.
+Se realizaron pruebas de rendimiento al sistema para aproximar la cantidad de usuarios concurrentes que este sería capaz de atender en el hardware disponible. Descubrimos que la aplicación web sería capaz de atender 768 peticiones \textbf{dinámicas} por minuto lo que equivale a 1105920 por día, sin embargo solo sería capaz de atender 32 peticiones por minuto dado que estas incluyan la descarga de archivos estáticos, por lo tanto concluimos que para asegurar la escalabilidad del sistema es conveniente delegar esta tarea a otro servidor o un servicio de entrega de contenidos.
 
-A pesar de que hacer análisis sobre los datos recolectados esta fuera del alcance de este trabajo, se realizaron descubrimientos útiles sobre la latencia, disponibilidad y estabilidad de los enlaces monitoreados; por ejemplo, se encontró un patrón claro de menor latencia y mayor estabilidad en el periodo entre las 12am y las 8am, lo cual corresponde al patrón de uso esperado de la red, encontramos constantes periodos de inactividad para ula.ve al igual que tiempos de respuesta mas largo en comparación con saber.ula.ve, ademas encontramos que ambos sitios rechazan paquetes del protocolo ICMP, por lo que se monitorearon a través de HTTP, esto solo para nombrar algunos resultados relevantes.
+A pesar de que hacer análisis sobre los datos recolectados esta fuera del alcance de este trabajo, se observaron algunos patrones sobre la latencia, disponibilidad y estabilidad de los enlaces monitoreados. Por ejemplo, se encontró un patrón claro de menor latencia y mayor estabilidad en el período entre las 12am y las 8am, lo cual corresponde al patrón de uso esperado de la red, encontramos constantes periodos de inactividad para ula.ve al igual que tiempos de respuesta mas largo en comparación con saber.ula.ve, además encontramos que ambos sitios rechazan paquetes del protocolo ICMP, por lo que se monitorearon a través de HTTP, esto solo para nombrar algunos resultados relevantes.
 
 \section{Recomendaciones}
 
-Como trabajos futuros, proponemos la implementación de algoritmos de sincronización que ademas de introducir datos en la base de datos sean capaces de detectar condiciones críticas a partir de los datos recolectados y alertar proactivamente al usuario emitiendo notificaciones a través de la aplicacion web, correo electrónico o SMS. Las alertas podrían ser anexadas a las pruebas y podrían funcionar como parte del \textit{framework} de integración de pruebas.
+Como trabajos futuros, proponemos la implementación de algoritmos de sincronización que además de introducir datos en la base de datos sean capaces de detectar condiciones críticas a partir de los datos recolectados y alertar proactivamente al usuario emitiendo notificaciones a través de la aplicación web, correo electrónico o SMS. Las alertas podrían ser anexadas a las pruebas y podrían funcionar como parte del \textit{framework} de integración de pruebas.
 
 También sería posible la implementación de nuevos esquemas de sincronización con los monitores que permitan el \textit{streaming} de datos en tiempo real desde los monitores hasta el navegador del usuario, ya sea permitiendo que el servidor web sirva para negociar una conexión directa entre ellos, o que el servidor web sirva como relé a través del cual se pasen los datos.
 
@@ -2873,7 +2873,7 @@ También sería posible la implementación de nuevos esquemas de sincronización con
 \appendix
 
 
-\chapter{Casos de uso de la aplicacion web.}
+\chapter{Casos de uso de la aplicación web.}
 
 \subsection{Usuario no autenticado}
 
@@ -3038,7 +3038,7 @@ También sería posible la implementación de nuevos esquemas de sincronización con
 			& 2 & El servidor retorna un enlace a Dropbox y un formulario\\
 			& 3 & El usuario hace click en el enlace\\
 			& 4 & El usuario ingresa a Dropbox\\
-			& 5 & El usuario da permisos a la aplicacion de Octopus Monitor\\
+			& 5 & El usuario da permisos a la aplicación de Octopus Monitor\\
 			& 6 & Dropbox muestra un código al usuario\\
 			& 7 & El usuario ingresa el código en el formulario\\
 			& 8 & El servidor envía el código a Dropbox\\
@@ -3046,7 +3046,7 @@ También sería posible la implementación de nuevos esquemas de sincronización con
 			& 10 & El servidor actualiza el perfil del usuario\\
 			% Linea de Secuencia excepciones
 			\multirow{2}{*}{\textbf{\textit{Excepciones}}} & \cellcolor{light-gray}\textbf{Paso} & \cellcolor{light-gray}\textbf{Acción} \\
-			& 5 & Si el usuario no da permisos a la aplicacion el flujo termina. \\
+			& 5 & Si el usuario no da permisos a la aplicación el flujo termina. \\
 			\textbf{\textit{Postcondición}} & \multicolumn{2}{p{10cm}}{Cuenta de Dropbox vinculada.}\\
 		\end{tabular}
 	\end{center}
